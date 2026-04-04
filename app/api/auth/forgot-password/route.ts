@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getResend } from "@/lib/resend";
+import { getResend, FROM_EMAIL } from "@/lib/resend";
 import { rateLimit, getIp } from "@/lib/rate-limit";
 import crypto from "crypto";
 
@@ -41,13 +41,8 @@ export async function POST(req: Request) {
 
     const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${token}`;
 
-    // En dev : utiliser l'adresse Resend par défaut (pas de domaine requis)
-    const fromEmail = process.env.NODE_ENV === "production"
-      ? "Quotidia <noreply@quotidia.app>"
-      : "Quotidia <onboarding@resend.dev>";
-
     await getResend().emails.send({
-      from: fromEmail,
+      from: FROM_EMAIL,
       to: email,
       subject: "Réinitialisation de ton mot de passe — Quotidia",
       html: `

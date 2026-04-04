@@ -9,7 +9,7 @@ export function getResend(): Resend {
   return _resend;
 }
 
-const DOMAIN = process.env.EMAIL_DOMAIN ?? "myquotidia.app";
+const DOMAIN = "myquotidia.app";
 
 export const FROM_EMAIL    = `Quotidia <noreply@${DOMAIN}>`;
 export const FROM_CONTACT  = `Quotidia <contact@${DOMAIN}>`;
