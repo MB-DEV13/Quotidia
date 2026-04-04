@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { GoalCard, type Goal } from "./GoalCard";
 import { GoalForm, type GoalFormData } from "./GoalForm";
 
@@ -32,7 +31,6 @@ interface GoalsClientProps {
 }
 
 export function GoalsClient({ initialGoals, canAddMore, isPremium }: GoalsClientProps) {
-  const router = useRouter();
   const [goals, setGoals] = useState<Goal[]>(initialGoals);
 
   // Sync depuis le serveur après chaque router.refresh()
@@ -68,9 +66,10 @@ export function GoalsClient({ initialGoals, canAddMore, isPremium }: GoalsClient
       body: JSON.stringify(data),
     });
     if (res.ok) {
+      const json = await res.json();
       setShowForm(false);
       setPrefillData(null);
-      router.refresh();
+      setGoals((prev) => [json.data, ...prev]);
     }
   }
 
@@ -88,7 +87,7 @@ export function GoalsClient({ initialGoals, canAddMore, isPremium }: GoalsClient
       const json = await res.json();
       const updated = json.data;
       const isNowCompleted = updated.current >= updated.target;
-      router.refresh();
+      setGoals((prev) => prev.map((g) => g.id === id ? { ...g, current: updated.current } : g));
       return { justCompleted: !wasCompleted && isNowCompleted };
     }
     return { justCompleted: false };
@@ -103,13 +102,13 @@ export function GoalsClient({ initialGoals, canAddMore, isPremium }: GoalsClient
     });
     if (res.ok) {
       setEditingGoal(null);
-      router.refresh();
+      setGoals((prev) => prev.map((g) => g.id === editingGoal.id ? { ...g, ...data } : g));
     }
   }
 
   async function handleDelete(id: string) {
     const res = await fetch(`/api/goals/${id}`, { method: "DELETE" });
-    if (res.ok) { router.refresh(); }
+    if (res.ok) { setGoals((prev) => prev.filter((g) => g.id !== id)); }
   }
 
   async function handleRestart(id: string) {
@@ -118,7 +117,7 @@ export function GoalsClient({ initialGoals, canAddMore, isPremium }: GoalsClient
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ current: 0 }),
     });
-    if (res.ok) { router.refresh(); }
+    if (res.ok) { setGoals((prev) => prev.map((g) => g.id === id ? { ...g, current: 0 } : g)); }
   }
 
   function openSuggestion(s: typeof SUGGESTED_GOALS[number]) {

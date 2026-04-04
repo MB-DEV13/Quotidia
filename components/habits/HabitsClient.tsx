@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { HabitForm } from "./HabitForm";
 import { HabitCard } from "./HabitCard";
@@ -34,11 +33,9 @@ const SUGGESTED_HABITS = [
 ];
 
 export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsClientProps) {
-  const router = useRouter();
   const ph = usePostHog();
   const [habits, setHabits] = useState(initialHabits);
 
-  // Sync depuis le serveur après chaque router.refresh()
   useEffect(() => { setHabits(initialHabits); }, [initialHabits]);
   const [showForm, setShowForm] = useState(false);
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
@@ -55,10 +52,12 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
       body: JSON.stringify(data),
     });
     if (res.ok) {
+      const json = await res.json();
       ph.capture("habit_created", { frequency: data.frequency, is_premium: isPremium });
       setShowForm(false);
       setPrefillData(null);
-      router.refresh();
+      // Ajout optimiste
+      setHabits((prev) => [{ ...json.data, completions: [] }, ...prev]);
     }
   }
 
@@ -71,7 +70,10 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
     });
     if (res.ok) {
       setEditingHabit(null);
-      router.refresh();
+      // Mise à jour optimiste
+      setHabits((prev) => prev.map((h) =>
+        h.id === editingHabit.id ? { ...h, ...data } : h
+      ));
     }
   }
 
@@ -81,7 +83,9 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isArchived: true }),
     });
-    if (res.ok) { router.refresh(); }
+    if (res.ok) {
+      setHabits((prev) => prev.map((h) => h.id === id ? { ...h, isArchived: true } : h));
+    }
   }
 
   async function handleUnarchive(id: string) {
@@ -90,12 +94,16 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isArchived: false }),
     });
-    if (res.ok) { router.refresh(); }
+    if (res.ok) {
+      setHabits((prev) => prev.map((h) => h.id === id ? { ...h, isArchived: false } : h));
+    }
   }
 
   async function handleDelete(id: string) {
     const res = await fetch(`/api/habits/${id}`, { method: "DELETE" });
-    if (res.ok) { router.refresh(); }
+    if (res.ok) {
+      setHabits((prev) => prev.filter((h) => h.id !== id));
+    }
   }
 
   function openSuggestion(s: typeof SUGGESTED_HABITS[0]) {
@@ -169,7 +177,7 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
         )}
       </div>
 
-      {/* Suggestions — toujours affichées */}
+      {/* Suggestions */}
       <div className="mt-6">
         <p className="text-sm font-semibold text-textLight uppercase tracking-wide mb-3">Suggestions populaires</p>
         <div className="space-y-3">
