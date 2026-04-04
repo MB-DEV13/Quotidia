@@ -1,17 +1,31 @@
 {
+  "id": "https://myquotidia.app/",
   "name": "Quotidia",
   "short_name": "Quotidia",
   "description": "Dashboard de vie personnel : habitudes, budget, objectifs et assistant IA.",
   "start_url": "/dashboard",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
   "orientation": "portrait",
   "background_color": "#F5F3FF",
   "theme_color": "#5B5EA6",
   "categories": ["productivity", "lifestyle"],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ],
+  "screenshots": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
   ]
 }
