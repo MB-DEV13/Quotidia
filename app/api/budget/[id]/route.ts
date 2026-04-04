@@ -9,6 +9,9 @@ const updateExpenseSchema = z.object({
   category: z.string().min(1).optional(),
   label: z.string().optional(),
   date: z.string().optional(),
+  recurrenceInterval: z.enum(["weekly", "monthly", "custom"]).nullable().optional(),
+  recurrenceDays: z.number().int().min(1).max(365).nullable().optional(),
+  isRecurring: z.boolean().optional(),
 });
 
 export async function PATCH(
