@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       const resend = new Resend(process.env.RESEND_API_KEY);
       await resend.emails.send({
         from: FROM_CONTACT,
-        to: process.env.CONTACT_EMAIL ?? "contact@quotidia.fr",
+        to: process.env.CONTACT_EMAIL ?? "contact@myquotidia.app",
         subject: `[Contact] ${escapeHtml(data.subject)}`,
         html: `
           <h2>Nouveau message de contact</h2>

@@ -73,13 +73,13 @@ export async function GET(req: Request) {
               <p style="color:#2D2D2D;font-size:14px;line-height:1.8;margin:0;">${habitsList}</p>
             </div>
             <div style="text-align:center;">
-              <a href="https://quotidia.fr/habits" style="background:#5B5EA6;color:#fff;text-decoration:none;padding:12px 28px;border-radius:12px;font-weight:600;font-size:14px;display:inline-block;">
+              <a href="https://myquotidia.app/habits" style="background:#5B5EA6;color:#fff;text-decoration:none;padding:12px 28px;border-radius:12px;font-weight:600;font-size:14px;display:inline-block;">
                 Valider mes habitudes →
               </a>
             </div>
             <p style="text-align:center;color:#888;font-size:11px;margin-top:20px;">
               Tu reçois cet email car tu as activé les rappels dans tes paramètres.<br/>
-              <a href="https://quotidia.fr/settings" style="color:#5B5EA6;">Gérer mes notifications</a>
+              <a href="https://myquotidia.app/settings" style="color:#5B5EA6;">Gérer mes notifications</a>
             </p>
           </div>
         `,

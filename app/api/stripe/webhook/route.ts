@@ -5,7 +5,7 @@ import { getResend, FROM_EMAIL } from "@/lib/resend";
 import { premiumConfirmEmailHtml, subscriptionCancelledEmailHtml } from "@/lib/email-templates";
 import Stripe from "stripe";
 
-const APP_URL = process.env.NEXTAUTH_URL ?? "https://quotidia.fr";
+const APP_URL = process.env.NEXTAUTH_URL ?? "https://myquotidia.app";
 
 export const dynamic = "force-dynamic";
 

@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 
 if (process.env.VAPID_PRIVATE_KEY && process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY) {
   webpush.setVapidDetails(
-    "mailto:contact@quotidia.fr",
+    "mailto:contact@myquotidia.app",
     process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
     process.env.VAPID_PRIVATE_KEY
   );

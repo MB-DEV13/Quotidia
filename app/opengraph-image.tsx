@@ -99,7 +99,7 @@ export default function OGImage() {
             fontSize: "18px",
           }}
         >
-          quotidia.fr
+          myquotidia.app
         </p>
       </div>
     ),

@@ -283,7 +283,7 @@ export function BilanClient() {
     y += 5;
     doc.setFontSize(7);
     doc.setTextColor(...gray);
-    doc.text(`Généré le ${new Date().toLocaleDateString("fr-FR")} par Quotidia — quotidia.fr`, lm, y);
+    doc.text(`Généré le ${new Date().toLocaleDateString("fr-FR")} par Quotidia — myquotidia.app`, lm, y);
 
     doc.save(`bilan-${data.period.label.replace(/\s/g, "-")}.pdf`);
   }

@@ -90,12 +90,12 @@ export async function GET(req: Request) {
               <p style="color:#888;font-size:12px;text-align:right;margin:4px 0 0;">${percent}% utilisé</p>
             </div>
             <div style="text-align:center;">
-              <a href="https://quotidia.fr/budget" style="background:#5B5EA6;color:#fff;text-decoration:none;padding:12px 28px;border-radius:12px;font-weight:600;font-size:14px;display:inline-block;">
+              <a href="https://myquotidia.app/budget" style="background:#5B5EA6;color:#fff;text-decoration:none;padding:12px 28px;border-radius:12px;font-weight:600;font-size:14px;display:inline-block;">
                 Voir mon budget →
               </a>
             </div>
             <p style="text-align:center;color:#888;font-size:11px;margin-top:20px;">
-              <a href="https://quotidia.fr/settings" style="color:#5B5EA6;">Gérer mes notifications</a>
+              <a href="https://myquotidia.app/settings" style="color:#5B5EA6;">Gérer mes notifications</a>
             </p>
           </div>
         `,

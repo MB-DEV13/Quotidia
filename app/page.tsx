@@ -239,7 +239,7 @@ const jsonLd = {
   ],
   description:
     "Dashboard de vie personnel : suis tes habitudes, gère ton budget, atteins tes objectifs et booste ta productivité avec un assistant IA.",
-  url: "https://quotidia.fr",
+  url: "https://myquotidia.app",
   inLanguage: "fr",
 };
 

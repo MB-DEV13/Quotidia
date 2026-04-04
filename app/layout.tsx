@@ -12,7 +12,7 @@ const inter = Inter({
   preload: true,
 });
 
-const APP_URL = process.env.NEXTAUTH_URL ?? "https://quotidia.fr";
+const APP_URL = process.env.NEXTAUTH_URL ?? "https://myquotidia.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),

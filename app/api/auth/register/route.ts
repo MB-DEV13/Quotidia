@@ -68,7 +68,7 @@ export async function POST(req: Request) {
     });
 
     // Email de bienvenue (non bloquant)
-    const appUrl = process.env.NEXTAUTH_URL ?? "https://quotidia.fr";
+    const appUrl = process.env.NEXTAUTH_URL ?? "https://myquotidia.app";
     getResend().emails.send({
       from: FROM_EMAIL,
       to: email,

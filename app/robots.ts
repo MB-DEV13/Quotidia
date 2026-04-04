@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 
-const APP_URL = process.env.NEXTAUTH_URL ?? "https://quotidia.fr";
+const APP_URL = process.env.NEXTAUTH_URL ?? "https://myquotidia.app";
 
 export default function robots(): MetadataRoute.Robots {
   return {
