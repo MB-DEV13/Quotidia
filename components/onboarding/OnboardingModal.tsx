@@ -55,12 +55,10 @@ export function OnboardingModal({ isOpen }: OnboardingModalProps) {
   async function handleFinish() {
     await completeOnboarding();
     router.push("/habits");
-    router.refresh();
   }
 
   async function handleSkip() {
     await completeOnboarding();
-    router.refresh();
   }
 
   if (!isOpen || closing) return null;

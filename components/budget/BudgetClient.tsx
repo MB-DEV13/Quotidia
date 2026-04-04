@@ -74,7 +74,6 @@ export function BudgetClient({
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
   const [summary, setSummary] = useState(initialSummary);
 
-  // Sync depuis le serveur après chaque router.refresh()
   useEffect(() => { setTransactions(initialTransactions); }, [initialTransactions]);
   useEffect(() => { setSummary(initialSummary); }, [initialSummary]);
   const [showForm, setShowForm] = useState<"expense" | "income" | null>(null);
@@ -116,7 +115,6 @@ export function BudgetClient({
       body: JSON.stringify({ ...config, configured: true }),
     });
     setShowSetup(false);
-    router.refresh();
   }
 
   async function handleCreate(data: TransactionFormData) {
@@ -143,7 +141,18 @@ export function BudgetClient({
 
     setShowForm(null);
     setFormError(null);
-    router.refresh();
+    // Ajout optimiste dans la liste
+    const newTx: Transaction = {
+      ...json.data,
+      date: json.data.date ?? new Date().toISOString(),
+      type: isExpense ? "expense" : "income",
+    };
+    setTransactions((prev) => [newTx, ...prev]);
+    setSummary((prev) => ({
+      ...prev,
+      totalExpenses: isExpense ? prev.totalExpenses + newTx.amount : prev.totalExpenses,
+      totalIncome: !isExpense ? prev.totalIncome + newTx.amount : prev.totalIncome,
+    }));
   }
 
   async function handleEdit(data: TransactionFormData) {
@@ -157,16 +166,32 @@ export function BudgetClient({
       body: JSON.stringify(data),
     });
     if (res.ok) {
+      const oldAmount = editingTransaction.amount;
+      const newAmount = data.amount ?? oldAmount;
+      const type = editingTransaction.type;
+      setTransactions((prev) => prev.map((t) =>
+        t.id === editingTransaction.id ? { ...t, ...data, amount: newAmount } : t
+      ));
+      setSummary((prev) => ({
+        ...prev,
+        totalExpenses: type === "expense" ? prev.totalExpenses - oldAmount + newAmount : prev.totalExpenses,
+        totalIncome: type === "income" ? prev.totalIncome - oldAmount + newAmount : prev.totalIncome,
+      }));
       setEditingTransaction(null);
-      router.refresh();
     }
   }
 
   async function handleDelete(id: string, type: "expense" | "income") {
     const endpoint = type === "expense" ? `/api/budget/${id}` : `/api/income/${id}`;
+    const tx = transactions.find((t) => t.id === id);
     const res = await fetch(endpoint, { method: "DELETE" });
-    if (res.ok) {
-      router.refresh();
+    if (res.ok && tx) {
+      setTransactions((prev) => prev.filter((t) => t.id !== id));
+      setSummary((prev) => ({
+        ...prev,
+        totalExpenses: type === "expense" ? prev.totalExpenses - tx.amount : prev.totalExpenses,
+        totalIncome: type === "income" ? prev.totalIncome - tx.amount : prev.totalIncome,
+      }));
     }
   }
 

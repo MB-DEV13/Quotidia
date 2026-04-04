@@ -33,7 +33,6 @@ interface GoalsClientProps {
 export function GoalsClient({ initialGoals, canAddMore, isPremium }: GoalsClientProps) {
   const [goals, setGoals] = useState<Goal[]>(initialGoals);
 
-  // Sync depuis le serveur après chaque router.refresh()
   useEffect(() => { setGoals(initialGoals); }, [initialGoals]);
   const [showForm, setShowForm] = useState(false);
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
