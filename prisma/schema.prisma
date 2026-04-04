@@ -1,0 +1,242 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                     String    @id @default(cuid())
+  email                  String    @unique
+  name                   String?
+  password               String?
+  emailVerified          DateTime?
+  avatar                 String?
+  level                  Int       @default(1)
+  xp                     Int       @default(0)
+  isPremium              Boolean   @default(false)
+  aiRequestsUsed         Int       @default(0)
+  aiRequestsReset        DateTime?
+  stripeCustomerId       String?
+  stripeSubscriptionId   String?
+  stripePriceId          String?
+  stripeCurrentPeriodEnd DateTime?
+  onboardingCompleted    Boolean   @default(false)
+  loginStreak            Int       @default(0)
+  lastLoginWeek          String?
+  resetToken             String?   @unique
+  resetTokenExpiry       DateTime?
+  country                String?
+  region                 String?
+  city                   String?
+  showInLeaderboard      Boolean   @default(true)
+  dailyReminderEnabled   Boolean   @default(false)
+  budgetMode             String    @default("manual") // "manual" | "automatic"
+  habits                 Habit[]
+  bankConnection         BankConnection?
+  pushSubscriptions      PushSubscription[]
+  expenses               Expense[]
+  incomes                Income[]
+  budgetConfig           BudgetConfig?
+  goals                  Goal[]
+  badges                 UserBadge[]
+  aiConversations        AiConversation[]
+  accounts               Account[]
+  sessions               Session[]
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Habit {
+  id            String            @id @default(cuid())
+  userId        String
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  icon          String?
+  color         String            @default("#5B5EA6")
+  frequency     String            @default("daily") // "daily" | "weekly"
+  currentStreak Int               @default(0)
+  bestStreak    Int               @default(0)
+  isArchived    Boolean           @default(false)
+  completions   HabitCompletion[]
+  createdAt     DateTime          @default(now())
+
+  @@index([userId])
+}
+
+model HabitCompletion {
+  id      String   @id @default(cuid())
+  habitId String
+  habit   Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  date    DateTime
+
+  @@unique([habitId, date])
+  @@index([habitId])
+}
+
+model Expense {
+  id                  String   @id @default(cuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount              Float
+  category            String
+  label               String?
+  date                DateTime @default(now())
+  isRecurring         Boolean  @default(false)
+  recurrenceInterval  String?
+  recurrenceDays      Int?
+  recurringGroupId    String?
+  source              String   @default("manual") // "manual" | "bank_sync"
+  bridgeTransactionId String?  @unique
+
+  @@index([userId])
+  @@index([date])
+  @@index([recurringGroupId])
+}
+
+model Income {
+  id                  String   @id @default(cuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount              Float
+  category            String
+  label               String?
+  date                DateTime @default(now())
+  isRecurring         Boolean  @default(false)
+  recurrenceInterval  String?
+  recurrenceDays      Int?
+  recurringGroupId    String?
+  source              String   @default("manual") // "manual" | "bank_sync"
+  bridgeTransactionId String?  @unique
+
+  @@index([userId])
+  @@index([date])
+  @@index([recurringGroupId])
+}
+
+model BankConnection {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bridgeUserId    String    // UUID Bridge
+  bridgeItemId    Int?      // ID du compte bancaire connecté
+  bankName        String?
+  bankLogoUrl     String?
+  status          String    @default("pending") // "pending" | "active" | "error" | "disconnected"
+  lastSyncAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model BudgetConfig {
+  id             String  @id @default(cuid())
+  userId         String  @unique
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  monthlyBudget  Float   @default(0)   // plafond de dépenses mensuel
+  incomeAmount   Float   @default(0)   // revenu récurrent
+  incomePeriod   Int     @default(30)  // tous les X jours
+  incomeLabel         String?   // ex: "Salaire"
+  configured          Boolean   @default(false)
+  budgetAlertSentAt   DateTime?
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Goal {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  icon      String    @default("🎯")
+  color     String    @default("#5B5EA6")
+  target    Float
+  current   Float     @default(0)
+  unit      String?
+  deadline  DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model Badge {
+  id          String      @id @default(cuid())
+  name        String      @unique
+  description String
+  icon        String
+  condition   String
+  xpReward    Int         @default(50)
+  users       UserBadge[]
+}
+
+model UserBadge {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId  String
+  badge    Badge    @relation(fields: [badgeId], references: [id])
+  earnedAt DateTime @default(now())
+
+  @@unique([userId, badgeId])
+}
+
+model AiConversation {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  Json
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}

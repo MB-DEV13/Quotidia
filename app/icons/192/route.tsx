@@ -1,0 +1,37 @@
+import { ImageResponse } from "next/og";
+
+export const runtime = "edge";
+
+export function GET() {
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: 192,
+          height: 192,
+          background: "#FFFFFF",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <svg
+          width="176"
+          height="176"
+          viewBox="0 0 192 192"
+          fill="none"
+        >
+          <path
+            d="M 96,20 C 138,20 163.5,58.7 163.5,96 C 163.5,133.3 128.6,155 96,155 C 63.4,155 45.5,123.9 45.5,96 C 45.5,68.1 72.8,54 96,54 C 119.2,54 129.5,77.5 129.5,96 C 129.5,114.5 109.8,121 96,121 C 82.2,121 79.5,105.1 79.5,96 C 79.5,86.9 91.6,88 96,88"
+            stroke="#5B5EA6"
+            strokeWidth="13"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+        </svg>
+      </div>
+    ),
+    { width: 192, height: 192 }
+  );
+}

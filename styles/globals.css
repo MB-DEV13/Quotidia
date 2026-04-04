@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: "Inter", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #F5F3FF;
+  color: #2D2D2D;
+  font-family: var(--font-inter), sans-serif;
+}
+
+/* Dark mode global */
+.dark body {
+  background-color: #030712;
+  color: #f1f5f9;
+}
+
+/* Cards en dark */
+.dark .bg-white {
+  background-color: #111827 !important;
+}
+
+/* Textes */
+.dark .text-textDark {
+  color: #f1f5f9 !important;
+}
+.dark .text-textLight {
+  color: #94a3b8 !important;
+}
+
+/* Bordures */
+.dark .border-gray-100 {
+  border-color: #1f2937 !important;
+}
+.dark .border-gray-200 {
+  border-color: #374151 !important;
+}
+
+/* Inputs */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #1f2937;
+  color: #f1f5f9;
+  border-color: #374151;
+}
+
+/* Hover states */
+.dark .hover\:bg-gray-50:hover {
+  background-color: #1f2937 !important;
+}
+.dark .bg-gray-50 {
+  background-color: #1f2937 !important;
+}
+.dark .bg-gray-100 {
+  background-color: #1f2937 !important;
+}
+
+/* Background lavande → foncé */
+.dark .bg-background {
+  background-color: #030712 !important;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
