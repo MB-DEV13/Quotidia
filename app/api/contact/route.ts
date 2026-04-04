@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       await resend.emails.send({
         from: FROM_CONTACT,
         to: process.env.CONTACT_EMAIL ?? "contact@myquotidia.app",
-        reply_to: data.email,
+        replyTo: data.email,
         subject: `[Contact] ${escapeHtml(data.subject)}`,
         html: `
           <h2>Nouveau message de contact</h2>
