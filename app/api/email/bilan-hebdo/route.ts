@@ -95,7 +95,7 @@ export async function POST() {
     else if (completionRate >= 50) motivationMessage = "Semaine correcte. La régularité est la clé du succès — tu peux faire encore mieux !";
     else motivationMessage = "Tout le monde a des semaines difficiles. Reprends de l'élan et lance-toi !";
 
-    const appUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+    const appUrl = process.env.NEXTAUTH_URL ?? "https://myquotidia.app";
 
     const html = weeklyReportHtml({
       userName: user.name ?? "Champion",

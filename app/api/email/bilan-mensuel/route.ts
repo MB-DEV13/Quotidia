@@ -78,7 +78,7 @@ export async function POST() {
     else if (completionRate >= 65) motivationMessage = `Bon mois ! Tu as maintenu ${completionRate}% de tes habitudes. Vise les 80% le mois prochain !`;
     else motivationMessage = `Chaque mois est une nouvelle opportunité. Tu as posé ${totalCompleted} habitudes — construis dessus le mois prochain !`;
 
-    const appUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+    const appUrl = process.env.NEXTAUTH_URL ?? "https://myquotidia.app";
 
     const html = monthlyReportHtml({
       userName: user.name ?? "Champion",

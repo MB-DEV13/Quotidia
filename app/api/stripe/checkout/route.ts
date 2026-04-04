@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     const priceId =
       parsed.data.priceId === "monthly" ? STRIPE_PRICE_MONTHLY : STRIPE_PRICE_YEARLY;
 
-    const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+    const baseUrl = process.env.NEXTAUTH_URL ?? "https://myquotidia.app";
 
     const checkoutSession = await stripe.checkout.sessions.create({
       customer: customerId,

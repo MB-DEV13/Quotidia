@@ -11,7 +11,7 @@ export async function GET() {
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
-  const appUrl = "http://localhost:3000";
+  const appUrl = "https://myquotidia.app";
 
   const results = await Promise.allSettled([
 

@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+    const baseUrl = process.env.NEXTAUTH_URL ?? "https://myquotidia.app";
 
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: user.stripeCustomerId,
