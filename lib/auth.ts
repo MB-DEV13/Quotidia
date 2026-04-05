@@ -13,6 +13,7 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: "/login",
+    newUser: "/onboarding", // Nouveaux utilisateurs Google → onboarding directement
   },
   providers: [
     GoogleProvider({
