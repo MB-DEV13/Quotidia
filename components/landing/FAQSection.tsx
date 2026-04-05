@@ -33,7 +33,7 @@ export function FAQSection() {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section className="px-4 py-20 bg-white">
+    <section className="px-4 py-20 bg-background">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
           <p className="text-sm font-semibold text-[#5B5EA6] uppercase tracking-widest mb-3">
