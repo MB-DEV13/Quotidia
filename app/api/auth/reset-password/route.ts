@@ -14,7 +14,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Le mot de passe doit contenir au moins 8 caractères." }, { status: 400 });
     }
 
-    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    const hmacSecret = process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET ?? "";
+    const hashedToken = crypto.createHmac("sha256", hmacSecret).update(token).digest("hex");
 
     // Invalider le token atomiquement : updateMany avec conditions = pas de race condition
     const hashed = await bcrypt.hash(password, 12);

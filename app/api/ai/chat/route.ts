@@ -155,7 +155,11 @@ Règles:
             timestamp: new Date().toISOString(),
           };
 
-          const updatedMessages = [...messages, newUserMessage, assistantMessage];
+          const MAX_STORED_MESSAGES = 50;
+          const allMessages = [...messages, newUserMessage, assistantMessage];
+          const updatedMessages = allMessages.length > MAX_STORED_MESSAGES
+            ? allMessages.slice(allMessages.length - MAX_STORED_MESSAGES)
+            : allMessages;
 
           await db.aiConversation.update({
             where: { id: conversation!.id },

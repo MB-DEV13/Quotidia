@@ -36,6 +36,12 @@ function getSubscriptionEndDate(subscription: Stripe.Subscription): Date {
 }
 
 export async function POST(req: NextRequest) {
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    console.error("[WEBHOOK] STRIPE_WEBHOOK_SECRET manquant — webhook désactivé");
+    return NextResponse.json({ error: "Configuration manquante" }, { status: 500 });
+  }
+
   const body = await req.text();
   const sig = req.headers.get("stripe-signature");
 
@@ -46,11 +52,7 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET ?? ""
-    );
+    event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err) {
     console.error("[WEBHOOK] Signature invalide:", err);
     return NextResponse.json({ error: "Signature invalide" }, { status: 400 });

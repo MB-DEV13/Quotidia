@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     const periodParam = searchParams.get("period") ?? "7";
     const period = parseInt(periodParam, 10);
 
-    if (![7, 30, 90].includes(period)) {
+    if (isNaN(period) || ![7, 30, 90].includes(period)) {
       return NextResponse.json({ success: false, error: "Période invalide" }, { status: 400 });
     }
 

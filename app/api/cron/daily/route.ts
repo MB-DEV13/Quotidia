@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { Resend } from "resend";
+import { getResend, FROM_REMINDERS } from "@/lib/resend";
 import { sendPushToUser } from "@/lib/push";
-import { FROM_REMINDERS } from "@/lib/resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 function verifyCron(req: Request) {
+  const secret = process.env.CRON_SECRET;
+  if (!secret) return false;
   const auth = req.headers.get("authorization");
-  return auth === `Bearer ${process.env.CRON_SECRET}`;
+  return auth === `Bearer ${secret}`;
 }
 
 export async function GET(req: Request) {
@@ -57,7 +56,7 @@ export async function GET(req: Request) {
 
     // Email
     if (process.env.RESEND_API_KEY) {
-      await resend.emails.send({
+      await getResend().emails.send({
         from: FROM_REMINDERS,
         to: user.email,
         subject: title,

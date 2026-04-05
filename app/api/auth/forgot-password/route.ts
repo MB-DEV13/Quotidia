@@ -31,7 +31,8 @@ export async function POST(req: Request) {
     }
 
     const token = crypto.randomBytes(32).toString("hex");
-    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    const hmacSecret = process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET ?? "";
+    const hashedToken = crypto.createHmac("sha256", hmacSecret).update(token).digest("hex");
     const expiry = new Date(Date.now() + 1000 * 60 * 60); // 1 heure
 
     await db.user.update({
