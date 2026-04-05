@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Conditions Générales d'Utilisation",
+  description: "CGU de Quotidia — conditions d'utilisation du service, plan gratuit et Premium à 4,99€/mois.",
+};
 
 export default function CguPage() {
   return (

@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Politique de confidentialité",
+  description: "Politique de confidentialité RGPD de Quotidia — données collectées, cookies et droits des utilisateurs.",
+};
 
 export default function ConfidentialitePage() {
   return (

@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Mentions légales",
+  description: "Mentions légales de Quotidia — éditeur, hébergeur et responsabilités du service.",
+};
 
 export default function MentionsLegalesPage() {
   return (

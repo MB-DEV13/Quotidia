@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { FROM_CONTACT } from "@/lib/resend";
+import { rateLimit, getIp } from "@/lib/rate-limit";
 
 const schema = z.object({
   name: z.string().min(1),
@@ -14,6 +15,11 @@ function escapeHtml(str: string) {
 }
 
 export async function POST(req: Request) {
+  const { allowed } = rateLimit(`contact:${getIp(req)}`, 5, 60 * 60 * 1000);
+  if (!allowed) {
+    return NextResponse.json({ success: false, error: "Trop de messages. Réessaie dans une heure." }, { status: 429 });
+  }
+
   try {
     const body = await req.json();
     const data = schema.parse(body);
