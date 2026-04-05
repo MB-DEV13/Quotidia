@@ -83,6 +83,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
+      <head>
+        {/* Preconnect pour Google Fonts (accélère le chargement Inter) */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* DNS prefetch PostHog pour éviter la latence DNS */}
+        <link rel="dns-prefetch" href="https://eu.i.posthog.com" />
+      </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <ErrorBoundary>
           <Providers>{children}</Providers>

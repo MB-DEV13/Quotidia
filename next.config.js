@@ -16,6 +16,8 @@ const nextConfig = {
     root: __dirname,
   },
   outputFileTracingRoot: __dirname,
+  // Compression Gzip/Brotli pour tous les assets
+  compress: true,
   async headers() {
     return [
       {
