@@ -274,7 +274,7 @@ export default function LandingPage() {
             dashboard élégant. Fini les 4 apps séparées.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <Link
               href="/register"
               className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white font-bold px-8 py-4 rounded-2xl transition-all shadow-card text-base"
@@ -293,7 +293,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Dashboard mockup interactif ───────────────────────────── */}
-      <section className="px-4 pb-24">
+      <section className="px-4 pb-12">
         <div className="max-w-lg mx-auto">
           <p className="text-center text-xs font-semibold text-textLight uppercase tracking-widest mb-4">
             Explore le dashboard
