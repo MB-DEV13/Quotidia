@@ -4,7 +4,7 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimitAsync } from "@/lib/rate-limit";
 
 const schema = z.object({
   currentPassword: z.string().min(1),
@@ -18,7 +18,7 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ success: false, error: "Non autorisé" }, { status: 401 });
     }
 
-    const { allowed, retryAfterMs } = rateLimit(`password:${session.user.id}`, 5, 15 * 60 * 1000);
+    const { allowed, retryAfterMs } = await rateLimitAsync(`password:${session.user.id}`, 5, 15 * 60 * 1000);
     if (!allowed) {
       return NextResponse.json(
         { success: false, error: "Trop de tentatives. Réessaie dans quelques minutes." },

@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getResend, FROM_EMAIL } from "@/lib/resend";
-import { rateLimit, getIp } from "@/lib/rate-limit";
+import { rateLimitAsync, getIp } from "@/lib/rate-limit";
 import crypto from "crypto";
 
 export async function POST(req: Request) {
   // 3 demandes max par IP par heure
   const ip = getIp(req);
-  const { allowed, retryAfterMs } = rateLimit(`forgot:${ip}`, 3, 60 * 60 * 1000);
+  const { allowed, retryAfterMs } = await rateLimitAsync(`forgot:${ip}`, 3, 60 * 60 * 1000);
   if (!allowed) {
     // Réponse identique au succès pour ne pas révéler le rate limiting
     return NextResponse.json({ success: true });
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     if (!email) return NextResponse.json({ error: "Email requis." }, { status: 400 });
 
     // Rate limit supplémentaire par email : 3 demandes max par heure
-    const { allowed: emailAllowed } = rateLimit(`forgot-email:${email}`, 3, 60 * 60 * 1000);
+    const { allowed: emailAllowed } = await rateLimitAsync(`forgot-email:${email}`, 3, 60 * 60 * 1000);
     if (!emailAllowed) {
       return NextResponse.json({ success: true }); // Même réponse silencieuse
     }

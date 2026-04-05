@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { rateLimit, getIp } from "@/lib/rate-limit";
+import { rateLimitAsync, getIp } from "@/lib/rate-limit";
 import { getResend, FROM_EMAIL } from "@/lib/resend";
 import { welcomeEmailHtml } from "@/lib/email-templates";
 
@@ -19,7 +19,7 @@ const registerSchema = z.object({
 
 export async function POST(req: Request) {
   // 5 inscriptions max par IP par 15 minutes
-  const { allowed, retryAfterMs } = rateLimit(`register:${getIp(req)}`, 5, 15 * 60 * 1000);
+  const { allowed, retryAfterMs } = await rateLimitAsync(`register:${getIp(req)}`, 5, 15 * 60 * 1000);
   if (!allowed) {
     return NextResponse.json(
       { success: false, error: "Trop de tentatives. Réessaie dans quelques minutes." },
