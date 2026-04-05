@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
         region: body.region || null,
         city: body.city || null,
         showInLeaderboard: body.showInLeaderboard ?? true,
+        ...(body.avatar ? { avatar: body.avatar } : {}),
       };
     } catch {
       // body vide = pas de données profil, c'est ok

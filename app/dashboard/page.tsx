@@ -66,6 +66,9 @@ export default async function DashboardPage() {
 
   if (!user) redirect("/login");
 
+  // Utilisateurs Google : pas passé par le register, profil vide → onboarding obligatoire
+  if (!user.onboardingCompleted && !user.country) redirect("/onboarding");
+
   const habitsScheduledToday = habits.filter((h) => isHabitScheduledToday(h.frequency));
   const todayCompletions = habitsScheduledToday.filter((h) =>
     h.completions.some((c) => c.date >= startOfDay && c.date <= endOfDay)
