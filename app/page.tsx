@@ -1,4 +1,5 @@
 import { FAQSection } from "@/components/landing/FAQSection";
+import { InteractiveMockup } from "@/components/landing/InteractiveMockupLazy";
 import { LandingNav } from "@/components/landing/LandingNav";
 import { PWAInstallModal } from "@/components/ui/PWAInstallModal";
 import type { Metadata } from "next";
@@ -288,6 +289,16 @@ export default function LandingPage() {
             </a>
           </div>
 
+        </div>
+      </section>
+
+      {/* ── Dashboard mockup interactif ───────────────────────────── */}
+      <section className="px-4 pb-24">
+        <div className="max-w-lg mx-auto">
+          <p className="text-center text-xs font-semibold text-textLight uppercase tracking-widest mb-4">
+            Explore le dashboard
+          </p>
+          <InteractiveMockup />
         </div>
       </section>
 
@@ -851,7 +862,7 @@ export default function LandingPage() {
               </a>
             </div>
           </div>
-          <p className="text-center">
+          <p className="text-center w-full">
             © {new Date().getFullYear()} Quotidia. Tous droits réservés.
           </p>
         </div>
