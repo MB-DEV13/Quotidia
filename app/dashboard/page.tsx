@@ -37,7 +37,7 @@ export default async function DashboardPage() {
   const [user, habits, goalsRaw, expensesLast7, expenses, budgetConfig, userBadges] = await Promise.all([
     db.user.findUnique({
       where: { id: session.user.id },
-      select: { name: true, level: true, xp: true, isPremium: true, aiRequestsUsed: true, aiRequestsReset: true, onboardingCompleted: true, loginStreak: true },
+      select: { name: true, level: true, xp: true, isPremium: true, aiRequestsUsed: true, aiRequestsReset: true, onboardingCompleted: true, loginStreak: true, country: true },
     }),
     db.habit.findMany({
       where: { userId: session.user.id, isArchived: false },
@@ -351,7 +351,7 @@ export default async function DashboardPage() {
       </div>
 
       <ChatBubble aiRequestsUsed={aiRequestsUsed} isPremium={user.isPremium} />
-      <OnboardingModal isOpen={!user.onboardingCompleted} />
+      <OnboardingModal isOpen={!user.onboardingCompleted} needsProfile={!user.country} />
     </AppShell>
   );
 }

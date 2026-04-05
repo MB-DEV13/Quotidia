@@ -6,9 +6,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface OnboardingModalProps {
   isOpen: boolean;
+  needsProfile?: boolean;
 }
 
-const STEPS = [
+const INTRO_STEPS = [
   {
     icon: "🎉",
     title: "Bienvenue sur Quotidia !",
@@ -35,21 +36,65 @@ const STEPS = [
   },
 ];
 
-export function OnboardingModal({ isOpen }: OnboardingModalProps) {
+const COUNTRIES = [
+  { code: "FR", label: "France" },
+  { code: "BE", label: "Belgique" },
+  { code: "CH", label: "Suisse" },
+  { code: "CA", label: "Canada" },
+  { code: "LU", label: "Luxembourg" },
+  { code: "MA", label: "Maroc" },
+  { code: "SN", label: "Sénégal" },
+  { code: "CI", label: "Côte d'Ivoire" },
+  { code: "OTHER", label: "Autre" },
+];
+
+export function OnboardingModal({ isOpen, needsProfile = false }: OnboardingModalProps) {
   const router = useRouter();
-  const [step, setStep] = useState(0);
+  const [phase, setPhase] = useState<"profile" | "intro">(needsProfile ? "profile" : "intro");
+  const [introStep, setIntroStep] = useState(0);
   const [closing, setClosing] = useState(false);
 
-  const isLast = step === STEPS.length - 1;
-  const current = STEPS[step];
+  // Profil
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
+  const [showInLeaderboard, setShowInLeaderboard] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-  async function completeOnboarding() {
+  if (!isOpen || closing) return null;
+
+  const current = INTRO_STEPS[introStep];
+  const isLast = introStep === INTRO_STEPS.length - 1;
+
+  async function completeOnboarding(withProfile = false) {
     setClosing(true);
     try {
-      await fetch("/api/user/onboarding", { method: "POST" });
+      const body = withProfile && country
+        ? { country, city, showInLeaderboard }
+        : {};
+      await fetch("/api/user/onboarding", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
     } catch {
       // ignore
     }
+  }
+
+  async function handleProfileNext() {
+    setSaving(true);
+    try {
+      await fetch("/api/user/onboarding", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ country, city, showInLeaderboard }),
+      });
+    } catch {
+      // ignore
+    } finally {
+      setSaving(false);
+    }
+    setPhase("intro");
   }
 
   async function handleFinish() {
@@ -58,10 +103,8 @@ export function OnboardingModal({ isOpen }: OnboardingModalProps) {
   }
 
   async function handleSkip() {
-    await completeOnboarding();
+    await completeOnboarding(phase === "profile");
   }
-
-  if (!isOpen || closing) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
@@ -81,60 +124,139 @@ export function OnboardingModal({ isOpen }: OnboardingModalProps) {
           </button>
         </div>
 
-        {/* Content */}
         <AnimatePresence mode="wait">
-          <motion.div
-            key={step}
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -30 }}
-            transition={{ duration: 0.2 }}
-            className="text-center py-4"
-          >
-            <div className="text-5xl mb-4">{current.icon}</div>
-            <h2 className="text-xl font-bold text-textDark mb-3">{current.title}</h2>
-            <p className="text-sm text-textLight leading-relaxed">{current.content}</p>
-          </motion.div>
+
+          {/* ── Phase profil ──────────────────────────────────── */}
+          {phase === "profile" && (
+            <motion.div
+              key="profile"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -30 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="text-center mb-5">
+                <div className="text-4xl mb-3">🌍</div>
+                <h2 className="text-xl font-bold text-textDark mb-1">Ton profil</h2>
+                <p className="text-sm text-textLight">
+                  Pour apparaître dans le classement et te comparer aux autres.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-textDark mb-1.5">
+                    Pays
+                  </label>
+                  <select
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-textDark focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  >
+                    <option value="">Sélectionne ton pays</option>
+                    {COUNTRIES.map((c) => (
+                      <option key={c.code} value={c.code}>{c.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-textDark mb-1.5">
+                    Ville <span className="text-textLight font-normal">(optionnel)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="ex: Paris"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-textDark placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
+
+                <div
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-xl cursor-pointer"
+                  onClick={() => setShowInLeaderboard((v) => !v)}
+                >
+                  <div>
+                    <p className="text-sm font-medium text-textDark">Apparaître dans le classement</p>
+                    <p className="text-xs text-textLight">Ton nom et niveau visibles des autres</p>
+                  </div>
+                  <div className={`w-10 h-6 rounded-full transition-colors ${showInLeaderboard ? "bg-primary" : "bg-gray-200"} relative flex-shrink-0`}>
+                    <div className={`w-4 h-4 bg-white rounded-full shadow absolute top-1 transition-all ${showInLeaderboard ? "left-5" : "left-1"}`} />
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={handleProfileNext}
+                disabled={saving}
+                className="mt-5 w-full py-3 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-semibold transition disabled:opacity-60"
+              >
+                {saving ? "Enregistrement..." : "Continuer →"}
+              </button>
+            </motion.div>
+          )}
+
+          {/* ── Phase intro ───────────────────────────────────── */}
+          {phase === "intro" && (
+            <motion.div
+              key={`intro-${introStep}`}
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -30 }}
+              transition={{ duration: 0.2 }}
+              className="text-center py-4"
+            >
+              <div className="text-5xl mb-4">{current.icon}</div>
+              <h2 className="text-xl font-bold text-textDark mb-3">{current.title}</h2>
+              <p className="text-sm text-textLight leading-relaxed">{current.content}</p>
+            </motion.div>
+          )}
+
         </AnimatePresence>
 
-        {/* Progress dots */}
-        <div className="flex justify-center gap-2 my-5">
-          {STEPS.map((_, i) => (
-            <div
-              key={i}
-              className={`h-2 rounded-full transition-all ${
-                i === step ? "w-6 bg-primary" : "w-2 bg-gray-200"
-              }`}
-            />
-          ))}
-        </div>
+        {/* Progress dots — seulement en phase intro */}
+        {phase === "intro" && (
+          <div className="flex justify-center gap-2 my-5">
+            {INTRO_STEPS.map((_, i) => (
+              <div
+                key={i}
+                className={`h-2 rounded-full transition-all ${
+                  i === introStep ? "w-6 bg-primary" : "w-2 bg-gray-200"
+                }`}
+              />
+            ))}
+          </div>
+        )}
 
-        {/* Buttons */}
-        <div className="flex gap-3">
-          {step > 0 && (
-            <button
-              onClick={() => setStep((s) => s - 1)}
-              className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-medium text-textLight hover:bg-gray-50 transition"
-            >
-              Précédent
-            </button>
-          )}
-          {isLast ? (
-            <button
-              onClick={handleFinish}
-              className="flex-1 py-3 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-semibold transition"
-            >
-              Créer ma première habitude →
-            </button>
-          ) : (
-            <button
-              onClick={() => setStep((s) => s + 1)}
-              className="flex-1 py-3 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-semibold transition"
-            >
-              Suivant
-            </button>
-          )}
-        </div>
+        {/* Boutons navigation intro */}
+        {phase === "intro" && (
+          <div className="flex gap-3">
+            {introStep > 0 && (
+              <button
+                onClick={() => setIntroStep((s) => s - 1)}
+                className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-medium text-textLight hover:bg-gray-50 transition"
+              >
+                Précédent
+              </button>
+            )}
+            {isLast ? (
+              <button
+                onClick={handleFinish}
+                className="flex-1 py-3 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-semibold transition"
+              >
+                Créer ma première habitude →
+              </button>
+            ) : (
+              <button
+                onClick={() => setIntroStep((s) => s + 1)}
+                className="flex-1 py-3 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-semibold transition"
+              >
+                Suivant
+              </button>
+            )}
+          </div>
+        )}
       </motion.div>
     </div>
   );
