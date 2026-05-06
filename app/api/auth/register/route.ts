@@ -10,7 +10,10 @@ const registerSchema = z.object({
   name: z.string().optional(),
   email: z.string().email("Email invalide"),
   password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères"),
-  avatar: z.string().optional(),
+  avatar: z.string().max(500).refine(
+    (v) => !v || v.startsWith("preset:") || /^https:\/\/.+/.test(v),
+    { message: "Avatar invalide" }
+  ).optional(),
   country: z.string().optional(),
   region: z.string().optional(),
   city: z.string().optional(),

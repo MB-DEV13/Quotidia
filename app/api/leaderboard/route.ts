@@ -27,9 +27,6 @@ export async function GET(req: Request) {
         level: true,
         xp: true,
         country: true,
-        region: true,
-        city: true,
-        isPremium: true,
         _count: {
           select: { habits: { where: { isArchived: false } } },
         },

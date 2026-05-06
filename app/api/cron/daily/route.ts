@@ -2,12 +2,19 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getResend, FROM_REMINDERS } from "@/lib/resend";
 import { sendPushToUser } from "@/lib/push";
+import crypto from "crypto";
 
-function verifyCron(req: Request) {
+function verifyCron(req: Request): boolean {
   const secret = process.env.CRON_SECRET;
   if (!secret) return false;
   const auth = req.headers.get("authorization");
-  return auth === `Bearer ${secret}`;
+  if (!auth) return false;
+  const expected = `Bearer ${secret}`;
+  try {
+    return crypto.timingSafeEqual(Buffer.from(auth), Buffer.from(expected));
+  } catch {
+    return false;
+  }
 }
 
 export async function GET(req: Request) {

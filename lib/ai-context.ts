@@ -1,6 +1,10 @@
 import { db } from "@/lib/db";
 import { getStartOfMonth, getEndOfMonth, getStartOfDay, getEndOfDay } from "@/lib/utils";
 
+function sanitize(value: string, maxLength = 80): string {
+  return value.replace(/[\n\r\t]/g, " ").replace(/[^\x20-\x7EÀ-ÿ]/g, "").slice(0, maxLength);
+}
+
 export async function generateUserContext(userId: string): Promise<string> {
   const today = new Date();
   const startOfToday = getStartOfDay(today);
@@ -42,7 +46,7 @@ export async function generateUserContext(userId: string): Promise<string> {
 
   const lines: string[] = [];
 
-  lines.push(`Utilisateur: ${user.name ?? "Inconnu"}, Niveau ${user.level}, ${user.xp} XP`);
+  lines.push(`Utilisateur: ${sanitize(user.name ?? "Inconnu")}, Niveau ${user.level}, ${user.xp} XP`);
 
   // Habits summary
   if (habits.length > 0) {
@@ -56,7 +60,7 @@ export async function generateUserContext(userId: string): Promise<string> {
       .slice(0, 5)
       .map((h) => {
         const completedLast7 = h.completions.length;
-        return `${h.name}(streak:${h.currentStreak}, 7j:${completedLast7}/7)`;
+        return `${sanitize(h.name)}(streak:${h.currentStreak}, 7j:${completedLast7}/7)`;
       })
       .join(", ");
 
@@ -89,7 +93,7 @@ export async function generateUserContext(userId: string): Promise<string> {
       .slice(0, 3)
       .map((g) => {
         const pct = g.target > 0 ? Math.round((g.current / g.target) * 100) : 0;
-        return `"${g.title}"(${g.current}/${g.target}${g.unit ? " " + g.unit : ""}, ${pct}%)`;
+        return `"${sanitize(g.title)}"(${g.current}/${g.target}${g.unit ? " " + sanitize(g.unit, 20) : ""}, ${pct}%)`;
       })
       .join(", ");
     lines.push(`Objectifs: ${goalsSummary}`);

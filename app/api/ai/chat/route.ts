@@ -90,6 +90,17 @@ export async function POST(req: Request) {
     }
 
     if (!conversation) {
+      // Purger la plus ancienne conversation si la limite est atteinte
+      const convCount = await db.aiConversation.count({ where: { userId: session.user.id } });
+      if (convCount >= 20) {
+        const oldest = await db.aiConversation.findFirst({
+          where: { userId: session.user.id },
+          orderBy: { createdAt: "asc" },
+          select: { id: true },
+        });
+        if (oldest) await db.aiConversation.delete({ where: { id: oldest.id } });
+      }
+
       const created = await db.aiConversation.create({
         data: {
           userId: session.user.id,

@@ -67,6 +67,12 @@ export async function POST(req: NextRequest) {
         const userId = checkoutSession.metadata?.userId;
         if (!userId) break;
 
+        const userExists = await db.user.findUnique({ where: { id: userId }, select: { id: true } });
+        if (!userExists) {
+          console.error(`[WEBHOOK] checkout.session.completed — user introuvable: ${userId}`);
+          break;
+        }
+
         const subscriptionId = checkoutSession.subscription as string | null;
         if (!subscriptionId) break;
 

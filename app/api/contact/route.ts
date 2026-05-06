@@ -4,10 +4,10 @@ import { FROM_CONTACT } from "@/lib/resend";
 import { rateLimitAsync, getIp } from "@/lib/rate-limit";
 
 const schema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-  subject: z.string().min(1),
-  message: z.string().min(10),
+  name: z.string().min(1).max(100),
+  email: z.string().email().max(200),
+  subject: z.string().min(1).max(200),
+  message: z.string().min(10).max(5000),
 });
 
 function escapeHtml(str: string) {

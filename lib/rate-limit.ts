@@ -90,31 +90,8 @@ async function rateLimitRedis(
 // ── Export principal ────────────────────────────────────────────────────────
 
 /**
- * Vérifie et enregistre une tentative.
  * Utilise Upstash Redis si configuré, sinon fallback mémoire.
- *
- * @param key      Identifiant unique (ex: `register:1.2.3.4`)
- * @param limit    Nombre max de requêtes dans la fenêtre
- * @param windowMs Durée de la fenêtre en millisecondes
- */
-export function rateLimit(
-  key: string,
-  limit: number,
-  windowMs: number
-): { allowed: boolean; remaining: number; retryAfterMs: number } {
-  if (hasUpstash()) {
-    // Upstash est async — on retourne une promesse wrappée dans un objet sync-compatible.
-    // Les appelants doivent awaiter rateLimit() quand Upstash est actif.
-    // Pour rester compatible sans casser les appelants sync, on retourne le fallback
-    // et on laisse rateLimitAsync() pour les contextes async.
-    return rateLimitMemory(key, limit, windowMs);
-  }
-  return rateLimitMemory(key, limit, windowMs);
-}
-
-/**
- * Version async — utilise Upstash Redis si disponible, sinon mémoire.
- * À utiliser dans les API routes (contexte async).
+ * Toujours awaiter dans les API routes.
  */
 export async function rateLimitAsync(
   key: string,

@@ -6,7 +6,10 @@ import { db } from "@/lib/db";
 
 const profileSchema = z.object({
   name: z.string().optional(),
-  avatar: z.string().optional(),
+  avatar: z.string().max(500).refine(
+    (v) => !v || v.startsWith("preset:") || /^https:\/\/.+/.test(v),
+    { message: "Avatar invalide" }
+  ).optional(),
   country: z.string().optional().nullable(),
   region: z.string().optional().nullable(),
   city: z.string().optional().nullable(),

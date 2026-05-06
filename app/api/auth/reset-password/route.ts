@@ -2,8 +2,14 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import { rateLimitAsync, getIp } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
+  const { allowed } = await rateLimitAsync(`reset-pwd:${getIp(req)}`, 10, 15 * 60 * 1000);
+  if (!allowed) {
+    return NextResponse.json({ error: "Trop de tentatives. Réessaie dans quelques minutes." }, { status: 429 });
+  }
+
   try {
     const { token, password } = await req.json();
 
