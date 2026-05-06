@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 type Theme = "light" | "dark";
 
@@ -14,24 +15,33 @@ const ThemeContext = createContext<ThemeContextValue>({
   toggle: () => {},
 });
 
+function storageKey(email: string) {
+  return `quotidia-theme-${email}`;
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const { data: session } = useSession();
+  const userEmail = session?.user?.email ?? null;
   const [theme, setTheme] = useState<Theme>("light");
 
-  // Initialise depuis localStorage au premier rendu
   useEffect(() => {
-    const stored = localStorage.getItem("quotidia-theme") as Theme | null;
-    const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-    const initial = stored ?? preferred;
+    if (!userEmail) {
+      // Déconnecté → toujours clair
+      setTheme("light");
+      document.documentElement.classList.remove("dark");
+      return;
+    }
+    // Connecté → préférence propre à ce compte
+    const stored = localStorage.getItem(storageKey(userEmail)) as Theme | null;
+    const initial = stored ?? "light";
     setTheme(initial);
     document.documentElement.classList.toggle("dark", initial === "dark");
-  }, []);
+  }, [userEmail]);
 
   function toggle() {
     setTheme((prev) => {
       const next = prev === "light" ? "dark" : "light";
-      localStorage.setItem("quotidia-theme", next);
+      if (userEmail) localStorage.setItem(storageKey(userEmail), next);
       document.documentElement.classList.toggle("dark", next === "dark");
       return next;
     });
