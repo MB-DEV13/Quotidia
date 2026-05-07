@@ -36,3 +36,7 @@ next-env.d.ts
 
 # claude & docs
 *.md
+
+# sensitive backup files
+stripe_backup_code.txt
+*_backup_code.txt
