@@ -80,6 +80,7 @@ export async function GET(req: NextRequest) {
       db.goal.findMany({
         where: { userId: session.user.id },
         orderBy: { createdAt: "desc" },
+        take: 4,
       }),
       db.budgetConfig.findUnique({ where: { userId: session.user.id } }),
       db.habit.findMany({

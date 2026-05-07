@@ -13,9 +13,12 @@ const createGoalSchema = z.object({
   color: z.string().optional(),
   target: z.number().positive("La valeur cible doit être positive"),
   current: z.number().min(0).default(0),
-  unit: z.string().optional(),
+  unit: z.string().max(50).optional(),
   deadline: z.string().optional(),
-});
+}).refine(
+  (data) => data.current <= data.target,
+  { message: "La valeur actuelle ne peut pas dépasser la cible", path: ["current"] }
+);
 
 export async function GET() {
   try {
@@ -82,15 +85,7 @@ export async function POST(req: Request) {
       },
     });
 
-    // Award XP if goal is immediately completed
-    if (goal.current >= goal.target && user) {
-      const newXp = user.xp + XP_REWARDS.GOAL_REACHED;
-      await db.user.update({
-        where: { id: session.user.id },
-        data: { xp: newXp, level: getLevelFromXp(newXp) },
-      });
-      await checkAndAwardBadges(session.user.id);
-    }
+    // Zod refine ensures current < target at creation, so no immediate completion possible
 
     return NextResponse.json({ success: true, data: goal }, { status: 201 });
   } catch (error) {

@@ -46,16 +46,25 @@ export async function POST(
       );
     }
 
-    const yesterday = new Date(startOfDay);
-    yesterday.setDate(yesterday.getDate() - 1);
-    const startOfYesterday = getStartOfDay(yesterday);
-    const endOfYesterday = getEndOfDay(yesterday);
+    let completedPreviousPeriod: boolean;
 
-    const completedYesterday = habit.completions.some(
-      (c) => c.date >= startOfYesterday && c.date <= endOfYesterday
-    );
+    if (habit.frequency === "weekly") {
+      const startOfPrevWeek = new Date(startOfDay);
+      startOfPrevWeek.setDate(startOfPrevWeek.getDate() - 7);
+      const endOfPrevWeek = new Date(startOfDay);
+      endOfPrevWeek.setDate(endOfPrevWeek.getDate() - 1);
+      completedPreviousPeriod = habit.completions.some(
+        (c) => c.date >= startOfPrevWeek && c.date <= endOfPrevWeek
+      );
+    } else {
+      const yesterday = new Date(startOfDay);
+      yesterday.setDate(yesterday.getDate() - 1);
+      completedPreviousPeriod = habit.completions.some(
+        (c) => c.date >= getStartOfDay(yesterday) && c.date <= getEndOfDay(yesterday)
+      );
+    }
 
-    const newStreak = completedYesterday ? habit.currentStreak + 1 : 1;
+    const newStreak = completedPreviousPeriod ? habit.currentStreak + 1 : 1;
     const newBestStreak = Math.max(newStreak, habit.bestStreak);
 
     // Création de la completion + mise à jour du streak dans une transaction atomique

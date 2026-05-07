@@ -103,6 +103,7 @@ model Habit {
   createdAt     DateTime          @default(now())
 
   @@index([userId])
+  @@index([userId, isArchived])
 }
 
 model HabitCompletion {
@@ -131,7 +132,7 @@ model Expense {
   bridgeTransactionId String?  @unique
 
   @@index([userId])
-  @@index([date])
+  @@index([userId, date])
   @@index([recurringGroupId])
 }
 
@@ -151,7 +152,7 @@ model Income {
   bridgeTransactionId String?  @unique
 
   @@index([userId])
-  @@index([date])
+  @@index([userId, date])
   @@index([recurringGroupId])
 }
 

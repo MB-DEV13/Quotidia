@@ -28,6 +28,7 @@ export async function GET(req: Request) {
 
   const configs = await db.budgetConfig.findMany({
     where: { configured: true, monthlyBudget: { gt: 0 } },
+    take: 500,
     include: {
       user: {
         select: {

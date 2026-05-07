@@ -2,8 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { rateLimitAsync } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
+
+function csvField(value: string): string {
+  return `"${value.replace(/"/g, '""')}"`;
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -22,6 +27,11 @@ export async function GET(req: NextRequest) {
         { success: false, error: "Fonctionnalité réservée aux membres Premium" },
         { status: 403 }
       );
+    }
+
+    const { allowed } = await rateLimitAsync(`export-csv:${session.user.id}`, 5, 60 * 60 * 1000);
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: "Trop d'exports. Réessaie dans 1 heure." }, { status: 429 });
     }
 
     const now = new Date();
@@ -68,13 +78,13 @@ export async function GET(req: NextRequest) {
     for (const habit of habits) {
       lines.push(
         [
-          `"${habit.name}"`,
-          `"${habit.icon ?? ""}"`,
-          `"${habit.frequency}"`,
+          csvField(habit.name),
+          csvField(habit.icon ?? ""),
+          csvField(habit.frequency),
           habit.currentStreak,
           habit.bestStreak,
           habit.isArchived ? "Oui" : "Non",
-          `"${new Date(habit.createdAt).toLocaleDateString("fr-FR")}"`,
+          csvField(new Date(habit.createdAt).toLocaleDateString("fr-FR")),
         ].join(",")
       );
     }
@@ -85,12 +95,7 @@ export async function GET(req: NextRequest) {
     lines.push("Habitude,Date");
     for (const habit of habits) {
       for (const completion of habit.completions) {
-        lines.push(
-          [
-            `"${habit.name}"`,
-            `"${new Date(completion.date).toLocaleDateString("fr-FR")}"`,
-          ].join(",")
-        );
+        lines.push([csvField(habit.name), csvField(new Date(completion.date).toLocaleDateString("fr-FR"))].join(","));
       }
     }
     lines.push("");
@@ -102,9 +107,9 @@ export async function GET(req: NextRequest) {
       lines.push(
         [
           expense.amount.toFixed(2),
-          `"${expense.category}"`,
-          `"${expense.label ?? ""}"`,
-          `"${new Date(expense.date).toLocaleDateString("fr-FR")}"`,
+          csvField(expense.category),
+          csvField(expense.label ?? ""),
+          csvField(new Date(expense.date).toLocaleDateString("fr-FR")),
         ].join(",")
       );
     }
@@ -120,15 +125,13 @@ export async function GET(req: NextRequest) {
           : 0;
       lines.push(
         [
-          `"${goal.title}"`,
+          csvField(goal.title),
           goal.target,
           goal.current,
-          `"${goal.unit ?? ""}"`,
-          goal.deadline
-            ? `"${new Date(goal.deadline).toLocaleDateString("fr-FR")}"`
-            : `""`,
+          csvField(goal.unit ?? ""),
+          goal.deadline ? csvField(new Date(goal.deadline).toLocaleDateString("fr-FR")) : `""`,
           `${pct}%`,
-          `"${new Date(goal.createdAt).toLocaleDateString("fr-FR")}"`,
+          csvField(new Date(goal.createdAt).toLocaleDateString("fr-FR")),
         ].join(",")
       );
     }

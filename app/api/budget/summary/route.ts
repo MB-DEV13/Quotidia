@@ -4,9 +4,6 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getStartOfMonth, getEndOfMonth } from "@/lib/utils";
 
-// Default monthly budget limit (could be a user setting in the future)
-const DEFAULT_MONTHLY_BUDGET = 2000;
-
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -21,6 +18,9 @@ export async function GET(req: Request) {
     let endDate: Date;
 
     if (monthParam) {
+      if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(monthParam)) {
+        return NextResponse.json({ success: false, error: "Format de mois invalide" }, { status: 400 });
+      }
       const [year, month] = monthParam.split("-").map(Number);
       startDate = new Date(year, month - 1, 1);
       endDate = new Date(year, month, 0, 23, 59, 59, 999);
@@ -29,17 +29,27 @@ export async function GET(req: Request) {
       endDate = getEndOfMonth();
     }
 
-    const expenses = await db.expense.findMany({
-      where: {
-        userId: session.user.id,
-        date: { gte: startDate, lte: endDate },
-      },
-    });
+    const [expenses, budgetConfig] = await Promise.all([
+      db.expense.findMany({
+        where: {
+          userId: session.user.id,
+          date: { gte: startDate, lte: endDate },
+        },
+      }),
+      db.budgetConfig.findUnique({
+        where: { userId: session.user.id },
+        select: { monthlyBudget: true, configured: true },
+      }),
+    ]);
 
     const total = expenses.reduce((sum, e) => sum + e.amount, 0);
-    const budget = DEFAULT_MONTHLY_BUDGET;
-    const remaining = budget - total;
-    const percentageUsed = Math.min(Math.round((total / budget) * 100), 100);
+    const budget = budgetConfig?.configured && budgetConfig.monthlyBudget > 0
+      ? budgetConfig.monthlyBudget
+      : null;
+    const remaining = budget !== null ? budget - total : null;
+    const percentageUsed = budget !== null && budget > 0
+      ? Math.round((total / budget) * 100)
+      : null;
 
     const categoryMap = new Map<string, number>();
     for (const expense of expenses) {

@@ -28,6 +28,7 @@ export async function GET(req: Request) {
   // Récupère tous les users avec rappels activés ET des habitudes quotidiennes
   const users = await db.user.findMany({
     where: { dailyReminderEnabled: true },
+    take: 500,
     select: {
       id: true,
       email: true,

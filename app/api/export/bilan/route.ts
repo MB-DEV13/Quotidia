@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { rateLimitAsync } from "@/lib/rate-limit";
 
 export async function GET(req: Request) {
   try {
@@ -16,6 +17,11 @@ export async function GET(req: Request) {
     });
     if (!user?.isPremium) {
       return NextResponse.json({ success: false, error: "Premium requis" }, { status: 403 });
+    }
+
+    const { allowed } = await rateLimitAsync(`export-bilan:${session.user.id}`, 10, 60 * 60 * 1000);
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: "Trop de requêtes. Réessaie dans 1 heure." }, { status: 429 });
     }
 
     const { searchParams } = new URL(req.url);

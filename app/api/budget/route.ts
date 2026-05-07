@@ -8,13 +8,16 @@ import { generateOccurrenceDates, generateGroupId } from "@/lib/recurring";
 
 const createExpenseSchema = z.object({
   amount: z.number().positive("Le montant doit être positif"),
-  category: z.string().min(1, "La catégorie est requise"),
-  label: z.string().optional(),
+  category: z.string().min(1, "La catégorie est requise").max(100),
+  label: z.string().max(200).optional(),
   date: z.string().optional(),
   isRecurring: z.boolean().default(false),
   recurrenceInterval: z.enum(["weekly", "monthly", "custom"]).optional(),
   recurrenceDays: z.number().int().min(1).max(365).optional(),
-});
+}).refine(
+  (data) => !data.isRecurring || !!data.recurrenceInterval,
+  { message: "recurrenceInterval est requis pour une dépense récurrente", path: ["recurrenceInterval"] }
+);
 
 export async function GET(req: Request) {
   try {
@@ -130,21 +133,19 @@ export async function POST(req: Request) {
       ? generateGroupId()
       : null;
 
-    const expense = await db.expense.create({
-      data: {
-        userId: session.user.id,
-        amount: parsed.data.amount,
-        category: parsed.data.category,
-        label: parsed.data.label,
-        date: startDate,
-        isRecurring: parsed.data.isRecurring,
-        recurrenceInterval: parsed.data.recurrenceInterval,
-        recurrenceDays: parsed.data.recurrenceDays,
-        recurringGroupId: groupId,
-      },
-    });
+    const baseData = {
+      userId: session.user.id,
+      amount: parsed.data.amount,
+      category: parsed.data.category,
+      label: parsed.data.label ?? null,
+      isRecurring: parsed.data.isRecurring,
+      recurrenceInterval: parsed.data.recurrenceInterval,
+      recurrenceDays: parsed.data.recurrenceDays ?? null,
+      recurringGroupId: groupId,
+    };
 
-    // Générer toutes les occurrences suivantes (jusqu'à 12 mois)
+    let expense: Awaited<ReturnType<typeof db.expense.create>>;
+
     if (groupId && parsed.data.recurrenceInterval) {
       const allDates = generateOccurrenceDates(
         startDate,
@@ -152,23 +153,18 @@ export async function POST(req: Request) {
         parsed.data.recurrenceDays ?? null,
         12
       );
-      const futureDates = allDates.slice(1); // exclure la première (déjà créée)
+      const futureDates = allDates.slice(1);
 
-      if (futureDates.length > 0) {
-        await db.expense.createMany({
-          data: futureDates.map((date) => ({
-            userId: session.user.id,
-            amount: parsed.data.amount,
-            category: parsed.data.category,
-            label: parsed.data.label ?? null,
-            date,
-            isRecurring: true,
-            recurrenceInterval: parsed.data.recurrenceInterval,
-            recurrenceDays: parsed.data.recurrenceDays ?? null,
-            recurringGroupId: groupId,
-          })),
-        });
-      }
+      [expense] = await db.$transaction([
+        db.expense.create({ data: { ...baseData, date: startDate } }),
+        ...(futureDates.length > 0
+          ? [db.expense.createMany({
+              data: futureDates.map((date) => ({ ...baseData, date })),
+            })]
+          : []),
+      ]) as [Awaited<ReturnType<typeof db.expense.create>>, ...unknown[]];
+    } else {
+      expense = await db.expense.create({ data: { ...baseData, date: startDate } });
     }
 
     return NextResponse.json({ success: true, data: expense }, { status: 201 });

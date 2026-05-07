@@ -71,10 +71,19 @@ async function bridgeRequest<T>(
     ...(options.headers as Record<string, string> ?? {}),
   };
 
-  const res = await fetch(`${BRIDGE_BASE_URL}${path}`, {
-    ...options,
-    headers,
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10_000);
+
+  let res: Response;
+  try {
+    res = await fetch(`${BRIDGE_BASE_URL}${path}`, {
+      ...options,
+      headers,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
 
   if (!res.ok) {
     const err = await res.text();

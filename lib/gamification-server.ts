@@ -8,33 +8,44 @@ import {
 
 export async function checkAndAwardBadges(userId: string): Promise<{ name: string; icon: string }[]> {
   try {
-    const user = await db.user.findUnique({
-      where: { id: userId },
-      select: {
-        xp: true,
-        loginStreak: true,
-        habits: {
-          where: { isArchived: false },
-          select: {
-            currentStreak: true,
-            completions: {
-              select: { id: true, date: true },
-              orderBy: { date: "desc" },
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const [user, totalCompletionsResult] = await Promise.all([
+      db.user.findUnique({
+        where: { id: userId },
+        select: {
+          xp: true,
+          loginStreak: true,
+          habits: {
+            where: { isArchived: false },
+            select: {
+              currentStreak: true,
+              completions: {
+                where: { date: { gte: sevenDaysAgo } },
+                select: { date: true },
+                orderBy: { date: "desc" },
+                take: 7,
+              },
             },
           },
+          goals: { select: { current: true, target: true } },
+          expenses: { select: { amount: true, date: true } },
+          badges: { select: { badge: { select: { condition: true } } } },
         },
-        goals: { select: { current: true, target: true, createdAt: true } },
-        expenses: { select: { amount: true, date: true } },
-        badges: { select: { badge: { select: { condition: true } } } },
-      },
-    });
+      }),
+      db.habitCompletion.count({
+        where: { habit: { userId, isArchived: false } },
+      }),
+    ]);
 
     if (!user) return [];
 
     const earned = new Set(user.badges.map((b) => b.badge.condition));
     const toCheck: string[] = [];
 
-    const totalCompletions = user.habits.reduce((sum, h) => sum + h.completions.length, 0);
+    const totalCompletions = totalCompletionsResult;
     const maxStreak = user.habits.reduce((max, h) => Math.max(max, h.currentStreak), 0);
     const activeHabits = user.habits.length;
 
