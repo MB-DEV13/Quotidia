@@ -16,6 +16,7 @@ const createHabitSchema = z.object({
     .refine(
       (v) =>
         v === "daily" ||
+        v === "weekly" ||
         /^days:[1-7](,[1-7])*$/.test(v) ||
         /^once:\d{4}-\d{2}-\d{2}$/.test(v),
       { message: "Fréquence invalide" }

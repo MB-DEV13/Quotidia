@@ -33,6 +33,7 @@ export async function GET(req: Request) {
       id: true,
       email: true,
       name: true,
+      dailyReminderSentAt: true,
       habits: {
         where: { isArchived: false, frequency: "daily" },
         select: {
@@ -52,6 +53,12 @@ export async function GET(req: Request) {
   let sent = 0;
 
   for (const user of users) {
+    // Idempotency : ne pas envoyer 2x le même jour
+    if (user.dailyReminderSentAt) {
+      const sentToday = user.dailyReminderSentAt.toISOString().slice(0, 10) === today.toISOString().slice(0, 10);
+      if (sentToday) continue;
+    }
+
     const uncompleted = user.habits.filter((h) => h.completions.length === 0);
     if (uncompleted.length === 0) continue;
 
@@ -95,6 +102,13 @@ export async function GET(req: Request) {
 
     // Push mobile
     await sendPushToUser(user.id, { title, body, url: "/habits" });
+
+    // Marquer comme envoyé aujourd'hui (idempotency)
+    await db.user.update({
+      where: { id: user.id },
+      data: { dailyReminderSentAt: today },
+    });
+
     sent++;
   }
 

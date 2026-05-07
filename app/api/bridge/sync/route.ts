@@ -37,7 +37,15 @@ export async function POST() {
       : new Date(Date.now() - 30 * 86400000);
     const sinceStr = since.toISOString().slice(0, 10);
 
-    const transactions = await getBridgeTransactions(auth.access_token, sinceStr);
+    const { active: transactions, deletedIds } = await getBridgeTransactions(auth.access_token, sinceStr);
+
+    // Supprimer de la DB les transactions supprimées côté Bridge
+    if (deletedIds.length > 0) {
+      await Promise.all([
+        db.expense.deleteMany({ where: { userId: session.user.id, bridgeTransactionId: { in: deletedIds } } }),
+        db.income.deleteMany({ where: { userId: session.user.id, bridgeTransactionId: { in: deletedIds } } }),
+      ]);
+    }
 
     let imported = 0;
     for (const tx of transactions) {

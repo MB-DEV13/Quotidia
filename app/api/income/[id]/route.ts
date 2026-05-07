@@ -52,7 +52,7 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -67,7 +67,17 @@ export async function DELETE(
       return NextResponse.json({ success: false, error: "Revenu introuvable" }, { status: 404 });
     }
 
-    await db.income.delete({ where: { id } });
+    const { searchParams } = new URL(req.url);
+    const deleteGroup = searchParams.get("deleteGroup") === "true";
+
+    if (deleteGroup && income.recurringGroupId) {
+      await db.income.deleteMany({
+        where: { userId: session.user.id, recurringGroupId: income.recurringGroupId },
+      });
+    } else {
+      await db.income.delete({ where: { id } });
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[INCOME_DELETE]", error);

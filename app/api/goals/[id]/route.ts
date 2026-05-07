@@ -43,6 +43,7 @@ export async function PATCH(
     }
 
     const wasCompleted = goal.current >= goal.target;
+    const xpAlreadyAwarded = !!goal.completedAt;
 
     const updated = await db.goal.update({
       where: { id },
@@ -59,8 +60,8 @@ export async function PATCH(
 
     const isNowCompleted = updated.current >= updated.target;
 
-    // Award XP if goal was just completed
-    if (!wasCompleted && isNowCompleted) {
+    // Award XP only on first ever completion (prevent XP farming)
+    if (!wasCompleted && isNowCompleted && !xpAlreadyAwarded) {
       const user = await db.user.findUnique({
         where: { id: session.user.id },
         select: { xp: true },
@@ -70,6 +71,10 @@ export async function PATCH(
         await db.user.update({
           where: { id: session.user.id },
           data: { xp: newXp, level: getLevelFromXp(newXp) },
+        });
+        await db.goal.update({
+          where: { id },
+          data: { completedAt: new Date() },
         });
         await checkAndAwardBadges(session.user.id);
       }

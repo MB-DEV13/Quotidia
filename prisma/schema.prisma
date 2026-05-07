@@ -37,6 +37,7 @@ model User {
   city                   String?
   showInLeaderboard      Boolean   @default(true)
   dailyReminderEnabled   Boolean   @default(false)
+  dailyReminderSentAt    DateTime?
   budgetMode             String    @default("manual") // "manual" | "automatic"
   habits                 Habit[]
   bankConnection         BankConnection?
@@ -197,17 +198,18 @@ model PushSubscription {
 }
 
 model Goal {
-  id        String    @id @default(cuid())
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title     String
-  icon      String    @default("🎯")
-  color     String    @default("#5B5EA6")
-  target    Float
-  current   Float     @default(0)
-  unit      String?
-  deadline  DateTime?
-  createdAt DateTime  @default(now())
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  icon        String    @default("🎯")
+  color       String    @default("#5B5EA6")
+  target      Float
+  current     Float     @default(0)
+  unit        String?
+  deadline    DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
 
   @@index([userId])
 }

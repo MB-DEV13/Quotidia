@@ -141,18 +141,22 @@ export async function getBridgeAccounts(userToken: string): Promise<BridgeAccoun
   return data.resources ?? [];
 }
 
-/** Récupère les transactions depuis une date donnée */
+/** Récupère les transactions depuis une date donnée, séparées en actives et supprimées */
 export async function getBridgeTransactions(
   userToken: string,
   since?: string // format "YYYY-MM-DD"
-): Promise<BridgeTransaction[]> {
+): Promise<{ active: BridgeTransaction[]; deletedIds: string[] }> {
   const params = since ? `?after=${since}&limit=500` : "?limit=500";
   const data = await bridgeRequest<{ resources: BridgeTransaction[] }>(
     `/transactions${params}`,
     {},
     userToken
   );
-  return (data.resources ?? []).filter((t) => !t.is_deleted);
+  const all = data.resources ?? [];
+  return {
+    active: all.filter((t) => !t.is_deleted),
+    deletedIds: all.filter((t) => t.is_deleted).map((t) => `bridge_${t.id}`),
+  };
 }
 
 /** Récupère les items (banques connectées) */

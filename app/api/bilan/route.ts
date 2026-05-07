@@ -133,7 +133,7 @@ export async function GET(req: NextRequest) {
 
     // --- Dépenses ---
     const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
-    const monthlyBudget = budgetConfig?.monthlyBudget ?? budgetConfig?.incomeAmount ?? 0;
+    const monthlyBudget = budgetConfig?.configured && budgetConfig.monthlyBudget > 0 ? budgetConfig.monthlyBudget : 0;
     const budgetWeekly = monthlyBudget > 0 ? Math.round((monthlyBudget / 4) * 100) / 100 : null;
 
     // Top catégories

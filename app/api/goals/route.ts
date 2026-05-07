@@ -14,7 +14,10 @@ const createGoalSchema = z.object({
   target: z.number().positive("La valeur cible doit être positive"),
   current: z.number().min(0).default(0),
   unit: z.string().max(50).optional(),
-  deadline: z.string().optional(),
+  deadline: z.string().optional().refine(
+    (v) => !v || new Date(v) > new Date(),
+    { message: "La deadline ne peut pas être dans le passé" }
+  ),
 }).refine(
   (data) => data.current <= data.target,
   { message: "La valeur actuelle ne peut pas dépasser la cible", path: ["current"] }

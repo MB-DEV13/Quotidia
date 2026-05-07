@@ -7,7 +7,7 @@ import { getStartOfMonth, getEndOfMonth } from "@/lib/utils";
 import { generateOccurrenceDates, generateGroupId } from "@/lib/recurring";
 
 const createIncomeSchema = z.object({
-  amount: z.number().positive("Le montant doit être positif"),
+  amount: z.number().positive("Le montant doit être positif").max(9_999_999, "Montant trop élevé"),
   category: z.string().min(1, "La catégorie est requise"),
   label: z.string().optional(),
   date: z.string().optional(),

@@ -32,16 +32,13 @@ export async function GET(req: Request) {
     let endDate: Date;
 
     if (type === "weekly") {
-      const day = now.getDay() || 7;
-      startDate = new Date(now);
-      startDate.setDate(now.getDate() - day + 1);
-      startDate.setHours(0, 0, 0, 0);
-      endDate = new Date(startDate);
-      endDate.setDate(startDate.getDate() + 6);
-      endDate.setHours(23, 59, 59, 999);
+      // Calcul en UTC pour éviter les décalages timezone serveur vs client
+      const dayOfWeek = now.getUTCDay() || 7; // 1=lundi ... 7=dimanche
+      startDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - dayOfWeek + 1));
+      endDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - dayOfWeek + 7, 23, 59, 59, 999));
     } else {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+      startDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+      endDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0, 23, 59, 59, 999));
     }
 
     const [habits, expenses, incomes, goals] = await Promise.all([

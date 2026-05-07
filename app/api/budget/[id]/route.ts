@@ -56,7 +56,7 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -71,7 +71,16 @@ export async function DELETE(
       return NextResponse.json({ success: false, error: "Dépense introuvable" }, { status: 404 });
     }
 
-    await db.expense.delete({ where: { id } });
+    const { searchParams } = new URL(req.url);
+    const deleteGroup = searchParams.get("deleteGroup") === "true";
+
+    if (deleteGroup && expense.recurringGroupId) {
+      await db.expense.deleteMany({
+        where: { userId: session.user.id, recurringGroupId: expense.recurringGroupId },
+      });
+    } else {
+      await db.expense.delete({ where: { id } });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

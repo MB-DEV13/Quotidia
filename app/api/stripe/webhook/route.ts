@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
       case "invoice.payment_succeeded": {
         const invoice = event.data.object as Stripe.Invoice;
 
-        // Stripe v20: subscription info is in parent
+        // Stripe v20: subscription info is in parent; fallback to legacy invoice.subscription
         const parent = invoice.parent;
         let subscriptionId: string | null = null;
 
@@ -114,6 +114,14 @@ export async function POST(req: NextRequest) {
             typeof parent.subscription_details.subscription === "string"
               ? parent.subscription_details.subscription
               : parent.subscription_details.subscription.id;
+        }
+
+        // Fallback: older Stripe API format
+        if (!subscriptionId) {
+          const legacySub = (invoice as unknown as { subscription?: string | { id: string } }).subscription;
+          if (legacySub) {
+            subscriptionId = typeof legacySub === "string" ? legacySub : legacySub.id;
+          }
         }
 
         if (!subscriptionId) break;

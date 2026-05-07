@@ -48,9 +48,11 @@ export async function GET(req: NextRequest) {
           completions: {
             where: { date: { gte: thirtyDaysAgo } },
             orderBy: { date: "asc" },
+            take: 500,
           },
         },
         orderBy: { createdAt: "asc" },
+        take: 200,
       }),
       db.expense.findMany({
         where: {
@@ -58,10 +60,12 @@ export async function GET(req: NextRequest) {
           date: { gte: threeMonthsAgo },
         },
         orderBy: { date: "desc" },
+        take: 2000,
       }),
       db.goal.findMany({
         where: { userId: session.user.id },
         orderBy: { createdAt: "desc" },
+        take: 100,
       }),
     ]);
 

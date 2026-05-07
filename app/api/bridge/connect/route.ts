@@ -40,8 +40,7 @@ export async function POST() {
 
     return NextResponse.json({ url: connectUrl });
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error("[BRIDGE_CONNECT]", message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("[BRIDGE_CONNECT]", err);
+    return NextResponse.json({ error: "Impossible de se connecter à la banque. Réessaie plus tard." }, { status: 500 });
   }
 }

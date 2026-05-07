@@ -67,14 +67,21 @@ export async function POST(
     const newStreak = completedPreviousPeriod ? habit.currentStreak + 1 : 1;
     const newBestStreak = Math.max(newStreak, habit.bestStreak);
 
-    // Création de la completion + mise à jour du streak dans une transaction atomique
-    await db.$transaction([
-      db.habitCompletion.create({ data: { habitId: id, date: startOfDay } }),
-      db.habit.update({
-        where: { id },
-        data: { currentStreak: newStreak, bestStreak: newBestStreak },
-      }),
-    ]);
+    // Création atomique — le @@unique([habitId, date]) en DB garantit l'unicité
+    try {
+      await db.$transaction([
+        db.habitCompletion.create({ data: { habitId: id, date: startOfDay } }),
+        db.habit.update({
+          where: { id },
+          data: { currentStreak: newStreak, bestStreak: newBestStreak },
+        }),
+      ]);
+    } catch (e: unknown) {
+      if (typeof e === "object" && e !== null && "code" in e && (e as { code: string }).code === "P2002") {
+        return NextResponse.json({ success: false, error: "Déjà complété aujourd'hui" }, { status: 409 });
+      }
+      throw e;
+    }
 
     // Award XP
     const user = await db.user.findUnique({
