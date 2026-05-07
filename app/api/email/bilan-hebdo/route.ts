@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getResend, FROM_EMAIL } from "@/lib/resend";
 import { weeklyReportHtml } from "@/lib/email-templates";
+import { rateLimitAsync } from "@/lib/rate-limit";
 
 function getLastWeekBounds(): { start: Date; end: Date; label: string } {
   const now = new Date();
@@ -31,6 +32,12 @@ export async function POST() {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ success: false, error: "Non autorisé" }, { status: 401 });
+    }
+
+    // 2 envois max par heure par utilisateur
+    const { allowed } = await rateLimitAsync(`email-hebdo:${session.user.id}`, 2, 60 * 60 * 1000);
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: "Bilan déjà envoyé récemment." }, { status: 429 });
     }
 
     if (!process.env.RESEND_API_KEY) {

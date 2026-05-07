@@ -135,7 +135,7 @@ export async function GET(req: NextRequest) {
     const activeGoals = goals.filter((g) => g.current < g.target);
     const completedGoals = goals.filter((g) => g.current >= g.target);
     const globalGoalPct = goals.length > 0
-      ? Math.round(goals.reduce((sum, g) => sum + Math.min(g.current / g.target, 1), 0) / goals.length * 100)
+      ? Math.round(goals.reduce((sum, g) => sum + (g.target > 0 ? Math.min(g.current / g.target, 1) : 0), 0) / goals.length * 100)
       : 0;
     const bestGoal = goals.length > 0
       ? goals.reduce((best, g) => {

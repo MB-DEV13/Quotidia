@@ -46,11 +46,6 @@ export async function POST(
       );
     }
 
-    await db.habitCompletion.create({
-      data: { habitId: id, date: startOfDay },
-    });
-
-    // Calculate new streak
     const yesterday = new Date(startOfDay);
     yesterday.setDate(yesterday.getDate() - 1);
     const startOfYesterday = getStartOfDay(yesterday);
@@ -63,10 +58,14 @@ export async function POST(
     const newStreak = completedYesterday ? habit.currentStreak + 1 : 1;
     const newBestStreak = Math.max(newStreak, habit.bestStreak);
 
-    await db.habit.update({
-      where: { id },
-      data: { currentStreak: newStreak, bestStreak: newBestStreak },
-    });
+    // Création de la completion + mise à jour du streak dans une transaction atomique
+    await db.$transaction([
+      db.habitCompletion.create({ data: { habitId: id, date: startOfDay } }),
+      db.habit.update({
+        where: { id },
+        data: { currentStreak: newStreak, bestStreak: newBestStreak },
+      }),
+    ]);
 
     // Award XP
     const user = await db.user.findUnique({

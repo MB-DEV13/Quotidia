@@ -6,8 +6,8 @@ const TO = "onboarding@resend.dev";
 const FROM = "Quotidia <onboarding@resend.dev>";
 
 export async function GET() {
-  if (process.env.NODE_ENV === "production") {
-    return NextResponse.json({ error: "Dev only" }, { status: 403 });
+  if (process.env.NODE_ENV !== "development" || !process.env.ENABLE_DEV_EMAILS) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);

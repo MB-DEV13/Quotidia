@@ -8,15 +8,16 @@ export async function DELETE() {
   if (!session?.user?.id) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   try {
-    await db.bankConnection.update({
-      where: { userId: session.user.id },
-      data: { status: "disconnected", bridgeItemId: null },
-    });
-
-    await db.user.update({
-      where: { id: session.user.id },
-      data: { budgetMode: "manual" },
-    });
+    await db.$transaction([
+      db.bankConnection.updateMany({
+        where: { userId: session.user.id },
+        data: { status: "disconnected", bridgeItemId: null },
+      }),
+      db.user.update({
+        where: { id: session.user.id },
+        data: { budgetMode: "manual" },
+      }),
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (err) {
