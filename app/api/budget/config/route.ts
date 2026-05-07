@@ -69,16 +69,10 @@ export async function PATCH(req: Request) {
     const incomePeriod = parsed.data.incomePeriod ?? config.incomePeriod;
     const incomeLabel = parsed.data.incomeLabel ?? config.incomeLabel ?? "Revenu";
 
-    // Sync auto-revenus si un montant est configuré
+    // Sync auto-revenus de façon atomique (delete + create dans la même transaction)
+    const groupId = configGroupId(session.user.id);
+
     if (incomeAmount > 0 && incomePeriod >= 1) {
-      const groupId = configGroupId(session.user.id);
-
-      // Supprimer les anciens auto-revenus (reconfiguration)
-      await db.income.deleteMany({
-        where: { userId: session.user.id, recurringGroupId: groupId },
-      });
-
-      // Générer les dates à partir du 1er du mois courant
       const startDate = new Date();
       startDate.setDate(1);
       startDate.setHours(0, 0, 0, 0);
@@ -86,8 +80,9 @@ export async function PATCH(req: Request) {
       const { interval, customDays } = periodToInterval(incomePeriod);
       const allDates = generateOccurrenceDates(startDate, interval, customDays ?? null, 12);
 
-      if (allDates.length > 0) {
-        await db.income.createMany({
+      await db.$transaction([
+        db.income.deleteMany({ where: { userId: session.user.id, recurringGroupId: groupId } }),
+        ...(allDates.length > 0 ? [db.income.createMany({
           data: allDates.map((date) => ({
             userId: session.user.id,
             amount: incomeAmount,
@@ -99,13 +94,10 @@ export async function PATCH(req: Request) {
             recurrenceDays: customDays ?? null,
             recurringGroupId: groupId,
           })),
-        });
-      }
+        })] : []),
+      ]);
     } else if (incomeAmount === 0) {
-      // Montant remis à 0 → supprimer les auto-revenus
-      await db.income.deleteMany({
-        where: { userId: session.user.id, recurringGroupId: configGroupId(session.user.id) },
-      });
+      await db.income.deleteMany({ where: { userId: session.user.id, recurringGroupId: groupId } });
     }
 
     return NextResponse.json({ success: true, data: config });

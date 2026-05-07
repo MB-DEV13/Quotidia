@@ -191,7 +191,7 @@ export async function GET(req: NextRequest) {
           habitsCount: habits.length,
         },
       },
-    });
+    }, { headers: { "Cache-Control": "private, max-age=60, stale-while-revalidate=300" } });
   } catch (error) {
     console.error("[STATS]", error);
     return NextResponse.json({ success: false, error: "Erreur serveur" }, { status: 500 });

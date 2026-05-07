@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { openai } from "@/lib/openai";
 import { generateUserContext } from "@/lib/ai-context";
+import { rateLimitAsync } from "@/lib/rate-limit";
 
 export async function GET() {
   try {
@@ -19,6 +20,14 @@ export async function GET() {
 
     if (!user) {
       return NextResponse.json({ success: false, error: "Utilisateur introuvable" }, { status: 404 });
+    }
+
+    const { allowed } = await rateLimitAsync(`ai-suggest:${session.user.id}`, 20, 60 * 60 * 1000);
+    if (!allowed) {
+      return NextResponse.json({
+        success: true,
+        data: { suggestion: "Continue sur ta lancée ! Chaque habitude complétée te rapproche de tes objectifs." },
+      });
     }
 
     const userContext = await generateUserContext(session.user.id);

@@ -33,7 +33,8 @@ export async function POST() {
 
     // Authentifier l'utilisateur Bridge pour obtenir un token
     const auth = await authenticateBridgeUser(bridgeUserId);
-    const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/bridge/callback`;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXTAUTH_URL ?? "https://myquotidia.app";
+    const redirectUri = `${appUrl}/api/bridge/callback`;
 
     // Obtenir l'URL de connexion Bridge Connect
     const connectUrl = await getBridgeConnectUrl(auth.access_token, redirectUri, user.email!);

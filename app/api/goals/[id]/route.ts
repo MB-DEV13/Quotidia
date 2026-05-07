@@ -12,7 +12,7 @@ const updateGoalSchema = z.object({
   color: z.string().optional(),
   target: z.number().positive().optional(),
   current: z.number().min(0).optional(),
-  unit: z.string().optional(),
+  unit: z.string().max(50).optional(),
   deadline: z.string().nullable().optional(),
 });
 

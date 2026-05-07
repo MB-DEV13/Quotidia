@@ -1,14 +1,19 @@
 const BRIDGE_BASE_URL = "https://api.bridgeapi.io/v3/aggregation";
-const CLIENT_ID = process.env.BRIDGE_CLIENT_ID!;
-const CLIENT_SECRET = process.env.BRIDGE_CLIENT_SECRET!;
 
-const BRIDGE_HEADERS = {
-  "Content-Type": "application/json",
-  "Accept": "application/json",
-  "Bridge-Version": "2025-01-15",
-  "Client-Id": CLIENT_ID,
-  "Client-Secret": CLIENT_SECRET,
-};
+function getBridgeHeaders(): Record<string, string> {
+  const clientId = process.env.BRIDGE_CLIENT_ID;
+  const clientSecret = process.env.BRIDGE_CLIENT_SECRET;
+  if (!clientId || !clientSecret) {
+    throw new Error("BRIDGE_CLIENT_ID ou BRIDGE_CLIENT_SECRET manquant");
+  }
+  return {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "Bridge-Version": "2025-01-15",
+    "Client-Id": clientId,
+    "Client-Secret": clientSecret,
+  };
+}
 
 // ── Types ──────────────────────────────────────────────────────────────
 
@@ -66,7 +71,7 @@ async function bridgeRequest<T>(
   userToken?: string
 ): Promise<T> {
   const headers: Record<string, string> = {
-    ...BRIDGE_HEADERS,
+    ...getBridgeHeaders(),
     ...(userToken ? { Authorization: `Bearer ${userToken}` } : {}),
     ...(options.headers as Record<string, string> ?? {}),
   };

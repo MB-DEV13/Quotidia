@@ -20,7 +20,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Le mot de passe doit contenir au moins 8 caractères." }, { status: 400 });
     }
 
-    const hmacSecret = process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET ?? "";
+    const hmacSecret = process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET;
+    if (!hmacSecret) {
+      console.error("[reset-password] NEXTAUTH_SECRET manquant");
+      return NextResponse.json({ error: "Erreur de configuration serveur." }, { status: 500 });
+    }
     const hashedToken = crypto.createHmac("sha256", hmacSecret).update(token).digest("hex");
 
     // Invalider le token atomiquement : updateMany avec conditions = pas de race condition

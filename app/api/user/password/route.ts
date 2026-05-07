@@ -38,7 +38,7 @@ export async function PATCH(req: Request) {
     });
 
     if (!user?.password) {
-      return NextResponse.json({ success: false, error: "Compte Google — mot de passe non applicable" }, { status: 400 });
+      return NextResponse.json({ success: false, error: "Changement de mot de passe non disponible pour ce compte." }, { status: 400 });
     }
 
     const valid = await bcrypt.compare(parsed.data.currentPassword, user.password);

@@ -27,27 +27,16 @@ export async function GET(req: Request) {
         level: true,
         xp: true,
         country: true,
-        _count: {
-          select: { habits: { where: { isArchived: false } } },
-        },
+        _count: { select: { habits: { where: { isArchived: false } } } },
       },
       orderBy: [{ level: "desc" }, { xp: "desc" }],
       take: 100,
     });
 
-    // Rang global : compte uniquement les users avec niveau/xp supérieurs
-    const [myUser, higherCount, total] = await Promise.all([
+    const [myUser, total] = await Promise.all([
       db.user.findUnique({
         where: { id: session.user.id },
         select: { level: true, xp: true, showInLeaderboard: true },
-      }),
-      db.user.count({
-        where: {
-          showInLeaderboard: true,
-          OR: [
-            { level: { gt: 0 } }, // sera affiné ci-dessous
-          ],
-        },
       }),
       db.user.count({ where: { showInLeaderboard: true } }),
     ]);
@@ -69,7 +58,12 @@ export async function GET(req: Request) {
     return NextResponse.json({
       success: true,
       data: {
-        users: users.map((u, i) => ({ ...u, rank: i + 1 })),
+        users: users.map((u, i) => ({
+          ...u,
+          habitsCount: u._count.habits,
+          _count: undefined,
+          rank: i + 1,
+        })),
         myGlobalRank,
         total,
       },

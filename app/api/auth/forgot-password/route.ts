@@ -31,7 +31,11 @@ export async function POST(req: Request) {
     }
 
     const token = crypto.randomBytes(32).toString("hex");
-    const hmacSecret = process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET ?? "";
+    const hmacSecret = process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET;
+    if (!hmacSecret) {
+      console.error("[forgot-password] NEXTAUTH_SECRET manquant");
+      return NextResponse.json({ success: true }); // Ne pas révéler l'erreur
+    }
     const hashedToken = crypto.createHmac("sha256", hmacSecret).update(token).digest("hex");
     const expiry = new Date(Date.now() + 1000 * 60 * 60); // 1 heure
 

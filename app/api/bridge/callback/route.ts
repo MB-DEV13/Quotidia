@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
     since.setDate(since.getDate() - 90);
     const sinceStr = since.toISOString().slice(0, 10);
 
-    const transactions = await getBridgeTransactions(auth.access_token, sinceStr);
+    const { active: transactions } = await getBridgeTransactions(auth.access_token, sinceStr);
 
     for (const tx of transactions) {
       const bridgeId = `bridge_${tx.id}`;
