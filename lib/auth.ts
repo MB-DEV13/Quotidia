@@ -58,6 +58,20 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async signIn({ user, account }) {
+      // Uniquement pour les comptes credentials (Google est toujours vérifié)
+      if (account?.provider === "credentials" && user?.id) {
+        const dbUser = await db.user.findUnique({
+          where: { id: user.id },
+          select: { emailVerified: true, emailVerificationToken: true },
+        });
+        // Bloque seulement si un token de vérification est en attente (nouveau compte)
+        if (!dbUser?.emailVerified && dbUser?.emailVerificationToken) {
+          return "/login?error=EmailNotVerified";
+        }
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;

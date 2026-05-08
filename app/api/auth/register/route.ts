@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { rateLimitAsync, getIp } from "@/lib/rate-limit";
 import { getResend, FROM_EMAIL } from "@/lib/resend";
-import { welcomeEmailHtml } from "@/lib/email-templates";
+import { verifyEmailHtml } from "@/lib/email-templates";
 
 const registerSchema = z.object({
   name: z.string().optional(),
@@ -55,6 +56,8 @@ export async function POST(req: Request) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const verificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     const user = await db.user.create({
       data: {
@@ -66,20 +69,23 @@ export async function POST(req: Request) {
         region: region || null,
         city: city || null,
         showInLeaderboard,
+        emailVerificationToken: verificationToken,
+        emailVerificationExpiry: verificationExpiry,
       },
       select: { id: true, email: true, name: true },
     });
 
-    // Email de bienvenue (non bloquant)
-    const appUrl = process.env.NEXTAUTH_URL ?? "https://myquotidia.app";
+    // Email de vérification (non bloquant)
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXTAUTH_URL ?? "https://myquotidia.app";
+    const verifyUrl = `${appUrl}/api/auth/verify-email?token=${verificationToken}`;
     getResend().emails.send({
       from: FROM_EMAIL,
       to: email,
-      subject: "Bienvenue sur Quotidia 🌀",
-      html: welcomeEmailHtml(name ?? null, appUrl),
-    }).catch((err) => console.error("[REGISTER_WELCOME_EMAIL]", err));
+      subject: "Confirme ton adresse email — Quotidia 📧",
+      html: verifyEmailHtml(name ?? null, verifyUrl),
+    }).catch((err) => console.error("[REGISTER_VERIFY_EMAIL]", err));
 
-    return NextResponse.json({ success: true, data: user }, { status: 201 });
+    return NextResponse.json({ success: true, data: { ...user, requiresVerification: true } }, { status: 201 });
   } catch (error) {
     console.error("[REGISTER]", error);
     return NextResponse.json(

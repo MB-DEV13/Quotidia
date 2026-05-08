@@ -3,7 +3,7 @@
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function EyeIcon({ open }: { open: boolean }) {
   return open ? (
@@ -58,6 +58,18 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get("error");
+    const verified = params.get("verified");
+    if (verified === "true") setSuccessMessage("Email vérifié ! Tu peux maintenant te connecter.");
+    else if (verified === "already") setSuccessMessage("Email déjà vérifié. Connecte-toi.");
+    else if (err === "EmailNotVerified") setError("Vérifie ton email avant de te connecter. Consulte ta boite mail.");
+    else if (err === "verification_expired") setError("Le lien de vérification a expiré. Inscris-toi à nouveau ou demande un nouveau lien.");
+    else if (err === "verification_invalid") setError("Lien de vérification invalide.");
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -130,6 +142,12 @@ export default function LoginPage() {
           <div className="bg-white rounded-2xl shadow-card p-8">
             <h1 className="text-2xl font-bold text-textDark mb-1">Connexion</h1>
             <p className="text-textLight text-sm mb-6">Ravi de te revoir !</p>
+
+            {successMessage && (
+              <div className="text-sm text-success bg-success/10 p-3 rounded-xl mb-4 font-medium">
+                {successMessage}
+              </div>
+            )}
 
             {/* Google */}
             <button

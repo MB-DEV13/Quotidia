@@ -155,6 +155,31 @@ export function weeklyReportHtml(data: WeeklyReportData): string {
   return base(`Bilan de la semaine — ${data.weekLabel}`, body);
 }
 
+// ─── Vérification d'email ───────────────────────────────────────────────────
+
+export function verifyEmailHtml(name: string | null, verifyUrl: string): string {
+  const firstName = name?.split(" ")[0] ?? "toi";
+  return base("Confirme ton email — Quotidia", `
+    <h1>Confirme ton adresse email 📧</h1>
+    <p class="subtitle">Bonjour ${firstName} ! Plus qu'une étape pour accéder à Quotidia.</p>
+
+    <div style="background:#F5F3FF;border-radius:12px;padding:24px;margin-bottom:24px;text-align:center;">
+      <p style="font-size:14px;color:#444;margin-bottom:20px;line-height:1.6;">
+        Clique sur le bouton ci-dessous pour confirmer ton adresse email et activer ton compte.<br/>
+        Ce lien est valable <strong>24 heures</strong>.
+      </p>
+      <a href="${verifyUrl}" style="display:inline-block;background:linear-gradient(135deg,#5B5EA6,#9B72CF);color:#fff;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px;">
+        Vérifier mon email →
+      </a>
+    </div>
+
+    <p style="font-size:12px;color:#aaa;text-align:center;">
+      Si tu n'es pas à l'origine de cette inscription, ignore cet email.<br/>
+      Lien alternatif : <a href="${verifyUrl}" style="color:#9B72CF;word-break:break-all;">${verifyUrl}</a>
+    </p>
+  `);
+}
+
 // ─── Email de bienvenue ─────────────────────────────────────────────────────
 
 export function welcomeEmailHtml(name: string | null, appUrl: string): string {

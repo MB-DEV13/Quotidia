@@ -30,8 +30,10 @@ model User {
   onboardingCompleted    Boolean   @default(false)
   loginStreak            Int       @default(0)
   lastLoginWeek          String?
-  resetToken             String?   @unique
-  resetTokenExpiry       DateTime?
+  resetToken                  String?   @unique
+  resetTokenExpiry            DateTime?
+  emailVerificationToken      String?   @unique
+  emailVerificationExpiry     DateTime?
   country                String?
   region                 String?
   city                   String?

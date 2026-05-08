@@ -101,13 +101,7 @@ export default function RegisterPage() {
       return;
     }
 
-    const result = await signIn("credentials", { email, password, redirect: false });
-    if (result?.error) {
-      setError("Compte créé, mais connexion échouée. Essaie de te connecter manuellement.");
-      setLoading(false);
-      return;
-    }
-    router.push("/dashboard");
+    router.push(`/check-email?email=${encodeURIComponent(email)}`);
   }
 
   return (
