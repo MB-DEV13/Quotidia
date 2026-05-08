@@ -111,8 +111,21 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
     setShowForm(true);
   }
 
+  const FREE_LIMIT = 3;
+
   return (
     <div>
+      {/* Bandeau freemium */}
+      {!isPremium && (
+        <div className="mb-4 bg-accent/5 border border-accent/20 rounded-2xl px-4 py-3 text-center">
+          <p className="text-xs text-textLight">
+            Compte gratuit :{" "}
+            <strong className="text-textDark">{activeHabits.length}/{FREE_LIMIT} habitudes</strong> utilisées.{" "}
+            <span className="text-accent font-semibold">Premium</span> pour des habitudes illimitées.
+          </p>
+        </div>
+      )}
+
       {/* Bouton ajouter ou limite atteinte */}
       {canAddMore ? (
         <button
