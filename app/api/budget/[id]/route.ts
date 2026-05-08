@@ -40,13 +40,53 @@ export async function PATCH(
       );
     }
 
+    const newDate = parsed.data.date ? new Date(parsed.data.date) : undefined;
+
     const updated = await db.expense.update({
       where: { id },
-      data: {
-        ...parsed.data,
-        date: parsed.data.date ? new Date(parsed.data.date) : undefined,
-      },
+      data: { ...parsed.data, date: newDate },
     });
+
+    // Mettre à jour toutes les occurrences futures du même groupe
+    if (expense.recurringGroupId) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const futureOccurrences = await db.expense.findMany({
+        where: {
+          recurringGroupId: expense.recurringGroupId,
+          id: { not: id },
+          date: { gt: today },
+        },
+        select: { id: true, date: true },
+      });
+
+      if (futureOccurrences.length > 0) {
+        const newDay = newDate ? newDate.getDate() : null;
+
+        await db.$transaction(
+          futureOccurrences.map((occ) => {
+            const occDate = new Date(occ.date);
+            let updatedDate: Date | undefined;
+            if (newDay !== null) {
+              const maxDay = new Date(occDate.getFullYear(), occDate.getMonth() + 1, 0).getDate();
+              updatedDate = new Date(occDate.getFullYear(), occDate.getMonth(), Math.min(newDay, maxDay));
+            }
+            return db.expense.update({
+              where: { id: occ.id },
+              data: {
+                ...(parsed.data.amount !== undefined && { amount: parsed.data.amount }),
+                ...(parsed.data.category !== undefined && { category: parsed.data.category }),
+                ...(parsed.data.label !== undefined && { label: parsed.data.label }),
+                ...(updatedDate && { date: updatedDate }),
+                ...(parsed.data.recurrenceInterval !== undefined && { recurrenceInterval: parsed.data.recurrenceInterval }),
+                ...(parsed.data.recurrenceDays !== undefined && { recurrenceDays: parsed.data.recurrenceDays }),
+              },
+            });
+          })
+        );
+      }
+    }
 
     return NextResponse.json({ success: true, data: updated });
   } catch (error) {
