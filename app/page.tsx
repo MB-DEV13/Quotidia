@@ -28,7 +28,7 @@ const FEATURES = [
   {
     icon: "💰",
     title: "Budget intelligent",
-    desc: "Suis tes dépenses, relie ton compte bancaire pour une sync auto (Premium), et visualise où va ton argent en un coup d'œil.",
+    desc: "Suis tes dépenses, relie ton compte bancaire pour une sync auto (Premium — bientôt disponible), et visualise où va ton argent en un coup d'œil.",
     color: "from-emerald-500/10 to-green-400/10",
     iconBg: "bg-emerald-500/10 text-emerald-600",
   },
@@ -110,7 +110,7 @@ const PRICING = [
     features: [
       "Habitudes & objectifs illimités",
       "Catégories budget illimitées",
-      "Connexion bancaire automatique",
+      "Connexion bancaire automatique (bientôt disponible)",
       "Assistant IA sans limite",
       "Stats 30 & 90 jours",
       "Badges exclusifs & niveaux",
@@ -173,7 +173,7 @@ const COMPARISON = [
     ynab: true,
   },
   {
-    feature: "Sync bancaire automatique",
+    feature: "Sync bancaire automatique (bientôt dispo)",
     quotidia: true,
     notion: false,
     habitica: false,
