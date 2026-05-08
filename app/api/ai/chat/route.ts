@@ -14,6 +14,18 @@ const chatSchema = z.object({
 
 type Message = { role: "user" | "assistant"; content: string; timestamp: string };
 
+function sanitizeMessages(raw: unknown): Message[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((m): m is Record<string, unknown> => typeof m === "object" && m !== null)
+    .filter((m) => (m.role === "user" || m.role === "assistant") && typeof m.content === "string" && m.content.length > 0)
+    .map((m) => ({
+      role: m.role as "user" | "assistant",
+      content: (m.content as string).slice(0, 2000),
+      timestamp: typeof m.timestamp === "string" ? m.timestamp : new Date().toISOString(),
+    }));
+}
+
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -84,7 +96,7 @@ export async function POST(req: Request) {
       if (existing && existing.userId === session.user.id) {
         conversation = {
           id: existing.id,
-          messages: existing.messages as Message[],
+          messages: sanitizeMessages(existing.messages),
         };
       }
     }

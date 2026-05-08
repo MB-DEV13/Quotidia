@@ -15,6 +15,14 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ success: false, error: "Non autorisé" }, { status: 401 });
     }
 
+    const user = await db.user.findUnique({
+      where: { id: session.user.id },
+      select: { isPremium: true },
+    });
+    if (!user?.isPremium) {
+      return NextResponse.json({ success: false, error: "Fonctionnalité réservée au plan Premium" }, { status: 403 });
+    }
+
     const body = await req.json();
     const parsed = schema.safeParse(body);
     if (!parsed.success) {

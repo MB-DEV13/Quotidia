@@ -72,7 +72,7 @@ export async function GET(req: Request) {
         byCategory,
         month: monthParam ?? new Date().toISOString().slice(0, 7),
       },
-    });
+    }, { headers: { "Cache-Control": "private, max-age=60, stale-while-revalidate=300" } });
   } catch (error) {
     console.error("[BUDGET_SUMMARY_GET]", error);
     return NextResponse.json({ success: false, error: "Erreur interne" }, { status: 500 });

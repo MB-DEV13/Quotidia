@@ -28,6 +28,7 @@ export async function GET(req: NextRequest) {
   try {
     const bankConnection = await db.bankConnection.findUnique({
       where: { userId: session.user.id },
+      select: { bridgeUserId: true },
     });
     if (!bankConnection) {
       return NextResponse.redirect(new URL("/budget?bridge=error", req.url));

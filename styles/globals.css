@@ -68,6 +68,23 @@ body {
   background-color: #030712 !important;
 }
 
+/* Gris supplémentaires */
+.dark .bg-gray-200 {
+  background-color: #374151 !important;
+}
+.dark .hover\:bg-gray-200:hover {
+  background-color: #374151 !important;
+}
+.dark .text-gray-700 {
+  color: #d1d5db !important;
+}
+.dark .border-gray-50 {
+  border-color: #1f2937 !important;
+}
+.dark .bg-gray-950 {
+  background-color: #030712;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
