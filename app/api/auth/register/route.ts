@@ -82,15 +82,26 @@ export async function POST(req: Request) {
       select: { id: true, email: true, name: true },
     });
 
-    // Email de vérification (non bloquant)
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXTAUTH_URL ?? "https://myquotidia.app";
     const verifyUrl = `${appUrl}/api/auth/verify-email?token=${verificationToken}`;
-    getResend().emails.send({
-      from: FROM_EMAIL,
-      to: email,
-      subject: "Confirme ton adresse email — Quotidia 📧",
-      html: verifyEmailHtml(name ?? null, verifyUrl),
-    }).catch((err) => console.error("[REGISTER_VERIFY_EMAIL]", err));
+
+    if (!process.env.RESEND_API_KEY) {
+      console.error("[REGISTER] RESEND_API_KEY manquant — email de vérification non envoyé");
+    } else {
+      try {
+        const result = await getResend().emails.send({
+          from: FROM_EMAIL,
+          to: email,
+          subject: "Confirme ton adresse email — Quotidia 📧",
+          html: verifyEmailHtml(name ?? null, verifyUrl),
+        });
+        if (result.error) {
+          console.error("[REGISTER_VERIFY_EMAIL] Resend error:", result.error);
+        }
+      } catch (err) {
+        console.error("[REGISTER_VERIFY_EMAIL] Exception:", err);
+      }
+    }
 
     return NextResponse.json({ success: true, data: { ...user, requiresVerification: true } }, { status: 201 });
   } catch (error) {
