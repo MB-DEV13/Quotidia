@@ -863,7 +863,15 @@ export default function LandingPage() {
             </div>
           </div>
           <p className="text-center w-full">
-            © {new Date().getFullYear()} Quotidia. Tous droits réservés.
+            © {new Date().getFullYear()} Quotidia. Tous droits réservés. · Développé par{" "}
+            <a
+              href="https://devlyn.fr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors"
+            >
+              Devlyn
+            </a>
           </p>
         </div>
       </footer>
