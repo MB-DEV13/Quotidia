@@ -49,7 +49,7 @@ export default function ContactPage() {
           <p className="text-xs text-textLight mb-4">Actualités, conseils et nouveautés Quotidia.</p>
           <div className="flex items-center justify-center gap-4">
             <a
-              href="https://instagram.com/quotidia"
+              href="https://instagram.com/quotidia.app"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
@@ -61,7 +61,7 @@ export default function ContactPage() {
               Instagram
             </a>
             <a
-              href="https://x.com/quotidia"
+              href="https://x.com/QuotidiaApp"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="X (Twitter)"
@@ -73,7 +73,7 @@ export default function ContactPage() {
               X / Twitter
             </a>
             <a
-              href="https://facebook.com/quotidia"
+              href="https://facebook.com/61572147742258"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"

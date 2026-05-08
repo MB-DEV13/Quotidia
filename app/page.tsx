@@ -813,7 +813,7 @@ export default function LandingPage() {
             </div>
             <div className="flex items-center gap-3">
               <a
-                href="https://instagram.com/quotidia"
+                href="https://instagram.com/quotidia.app"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -829,7 +829,7 @@ export default function LandingPage() {
                 </svg>
               </a>
               <a
-                href="https://x.com/quotidia"
+                href="https://x.com/QuotidiaApp"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="X (Twitter)"
@@ -845,7 +845,7 @@ export default function LandingPage() {
                 </svg>
               </a>
               <a
-                href="https://facebook.com/quotidia"
+                href="https://facebook.com/61572147742258"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
