@@ -7,6 +7,7 @@ import Link from "next/link";
 import { AvatarPicker } from "@/components/ui/AvatarPicker";
 import { Avatar } from "@/components/ui/Avatar";
 import { LocationPicker } from "@/components/ui/LocationPicker";
+import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
 
 function EyeIcon({ open }: { open: boolean }) {
   return open ? (
@@ -56,6 +57,7 @@ export default function RegisterPage() {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const passwordStrength =
     password.length === 0 ? 0 : password.length < 8 ? 1 : password.length < 12 ? 2 : 3;
@@ -78,6 +80,10 @@ export default function RegisterPage() {
       setError("Tu dois accepter les CGU pour continuer.");
       return;
     }
+    if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !turnstileToken) {
+      setError("Valide le captcha pour continuer.");
+      return;
+    }
     setStep(2);
   }
 
@@ -89,7 +95,7 @@ export default function RegisterPage() {
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password, avatar, country, region, city, showInLeaderboard }),
+      body: JSON.stringify({ name, email, password, avatar, country, region, city, showInLeaderboard, turnstileToken }),
     });
 
     const data = await res.json();
@@ -307,6 +313,12 @@ export default function RegisterPage() {
                       {" "}de Quotidia.
                     </span>
                   </label>
+
+                  <TurnstileWidget
+                    onSuccess={setTurnstileToken}
+                    onExpire={() => setTurnstileToken(null)}
+                    onError={() => setTurnstileToken(null)}
+                  />
 
                   <button
                     type="submit"

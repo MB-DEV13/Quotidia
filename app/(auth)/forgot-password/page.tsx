@@ -2,22 +2,30 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setLoading(true);
 
+    if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !turnstileToken) {
+      setError("Valide le captcha pour continuer.");
+      setLoading(false);
+      return;
+    }
+
     const res = await fetch("/api/auth/forgot-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, turnstileToken }),
     });
 
     setLoading(false);
@@ -81,6 +89,12 @@ export default function ForgotPasswordPage() {
                     placeholder="toi@example.com"
                   />
                 </div>
+
+                <TurnstileWidget
+                  onSuccess={setTurnstileToken}
+                  onExpire={() => setTurnstileToken(null)}
+                  onError={() => setTurnstileToken(null)}
+                />
 
                 <button
                   type="submit"

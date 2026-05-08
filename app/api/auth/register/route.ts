@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { rateLimitAsync, getIp } from "@/lib/rate-limit";
 import { getResend, FROM_EMAIL } from "@/lib/resend";
 import { verifyEmailHtml } from "@/lib/email-templates";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 const registerSchema = z.object({
   name: z.string().optional(),
@@ -19,6 +20,7 @@ const registerSchema = z.object({
   region: z.string().optional(),
   city: z.string().optional(),
   showInLeaderboard: z.boolean().default(true),
+  turnstileToken: z.string().optional(),
 });
 
 export async function POST(req: Request) {
@@ -45,7 +47,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const { name, email, password, avatar, country, region, city, showInLeaderboard } = parsed.data;
+    const { name, email, password, avatar, country, region, city, showInLeaderboard, turnstileToken } = parsed.data;
+
+    const captchaOk = await verifyTurnstile(turnstileToken);
+    if (!captchaOk) {
+      return NextResponse.json({ success: false, error: "Captcha invalide. Réessaie." }, { status: 400 });
+    }
 
     const existing = await db.user.findUnique({ where: { email } });
     if (existing) {

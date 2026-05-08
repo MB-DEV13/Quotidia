@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getResend, FROM_EMAIL } from "@/lib/resend";
 import { rateLimitAsync, getIp } from "@/lib/rate-limit";
+import { verifyTurnstile } from "@/lib/turnstile";
 import crypto from "crypto";
 
 export async function POST(req: Request) {
@@ -14,8 +15,14 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { email } = await req.json();
+    const body = await req.json();
+    const { email, turnstileToken } = body;
     if (!email) return NextResponse.json({ error: "Email requis." }, { status: 400 });
+
+    const captchaOk = await verifyTurnstile(turnstileToken);
+    if (!captchaOk) {
+      return NextResponse.json({ success: true }); // Silencieux pour ne pas révéler l'échec
+    }
 
     // Rate limit supplémentaire par email : 3 demandes max par heure
     const { allowed: emailAllowed } = await rateLimitAsync(`forgot-email:${email}`, 3, 60 * 60 * 1000);
