@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { usePostHog } from "posthog-js/react";
 import { HabitForm } from "./HabitForm";
 import { HabitCard } from "./HabitCard";
+import { FREE_LIMITS } from "@/lib/config";
 
 interface Habit {
   id: string;
@@ -111,8 +112,6 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
     setShowForm(true);
   }
 
-  const FREE_LIMIT = 3;
-
   return (
     <div>
       {/* Bandeau freemium */}
@@ -120,7 +119,7 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
         <div className="mb-4 bg-accent/5 border border-accent/20 rounded-2xl px-4 py-3 text-center">
           <p className="text-xs text-textLight">
             Compte gratuit :{" "}
-            <strong className="text-textDark">{activeHabits.length}/{FREE_LIMIT} habitudes</strong> utilisées.{" "}
+            <strong className="text-textDark">{activeHabits.length}/{FREE_LIMITS.HABITS} habitudes</strong> utilisées.{" "}
             <span className="text-accent font-semibold">Premium</span> pour des habitudes illimitées.
           </p>
         </div>
@@ -137,7 +136,7 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
         </button>
       ) : (
         <div className="w-full bg-accent/10 border border-accent/20 rounded-2xl mb-6 p-4 text-center">
-          <p className="text-sm font-medium text-accent mb-1">Limite gratuite atteinte (3 habitudes)</p>
+          <p className="text-sm font-medium text-accent mb-1">Limite gratuite atteinte ({FREE_LIMITS.HABITS} habitudes)</p>
           <p className="text-xs text-textLight">
             Passe en <span className="text-accent font-semibold">Premium</span> pour des habitudes illimitées.
           </p>

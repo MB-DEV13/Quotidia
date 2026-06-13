@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getStartOfMonth, getEndOfMonth } from "@/lib/utils";
 import { generateOccurrenceDates, generateGroupId } from "@/lib/recurring";
+import { FREE_LIMITS } from "@/lib/config";
 
 const createExpenseSchema = z.object({
   amount: z.number().positive("Le montant doit être positif").max(9_999_999, "Montant trop élevé"),
@@ -114,14 +115,14 @@ export async function POST(req: Request) {
       });
       const usedCategories = new Set(existingCategories.map((e) => e.category));
       const usedCount = usedCategories.size;
-      if (usedCount >= 2 && !usedCategories.has(parsed.data.category)) {
+      if (usedCount >= FREE_LIMITS.BUDGET_CATEGORIES && !usedCategories.has(parsed.data.category)) {
         return NextResponse.json(
           {
             success: false,
-            error: `Compte gratuit : ${usedCount}/2 catégories utilisées ce mois. Premium pour des catégories illimitées.`,
+            error: `Compte gratuit : ${usedCount}/${FREE_LIMITS.BUDGET_CATEGORIES} catégories utilisées ce mois. Premium pour des catégories illimitées.`,
             limitReached: true,
             usedCount,
-            maxCount: 2,
+            maxCount: FREE_LIMITS.BUDGET_CATEGORIES,
           },
           { status: 403 }
         );

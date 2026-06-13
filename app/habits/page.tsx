@@ -5,8 +5,7 @@ import { db } from "@/lib/db";
 import { getLast7Days } from "@/lib/utils";
 import { AppShell } from "@/components/layout/AppShell";
 import { HabitsClient } from "@/components/habits/HabitsClient";
-
-export const HABIT_FREE_LIMIT = 3;
+import { FREE_LIMITS } from "@/lib/config";
 
 export default async function HabitsPage() {
   const session = await getServerSession(authOptions);
@@ -27,7 +26,7 @@ export default async function HabitsPage() {
   });
 
   const activeCount = habits.filter((h) => !h.isArchived).length;
-  const canAddMore = user?.isPremium || activeCount < HABIT_FREE_LIMIT;
+  const canAddMore = user?.isPremium || activeCount < FREE_LIMITS.HABITS;
 
   return (
     <AppShell>
@@ -37,12 +36,12 @@ export default async function HabitsPage() {
             <h1 className="text-2xl font-bold text-textDark">Mes habitudes</h1>
             <p className="text-textLight text-sm mt-1">
               {activeCount} habitude(s) active(s)
-              {!user?.isPremium && ` · ${HABIT_FREE_LIMIT - activeCount} restante(s) en gratuit`}
+              {!user?.isPremium && ` · ${FREE_LIMITS.HABITS - activeCount} restante(s) en gratuit`}
             </p>
           </div>
           {!user?.isPremium && (
             <div className="text-xs text-textLight bg-white rounded-xl px-3 py-1.5 shadow-soft">
-              {activeCount}/{HABIT_FREE_LIMIT} gratuites
+              {activeCount}/{FREE_LIMITS.HABITS} gratuites
             </div>
           )}
         </div>

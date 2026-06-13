@@ -2,6 +2,7 @@ import { FAQSection } from "@/components/landing/FAQSection";
 import { InteractiveMockup } from "@/components/landing/InteractiveMockupLazy";
 import { LandingNav } from "@/components/landing/LandingNav";
 import { PWAInstallModal } from "@/components/ui/PWAInstallModal";
+import { config } from "@/lib/config";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -813,7 +814,7 @@ export default function LandingPage() {
             </div>
             <div className="flex items-center gap-3">
               <a
-                href="https://instagram.com/quotidia.app"
+                href={config.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -829,7 +830,7 @@ export default function LandingPage() {
                 </svg>
               </a>
               <a
-                href="https://x.com/QuotidiaApp"
+                href={config.social.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="X (Twitter)"
@@ -845,7 +846,7 @@ export default function LandingPage() {
                 </svg>
               </a>
               <a
-                href="https://facebook.com/61572147742258"
+                href={config.social.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"

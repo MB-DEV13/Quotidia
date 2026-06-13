@@ -1,5 +1,6 @@
 import { LandingNav } from "@/components/landing/LandingNav";
 import { ContactForm } from "@/components/contact/ContactForm";
+import { config } from "@/lib/config";
 
 export const metadata = {
   title: "Contact — Quotidia",
@@ -49,7 +50,7 @@ export default function ContactPage() {
           <p className="text-xs text-textLight mb-4">Actualités, conseils et nouveautés Quotidia.</p>
           <div className="flex items-center justify-center gap-4">
             <a
-              href="https://instagram.com/quotidia.app"
+              href={config.social.instagram}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
@@ -61,7 +62,7 @@ export default function ContactPage() {
               Instagram
             </a>
             <a
-              href="https://x.com/QuotidiaApp"
+              href={config.social.twitter}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="X (Twitter)"
@@ -73,7 +74,7 @@ export default function ContactPage() {
               X / Twitter
             </a>
             <a
-              href="https://facebook.com/61572147742258"
+              href={config.social.facebook}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"
