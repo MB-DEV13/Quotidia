@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
+import { config } from "@/lib/config";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -44,7 +45,7 @@ export default function ForgotPasswordPage() {
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
           <span className="text-3xl">🌀</span>
-          <span className="font-bold text-xl text-primary">Quotidia</span>
+          <span className="font-bold text-xl text-primary">{config.app.name}</span>
         </Link>
 
         <div className="bg-white rounded-2xl shadow-card p-8">

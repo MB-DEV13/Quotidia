@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { config } from "@/lib/config";
 import { openai } from "@/lib/openai";
 import { generateUserContext } from "@/lib/ai-context";
 import { FREE_LIMITS } from "@/lib/constants";
@@ -129,7 +130,7 @@ export async function POST(req: Request) {
     // Generate user context
     const userContext = await generateUserContext(session.user.id);
 
-    const systemPrompt = `Tu es Quotidia Coach, un assistant IA bienveillant, motivant et positif intégré dans l'application Quotidia. Tu aides les utilisateurs à améliorer leurs habitudes, gérer leur budget et atteindre leurs objectifs. Tu réponds toujours en français, de façon concise (max 3 paragraphes), avec empathie et encouragement.
+    const systemPrompt = `Tu es ${config.app.name} Coach, un assistant IA bienveillant, motivant et positif intégré dans l'application ${config.app.name}. Tu aides les utilisateurs à améliorer leurs habitudes, gérer leur budget et atteindre leurs objectifs. Tu réponds toujours en français, de façon concise (max 3 paragraphes), avec empathie et encouragement.
 
 Données actuelles de l'utilisateur:
 ${userContext}

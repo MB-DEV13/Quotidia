@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { config } from "@/lib/config";
 
 const STORAGE_KEY = "quotidia_pwa_modal_dismissed";
 
@@ -26,12 +27,12 @@ const INSTRUCTIONS: Record<Platform, { step: string; icon: string }[]> = {
     { icon: "✅", step: "Confirme l'installation" },
   ],
   desktop: [
-    { icon: "🖥️", step: "Ouvre Quotidia dans Google Chrome" },
+    { icon: "🖥️", step: `Ouvre ${config.app.name} dans Google Chrome` },
     { icon: "💻", step: "Clique sur l'icône écran avec une flèche ↓ dans la barre d'adresse" },
     { icon: "✅", step: 'Clique sur "Installer" et profite !' },
   ],
   unknown: [
-    { icon: "🌐", step: "Ouvre Quotidia dans Chrome ou Safari" },
+    { icon: "🌐", step: `Ouvre ${config.app.name} dans Chrome ou Safari` },
     { icon: "📲", step: 'Cherche l\'option "Ajouter à l\'écran d\'accueil"' },
     { icon: "✅", step: "Confirme pour accéder en un tap !" },
   ],
@@ -86,7 +87,7 @@ export function PWAInstallModal() {
             </div>
             <div>
               <h2 className="font-extrabold text-textDark text-lg leading-tight">
-                Installe Quotidia
+                Installe {config.app.name}
               </h2>
               <p className="text-xs text-textLight">Accès rapide depuis ton écran d&apos;accueil</p>
             </div>

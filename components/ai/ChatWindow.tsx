@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import { config } from "@/lib/config";
 
 interface Message {
   role: "user" | "assistant";
@@ -21,7 +22,7 @@ export function ChatWindow({ onClose, aiRequestsUsed, isPremium }: ChatWindowPro
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Bonjour ! Je suis Quotidia Coach, ton assistant personnel. Comment puis-je t'aider aujourd'hui ? 😊",
+      content: `Bonjour ! Je suis ${config.app.name} Coach, ton assistant personnel. Comment puis-je t'aider aujourd'hui ? 😊`,
       timestamp: new Date().toISOString(),
     },
   ]);
@@ -162,7 +163,7 @@ export function ChatWindow({ onClose, aiRequestsUsed, isPremium }: ChatWindowPro
             🤖
           </div>
           <div>
-            <p className="text-sm font-semibold text-textDark">Quotidia Coach</p>
+            <p className="text-sm font-semibold text-textDark">{config.app.name} Coach</p>
             {!isPremium && (
               <p className="text-xs text-textLight">
                 {remaining !== null ? `${remaining} requête${remaining > 1 ? "s" : ""} restante${remaining > 1 ? "s" : ""}` : ""}

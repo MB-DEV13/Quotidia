@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { weeklyReportHtml, monthlyReportHtml } from "@/lib/email-templates";
+import { config } from "@/lib/config";
 
 const TO = "onboarding@resend.dev";
-const FROM = "Quotidia <onboarding@resend.dev>";
+const FROM = `${config.app.name} <onboarding@resend.dev>`;
 
 export async function GET() {
   if (process.env.NODE_ENV !== "development" || !process.env.ENABLE_DEV_EMAILS) {
@@ -11,19 +12,19 @@ export async function GET() {
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
-  const appUrl = "https://myquotidia.app";
+  const appUrl = config.app.url;
 
   const results = await Promise.allSettled([
 
     // 1. Reset mot de passe
     resend.emails.send({
       from: FROM, to: TO,
-      subject: "Réinitialisation de ton mot de passe — Quotidia",
+      subject: `Réinitialisation de ton mot de passe — ${config.app.name}`,
       html: `
         <div style="font-family:Inter,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;background:#F5F3FF;border-radius:16px;">
           <div style="text-align:center;margin-bottom:24px;">
             <span style="font-size:32px;">🌀</span>
-            <h1 style="color:#5B5EA6;font-size:20px;margin:8px 0 0;">Quotidia</h1>
+            <h1 style="color:#5B5EA6;font-size:20px;margin:8px 0 0;">${config.app.name}</h1>
           </div>
           <div style="background:white;border-radius:16px;padding:28px;">
             <h2 style="color:#2D2D2D;font-size:18px;margin:0 0 12px;">Réinitialisation du mot de passe</h2>
@@ -40,7 +41,7 @@ export async function GET() {
             </p>
           </div>
           <p style="color:#bbb;font-size:11px;text-align:center;margin-top:20px;">
-            © ${new Date().getFullYear()} Quotidia — Ton quotidien, en mieux.
+            © ${new Date().getFullYear()} ${config.app.name} — ${config.app.tagline}
           </p>
         </div>
       `,
@@ -117,7 +118,7 @@ export async function GET() {
     // 4. Bilan hebdomadaire
     resend.emails.send({
       from: FROM, to: TO,
-      subject: "📊 Ton bilan de la semaine — Quotidia",
+      subject: `📊 Ton bilan de la semaine — ${config.app.name}`,
       html: weeklyReportHtml({
         userName: "Mario",
         weekLabel: "24 – 30 mars 2026",
@@ -141,7 +142,7 @@ export async function GET() {
     // 5. Bilan mensuel
     resend.emails.send({
       from: FROM, to: TO,
-      subject: "🗓️ Ton bilan de Mars 2026 — Quotidia",
+      subject: `🗓️ Ton bilan de Mars 2026 — ${config.app.name}`,
       html: monthlyReportHtml({
         userName: "Mario",
         monthLabel: "Mars 2026",

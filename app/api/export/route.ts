@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { rateLimitAsync } from "@/lib/rate-limit";
+import { config } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -72,7 +73,7 @@ export async function GET(req: NextRequest) {
     const lines: string[] = [];
 
     // En-tête
-    lines.push("Quotidia — Export de données");
+    lines.push(`${config.app.name} — Export de données`);
     lines.push(`Exporté le: ${now.toLocaleDateString("fr-FR")}`);
     lines.push("");
 

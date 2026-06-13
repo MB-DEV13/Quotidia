@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { formatCurrency } from "@/lib/utils";
+import { config } from "@/lib/config";
 
 interface GoalProgress {
   title: string;
@@ -142,7 +143,7 @@ export function BilanClient() {
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
-    doc.text("Bilan Hebdomadaire — Quotidia", lm + 6, y + 9);
+    doc.text(`Bilan Hebdomadaire — ${config.app.name}`, lm + 6, y + 9);
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
     doc.text(data.period.label, lm + 6, y + 16);
@@ -283,7 +284,7 @@ export function BilanClient() {
     y += 5;
     doc.setFontSize(7);
     doc.setTextColor(...gray);
-    doc.text(`Généré le ${new Date().toLocaleDateString("fr-FR")} par Quotidia — myquotidia.app`, lm, y);
+    doc.text(`Généré le ${new Date().toLocaleDateString("fr-FR")} par ${config.app.name} — ${config.app.domain}`, lm, y);
 
     doc.save(`bilan-${data.period.label.replace(/\s/g, "-")}.pdf`);
   }

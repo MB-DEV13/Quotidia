@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { config } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "Mentions légales",
-  description: "Mentions légales de Quotidia — éditeur, hébergeur et responsabilités du service.",
+  description: `Mentions légales de ${config.app.name} — éditeur, hébergeur et responsabilités du service.`,
 };
 
 export default function MentionsLegalesPage() {
@@ -21,11 +22,11 @@ export default function MentionsLegalesPage() {
 
           <section>
             <h2 className="text-lg font-bold mb-3">1. Éditeur du site</h2>
-            <p>Le site Quotidia (accessible à l&apos;adresse <strong>quotidia.app</strong>) est édité par :</p>
+            <p>Le site {config.app.name} (accessible à l&apos;adresse <strong>{config.app.domain}</strong>) est édité par :</p>
             <ul className="mt-3 space-y-1 text-textLight pl-4 border-l-2 border-gray-100">
               <li><strong className="text-textDark">Raison sociale :</strong> [À compléter — nom ou entreprise]</li>
               <li><strong className="text-textDark">Adresse :</strong> [À compléter]</li>
-              <li><strong className="text-textDark">Email :</strong> contact@quotidia.app</li>
+              <li><strong className="text-textDark">Email :</strong> contact@{config.app.domain}</li>
               <li><strong className="text-textDark">Directeur de la publication :</strong> [À compléter]</li>
             </ul>
           </section>
@@ -42,7 +43,7 @@ export default function MentionsLegalesPage() {
           <section>
             <h2 className="text-lg font-bold mb-3">3. Propriété intellectuelle</h2>
             <p>
-              L&apos;ensemble du contenu du site Quotidia (textes, images, logos, interface, code) est la propriété exclusive de l&apos;éditeur et est protégé par les lois françaises et internationales sur la propriété intellectuelle. Toute reproduction, même partielle, est interdite sans autorisation préalable.
+              L&apos;ensemble du contenu du site {config.app.name} (textes, images, logos, interface, code) est la propriété exclusive de l&apos;éditeur et est protégé par les lois françaises et internationales sur la propriété intellectuelle. Toute reproduction, même partielle, est interdite sans autorisation préalable.
             </p>
           </section>
 

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { AvatarPicker } from "@/components/ui/AvatarPicker";
 import { Avatar } from "@/components/ui/Avatar";
 import { LocationPicker } from "@/components/ui/LocationPicker";
+import { config } from "@/lib/config";
 
 const PERKS = [
   { icon: "🚀", text: "Inscription gratuite, sans carte bancaire" },
@@ -74,7 +75,7 @@ export default function OnboardingPage() {
       <div className="hidden lg:flex flex-col justify-between w-[420px] flex-shrink-0 bg-gradient-to-br from-primary to-accent p-10 text-white">
         <Link href="/" className="flex items-center gap-2">
           <span className="text-3xl">🌀</span>
-          <span className="font-bold text-xl">Quotidia</span>
+          <span className="font-bold text-xl">{config.app.name}</span>
         </Link>
 
         <div>
@@ -95,7 +96,7 @@ export default function OnboardingPage() {
         </div>
 
         <p className="text-white/40 text-xs">
-          © {new Date().getFullYear()} Quotidia — Ton quotidien, en mieux.
+          © {new Date().getFullYear()} {config.app.name} — {config.app.tagline}
         </p>
       </div>
 
@@ -106,7 +107,7 @@ export default function OnboardingPage() {
           {/* Logo mobile */}
           <Link href="/" className="flex items-center justify-center gap-2 mb-8 lg:hidden">
             <span className="text-3xl">🌀</span>
-            <span className="font-bold text-xl text-primary">Quotidia</span>
+            <span className="font-bold text-xl text-primary">{config.app.name}</span>
           </Link>
 
           <div className="bg-white rounded-2xl shadow-card p-8">

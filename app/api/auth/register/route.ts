@@ -7,6 +7,7 @@ import { rateLimitAsync, getIp } from "@/lib/rate-limit";
 import { getResend, FROM_EMAIL } from "@/lib/resend";
 import { verifyEmailHtml } from "@/lib/email-templates";
 import { verifyTurnstile } from "@/lib/turnstile";
+import { config } from "@/lib/config";
 
 const registerSchema = z.object({
   name: z.string().optional(),
@@ -92,7 +93,7 @@ export async function POST(req: Request) {
         const result = await getResend().emails.send({
           from: FROM_EMAIL,
           to: email,
-          subject: "Confirme ton adresse email — Quotidia 📧",
+          subject: `Confirme ton adresse email — ${config.app.name} 📧`,
           html: verifyEmailHtml(name ?? null, verifyUrl),
         });
         if (result.error) {

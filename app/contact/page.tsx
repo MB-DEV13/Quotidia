@@ -3,8 +3,8 @@ import { ContactForm } from "@/components/contact/ContactForm";
 import { config } from "@/lib/config";
 
 export const metadata = {
-  title: "Contact — Quotidia",
-  description: "Une question, un problème ou une suggestion ? Contacte l'équipe Quotidia.",
+  title: `Contact — ${config.app.name}`,
+  description: `Une question, un problème ou une suggestion ? Contacte l'équipe ${config.app.name}.`,
 };
 
 export default function ContactPage() {
@@ -47,7 +47,7 @@ export default function ContactPage() {
 
         <div className="bg-white rounded-xl shadow-soft p-5 text-center">
           <p className="text-sm font-semibold text-textDark mb-1">Suis-nous sur les réseaux</p>
-          <p className="text-xs text-textLight mb-4">Actualités, conseils et nouveautés Quotidia.</p>
+          <p className="text-xs text-textLight mb-4">Actualités, conseils et nouveautés {config.app.name}.</p>
           <div className="flex items-center justify-center gap-4">
             <a
               href={config.social.instagram}

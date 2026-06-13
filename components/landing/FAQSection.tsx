@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { config } from "@/lib/config";
 
 const FAQS = [
   {
@@ -17,7 +18,7 @@ const FAQS = [
   },
   {
     q: "Y a-t-il une application mobile ?",
-    a: "Quotidia est une Progressive Web App (PWA) : tu peux l'ajouter à l'écran d'accueil de ton téléphone depuis le navigateur pour une expérience quasi-native. Une app iOS/Android dédiée est dans la roadmap.",
+    a: `${config.app.name} est une Progressive Web App (PWA) : tu peux l'ajouter à l'écran d'accueil de ton téléphone depuis le navigateur pour une expérience quasi-native. Une app iOS/Android dédiée est dans la roadmap.`,
   },
   {
     q: "L'assistant IA est-il vraiment personnalisé ?",

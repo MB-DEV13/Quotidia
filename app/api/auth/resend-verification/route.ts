@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { rateLimitAsync } from "@/lib/rate-limit";
 import { getResend, FROM_EMAIL } from "@/lib/resend";
 import { verifyEmailHtml } from "@/lib/email-templates";
+import { config } from "@/lib/config";
 
 const schema = z.object({
   email: z.string().email(),
@@ -52,7 +53,7 @@ export async function POST(req: Request) {
         const result = await getResend().emails.send({
           from: FROM_EMAIL,
           to: email,
-          subject: "Confirme ton adresse email — Quotidia 📧",
+          subject: `Confirme ton adresse email — ${config.app.name} 📧`,
           html: verifyEmailHtml(user.name, verifyUrl),
         });
         if (result.error) console.error("[RESEND_VERIFY_EMAIL] Resend error:", result.error);

@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { AppShell } from "@/components/layout/AppShell";
 import { LeaderboardClient } from "@/components/leaderboard/LeaderboardClient";
 import { getLevelTitle } from "@/lib/gamification";
+import { config } from "@/lib/config";
 
 export default async function LeaderboardPage() {
   const session = await getServerSession(authOptions);
@@ -73,7 +74,7 @@ export default async function LeaderboardPage() {
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-textDark">🏆 Classement</h1>
-          <p className="text-textLight text-sm mt-1">Les meilleurs joueurs Quotidia</p>
+          <p className="text-textLight text-sm mt-1">Les meilleurs joueurs {config.app.name}</p>
         </div>
 
         <LeaderboardClient

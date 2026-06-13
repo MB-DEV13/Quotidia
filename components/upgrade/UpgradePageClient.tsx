@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
+import { config } from "@/lib/config";
 import Link from "next/link";
 
 interface UpgradePageClientProps {
@@ -112,7 +113,7 @@ export function UpgradePageClient({
           </h1>
           <p className="text-textLight text-lg max-w-xl mx-auto">
             {isPremium
-              ? "Merci de soutenir Quotidia ! Tu profites de toutes les fonctionnalités sans limite."
+              ? `Merci de soutenir ${config.app.name} ! Tu profites de toutes les fonctionnalités sans limite.`
               : "Débloque toutes les fonctionnalités et transforme vraiment ton quotidien."}
           </p>
         </div>

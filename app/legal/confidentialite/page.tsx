@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { config } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "Politique de confidentialité",
-  description: "Politique de confidentialité RGPD de Quotidia — données collectées, cookies et droits des utilisateurs.",
+  description: `Politique de confidentialité RGPD de ${config.app.name} — données collectées, cookies et droits des utilisateurs.`,
 };
 
 export default function ConfidentialitePage() {
@@ -22,7 +23,7 @@ export default function ConfidentialitePage() {
           <section>
             <h2 className="text-lg font-bold mb-3">1. Responsable du traitement</h2>
             <p>
-              Le responsable du traitement des données personnelles collectées via Quotidia est l&apos;éditeur du site (voir <Link href="/legal/mentions-legales" className="text-primary hover:underline">mentions légales</Link>). Contact : <a href="mailto:contact@quotidia.app" className="text-primary hover:underline">contact@quotidia.app</a>
+              Le responsable du traitement des données personnelles collectées via {config.app.name} est l&apos;éditeur du site (voir <Link href="/legal/mentions-legales" className="text-primary hover:underline">mentions légales</Link>). Contact : <a href={`mailto:contact@${config.app.domain}`} className="text-primary hover:underline">contact@{config.app.domain}</a>
             </p>
           </section>
 
@@ -79,7 +80,7 @@ export default function ConfidentialitePage() {
 
           <section>
             <h2 className="text-lg font-bold mb-3">5. Cookies</h2>
-            <p className="mb-2">Quotidia utilise :</p>
+            <p className="mb-2">{config.app.name} utilise :</p>
             <ul className="space-y-2 text-textLight pl-4 border-l-2 border-gray-100">
               <li><strong className="text-textDark">Cookies essentiels</strong> — session d&apos;authentification (NextAuth). Nécessaires au fonctionnement, pas de consentement requis.</li>
               <li><strong className="text-textDark">Cookies de préférence</strong> — thème sombre, langue. Stockés localement.</li>

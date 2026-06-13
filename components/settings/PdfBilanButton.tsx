@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { config } from "@/lib/config";
 
 interface PdfBilanButtonProps {
   type: "weekly" | "monthly";
@@ -74,7 +75,7 @@ function openPrintWindow(data: Record<string, unknown>, type: "weekly" | "monthl
 <html lang="fr">
 <head>
   <meta charset="UTF-8"/>
-  <title>Quotidia — Bilan ${period}</title>
+  <title>${config.app.name} — Bilan ${period}</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #2D2D2D; padding: 40px; max-width: 800px; margin: auto; }
@@ -94,7 +95,7 @@ function openPrintWindow(data: Record<string, unknown>, type: "weekly" | "monthl
   </style>
 </head>
 <body>
-  <h1>🌀 Quotidia — Bilan ${period}</h1>
+  <h1>🌀 ${config.app.name} — Bilan ${period}</h1>
   <p class="date">Généré le ${now}</p>
 
   ${summary ? `
@@ -133,7 +134,7 @@ function openPrintWindow(data: Record<string, unknown>, type: "weekly" | "monthl
     ${goals.map((g) => `<tr><td>${g.title}</td><td>${g.current}/${g.target}${g.unit ? " " + g.unit : ""} (${Math.min(Math.round((g.current / g.target) * 100), 100)}%)</td></tr>`).join("")}
   </table>` : ""}
 
-  <div class="footer">Quotidia — Ton quotidien, en mieux.</div>
+  <div class="footer">${config.app.name} — ${config.app.tagline}</div>
   <script>window.onload = () => { window.print(); }</script>
 </body>
 </html>`;

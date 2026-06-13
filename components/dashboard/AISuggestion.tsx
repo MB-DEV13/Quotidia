@@ -1,6 +1,7 @@
 import { generateUserContext } from "@/lib/ai-context";
 import { openai } from "@/lib/openai";
 import { AITipCard } from "@/components/ai/AITipCard";
+import { config } from "@/lib/config";
 
 interface Props {
   userId: string;
@@ -14,7 +15,7 @@ export async function AISuggestion({ userId, hasHabits }: Props) {
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: "Tu es Quotidia Coach, un assistant bienveillant et motivant. Donne UN conseil court, personnalisé et actionnable (2-3 phrases max). Réponds en français." },
+        { role: "system", content: `Tu es ${config.app.name} Coach, un assistant bienveillant et motivant. Donne UN conseil court, personnalisé et actionnable (2-3 phrases max). Réponds en français.` },
         { role: "user", content: `Voici mes données du jour :\n${userContext}\n\nDonne-moi un conseil motivant pour aujourd'hui.` },
       ],
       max_tokens: 120,

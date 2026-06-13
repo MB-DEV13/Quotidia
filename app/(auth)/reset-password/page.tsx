@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { config } from "@/lib/config";
 
 function EyeIcon({ open }: { open: boolean }) {
   return open ? (
@@ -77,7 +78,7 @@ function ResetPasswordContent() {
       <div className="w-full max-w-md">
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
           <span className="text-3xl">🌀</span>
-          <span className="font-bold text-xl text-primary">Quotidia</span>
+          <span className="font-bold text-xl text-primary">{config.app.name}</span>
         </Link>
 
         <div className="bg-white rounded-2xl shadow-card p-8">

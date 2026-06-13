@@ -5,6 +5,7 @@ import { Providers } from "@/components/Providers";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { CookieBanner } from "@/components/ui/CookieBanner";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
+import { config } from "@/lib/config";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,13 +14,13 @@ const inter = Inter({
   preload: true,
 });
 
-const APP_URL = process.env.NEXTAUTH_URL ?? "https://myquotidia.app";
+const APP_URL = process.env.NEXTAUTH_URL ?? config.app.url;
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   title: {
-    default: "Quotidia — Ton quotidien, en mieux.",
-    template: "%s | Quotidia",
+    default: `${config.app.name} — ${config.app.tagline}`,
+    template: `%s | ${config.app.name}`,
   },
   description:
     "Suis tes habitudes, gère ton budget, atteins tes objectifs et booste ta productivité avec un assistant IA. Gratuit pour commencer.",
@@ -35,21 +36,21 @@ export const metadata: Metadata = {
     "streaks",
     "application gratuite",
   ],
-  authors: [{ name: "Quotidia" }],
-  creator: "Quotidia",
+  authors: [{ name: config.app.name }],
+  creator: config.app.name,
   manifest: "/manifest.json",
   openGraph: {
     type: "website",
     locale: "fr_FR",
     url: APP_URL,
-    siteName: "Quotidia",
-    title: "Quotidia — Ton quotidien, en mieux.",
+    siteName: config.app.name,
+    title: `${config.app.name} — ${config.app.tagline}`,
     description:
       "Suis tes habitudes, gère ton budget, atteins tes objectifs et booste ta productivité avec un assistant IA.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Quotidia — Ton quotidien, en mieux.",
+    title: `${config.app.name} — ${config.app.tagline}`,
     description:
       "Suis tes habitudes, gère ton budget, atteins tes objectifs et booste ta productivité avec un assistant IA.",
     creator: "@quotidia",
@@ -68,7 +69,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Quotidia",
+    title: config.app.name,
   },
   other: {
     "mobile-web-app-capable": "yes",

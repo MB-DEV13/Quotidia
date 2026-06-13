@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Quotidia — Ton quotidien, en mieux.",
+  title: `${config.app.name} — ${config.app.tagline}`,
   description:
     "Suis tes habitudes, gère ton budget, atteins tes objectifs et booste ta productivité avec un assistant IA personnel. Gratuit pour commencer.",
   alternates: {
@@ -220,7 +220,7 @@ const COMPARISON = [
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "Quotidia",
+  name: config.app.name,
   applicationCategory: "ProductivityApplication",
   operatingSystem: "Web, iOS, Android",
   offers: [
@@ -240,7 +240,7 @@ const jsonLd = {
   ],
   description:
     "Dashboard de vie personnel : suis tes habitudes, gère ton budget, atteins tes objectifs et booste ta productivité avec un assistant IA.",
-  url: "https://myquotidia.app",
+  url: config.app.url,
   inLanguage: "fr",
 };
 
@@ -268,7 +268,7 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-lg md:text-xl text-textLight max-w-2xl mx-auto mb-10 leading-relaxed">
-            Quotidia réunit <strong className="text-textDark">habitudes</strong>
+            {config.app.name} réunit <strong className="text-textDark">habitudes</strong>
             , <strong className="text-textDark">budget</strong>,{" "}
             <strong className="text-textDark">objectifs</strong> et{" "}
             <strong className="text-textDark">assistant IA</strong> dans un seul
@@ -442,7 +442,7 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-textDark">
-                    Quotidia Coach
+                    {config.app.name} Coach
                   </p>
                   <p className="text-xs text-sky-500">En ligne</p>
                 </div>
@@ -505,13 +505,13 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
-              Pourquoi Quotidia ?
+              Pourquoi {config.app.name} ?
             </p>
             <h2 className="text-3xl md:text-4xl font-extrabold text-textDark mb-3">
               Une app pour tout remplacer
             </h2>
             <p className="text-textLight">
-              Compare ce que tu obtiens avec Quotidia vs les autres.
+              Compare ce que tu obtiens avec {config.app.name} vs les autres.
             </p>
           </div>
 
@@ -526,7 +526,7 @@ export default function LandingPage() {
                     <div className="inline-flex flex-col items-center gap-1">
                       <span className="text-lg">🌀</span>
                       <span className="text-xs font-bold text-primary">
-                        Quotidia
+                        {config.app.name}
                       </span>
                     </div>
                   </th>
@@ -600,7 +600,7 @@ export default function LandingPage() {
           </div>
 
           <p className="text-center text-xs text-textLight mt-6">
-            Quotidia est la seule app qui combine <strong>tout</strong> dans une
+            {config.app.name} est la seule app qui combine <strong>tout</strong> dans une
             interface moderne et gamifiée.
           </p>
         </div>
@@ -780,8 +780,8 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <span>🌀</span>
-              <span className="font-semibold text-primary">Quotidia</span>
-              <span>— Ton quotidien, en mieux.</span>
+              <span className="font-semibold text-primary">{config.app.name}</span>
+              <span>— {config.app.tagline}</span>
             </div>
             <div className="flex flex-wrap justify-center gap-4">
               <a href="#features" className="hover:text-textDark transition">
@@ -864,7 +864,7 @@ export default function LandingPage() {
             </div>
           </div>
           <p className="text-center w-full">
-            © {new Date().getFullYear()} Quotidia. Tous droits réservés. · Développé par{" "}
+            © {new Date().getFullYear()} {config.app.name}. Tous droits réservés. · Développé par{" "}
             <a
               href="https://devlyn.fr"
               target="_blank"

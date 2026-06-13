@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { config } from "@/lib/config";
 
 const NAV_ITEMS = [
   { href: "/dashboard", icon: "🏠", label: "Accueil" },
@@ -54,7 +55,7 @@ export function Navbar() {
         <div className="px-5 py-6 border-b border-gray-100 dark:border-gray-800">
           <Link href="/dashboard" className="flex items-center gap-2">
             <span className="text-2xl">🌀</span>
-            <span className="font-bold text-lg text-primary">Quotidia</span>
+            <span className="font-bold text-lg text-primary">{config.app.name}</span>
           </Link>
         </div>
 

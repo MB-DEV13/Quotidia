@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { config } from "@/lib/config";
 
 function EyeIcon({ open }: { open: boolean }) {
   return open ? (
@@ -99,7 +100,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex flex-col justify-between w-[480px] flex-shrink-0 bg-gradient-to-br from-primary to-accent p-10 text-white">
         <Link href="/" className="flex items-center gap-2">
           <span className="text-3xl">🌀</span>
-          <span className="font-bold text-xl">Quotidia</span>
+          <span className="font-bold text-xl">{config.app.name}</span>
         </Link>
 
         <div>
@@ -123,7 +124,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-white/40 text-xs">
-          © {new Date().getFullYear()} Quotidia — Gratuit pour commencer
+          © {new Date().getFullYear()} {config.app.name} — {config.app.tagline}
         </p>
       </div>
 
@@ -136,7 +137,7 @@ export default function LoginPage() {
             className="flex items-center justify-center gap-2 mb-8 lg:hidden"
           >
             <span className="text-3xl">🌀</span>
-            <span className="font-bold text-xl text-primary">Quotidia</span>
+            <span className="font-bold text-xl text-primary">{config.app.name}</span>
           </Link>
 
           <div className="bg-white rounded-2xl shadow-card p-8">

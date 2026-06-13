@@ -4,6 +4,7 @@ import { getResend, FROM_EMAIL } from "@/lib/resend";
 import { rateLimitAsync, getIp } from "@/lib/rate-limit";
 import { verifyTurnstile } from "@/lib/turnstile";
 import crypto from "crypto";
+import { config } from "@/lib/config";
 
 export async function POST(req: Request) {
   // 3 demandes max par IP par heure
@@ -56,12 +57,12 @@ export async function POST(req: Request) {
     await getResend().emails.send({
       from: FROM_EMAIL,
       to: email,
-      subject: "Réinitialisation de ton mot de passe — Quotidia",
+      subject: `Réinitialisation de ton mot de passe — ${config.app.name}`,
       html: `
         <div style="font-family: Inter, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px 24px; background: #F5F3FF; border-radius: 16px;">
           <div style="text-align: center; margin-bottom: 24px;">
             <span style="font-size: 32px;">🌀</span>
-            <h1 style="color: #5B5EA6; font-size: 20px; margin: 8px 0 0;">Quotidia</h1>
+            <h1 style="color: #5B5EA6; font-size: 20px; margin: 8px 0 0;">${config.app.name}</h1>
           </div>
           <div style="background: white; border-radius: 16px; padding: 28px;">
             <h2 style="color: #2D2D2D; font-size: 18px; margin: 0 0 12px;">Réinitialisation du mot de passe</h2>
@@ -78,7 +79,7 @@ export async function POST(req: Request) {
             </p>
           </div>
           <p style="color: #bbb; font-size: 11px; text-align: center; margin-top: 20px;">
-            © ${new Date().getFullYear()} Quotidia — Ton quotidien, en mieux.
+            © ${new Date().getFullYear()} ${config.app.name} — ${config.app.tagline}
           </p>
         </div>
       `,

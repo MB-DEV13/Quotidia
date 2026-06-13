@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { openai } from "@/lib/openai";
+import { config } from "@/lib/config";
 import { generateUserContext } from "@/lib/ai-context";
 import { rateLimitAsync } from "@/lib/rate-limit";
 
@@ -48,7 +49,7 @@ export async function GET() {
         {
           role: "system",
           content:
-            "Tu es Quotidia Coach. Génère UNE seule suggestion proactive courte (1-2 phrases max) et motivante en français pour aider l'utilisateur à améliorer son quotidien. Basé sur ses données, identifie le point le plus important à améliorer.",
+            `Tu es ${config.app.name} Coach. Génère UNE seule suggestion proactive courte (1-2 phrases max) et motivante en français pour aider l'utilisateur à améliorer son quotidien. Basé sur ses données, identifie le point le plus important à améliorer.`,
         },
         {
           role: "user",

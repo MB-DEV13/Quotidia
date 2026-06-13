@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { config } from "@/lib/config";
 
 let _resend: Resend | null = null;
 
@@ -9,9 +10,9 @@ export function getResend(): Resend {
   return _resend;
 }
 
-const DOMAIN = "myquotidia.app";
+const DOMAIN = config.app.domain;
 
-export const FROM_EMAIL    = `Quotidia <noreply@${DOMAIN}>`;
-export const FROM_CONTACT  = `Quotidia <contact@${DOMAIN}>`;
-export const FROM_REMINDERS = `Quotidia <rappels@${DOMAIN}>`;
-export const FROM_ALERTS   = `Quotidia <alertes@${DOMAIN}>`;
+export const FROM_EMAIL     = `${config.app.name} <noreply@${DOMAIN}>`;
+export const FROM_CONTACT   = `${config.app.name} <contact@${DOMAIN}>`;
+export const FROM_REMINDERS = `${config.app.name} <rappels@${DOMAIN}>`;
+export const FROM_ALERTS    = `${config.app.name} <alertes@${DOMAIN}>`;

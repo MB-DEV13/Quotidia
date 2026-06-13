@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { config } from "@/lib/config";
 import { AvatarPicker } from "@/components/ui/AvatarPicker";
 import { Avatar } from "@/components/ui/Avatar";
 import { LocationPicker } from "@/components/ui/LocationPicker";
@@ -117,7 +118,7 @@ export default function RegisterPage() {
       <div className="hidden lg:flex flex-col justify-between w-[420px] flex-shrink-0 bg-gradient-to-br from-primary to-accent p-10 text-white">
         <Link href="/" className="flex items-center gap-2">
           <span className="text-3xl">🌀</span>
-          <span className="font-bold text-xl">Quotidia</span>
+          <span className="font-bold text-xl">{config.app.name}</span>
         </Link>
 
         <div>
@@ -138,7 +139,7 @@ export default function RegisterPage() {
         </div>
 
         <p className="text-white/40 text-xs">
-          © {new Date().getFullYear()} Quotidia — Ton quotidien, en mieux.
+          © {new Date().getFullYear()} {config.app.name} — {config.app.tagline}
         </p>
       </div>
 
@@ -149,7 +150,7 @@ export default function RegisterPage() {
           {/* Logo mobile */}
           <Link href="/" className="flex items-center justify-center gap-2 mb-8 lg:hidden">
             <span className="text-3xl">🌀</span>
-            <span className="font-bold text-xl text-primary">Quotidia</span>
+            <span className="font-bold text-xl text-primary">{config.app.name}</span>
           </Link>
 
           <div className="bg-white rounded-2xl shadow-card p-8">
@@ -310,7 +311,7 @@ export default function RegisterPage() {
                       <Link href="/legal/cgu" target="_blank" className="text-primary hover:underline font-medium">CGU</Link>
                       {" "}et la{" "}
                       <Link href="/legal/confidentialite" target="_blank" className="text-primary hover:underline font-medium">politique de confidentialité</Link>
-                      {" "}de Quotidia.
+                      {" "}de {config.app.name}.
                     </span>
                   </label>
 

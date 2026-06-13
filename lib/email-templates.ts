@@ -1,4 +1,5 @@
 // ─── Helpers ───────────────────────────────────────────────────────────────
+import { config } from "@/lib/config";
 
 function base(title: string, body: string): string {
   return `<!DOCTYPE html>
@@ -39,12 +40,12 @@ function base(title: string, body: string): string {
 <body>
   <div class="wrapper">
     <div class="card">
-      <div class="logo">🌀 Quotidia</div>
+      <div class="logo">🌀 ${config.app.name}</div>
       ${body}
     </div>
     <div class="footer">
-      Tu reçois cet email car tu es inscrit sur Quotidia.<br />
-      © ${new Date().getFullYear()} Quotidia — Ton quotidien, en mieux.
+      Tu reçois cet email car tu es inscrit sur ${config.app.name}.<br />
+      © ${new Date().getFullYear()} ${config.app.name} — ${config.app.tagline}
     </div>
   </div>
 </body>
@@ -159,9 +160,9 @@ export function weeklyReportHtml(data: WeeklyReportData): string {
 
 export function verifyEmailHtml(name: string | null, verifyUrl: string): string {
   const firstName = name?.split(" ")[0] ?? "toi";
-  return base("Confirme ton email — Quotidia", `
+  return base(`Confirme ton email — ${config.app.name}`, `
     <h1>Confirme ton adresse email 📧</h1>
-    <p class="subtitle">Bonjour ${firstName} ! Plus qu'une étape pour accéder à Quotidia.</p>
+    <p class="subtitle">Bonjour ${firstName} ! Plus qu'une étape pour accéder à ${config.app.name}.</p>
 
     <div style="background:#F5F3FF;border-radius:12px;padding:24px;margin-bottom:24px;text-align:center;">
       <p style="font-size:14px;color:#444;margin-bottom:20px;line-height:1.6;">
@@ -184,7 +185,7 @@ export function verifyEmailHtml(name: string | null, verifyUrl: string): string 
 
 export function welcomeEmailHtml(name: string | null, appUrl: string): string {
   const firstName = name?.split(" ")[0] ?? "toi";
-  return base("Bienvenue sur Quotidia 🌀", `
+  return base(`Bienvenue sur ${config.app.name} 🌀`, `
     <h1>Bienvenue, ${firstName} ! 🎉</h1>
     <p class="subtitle">Ton compte est prêt — voici par où commencer.</p>
 
@@ -356,8 +357,8 @@ export function monthlyReportHtml(data: MonthlyReportData): string {
 
     <div class="motivation"><p>💬 ${data.motivationMessage}</p></div>
 
-    <div class="cta"><a href="${data.appUrl}/dashboard">Continuer sur Quotidia →</a></div>
+    <div class="cta"><a href="${data.appUrl}/dashboard">Continuer sur ${config.app.name} →</a></div>
   `;
 
-  return base(`Bilan de ${data.monthLabel} — Quotidia`, body);
+  return base(`Bilan de ${data.monthLabel} — ${config.app.name}`, body);
 }

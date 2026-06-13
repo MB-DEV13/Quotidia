@@ -266,7 +266,7 @@ export function SettingsTabs({ user, badges, bankConnection }: SettingsTabsProps
 
           <div className="bg-white rounded-2xl shadow-soft p-5 text-center">
             <p className="text-sm font-semibold text-textDark mb-1">Suis-nous sur les réseaux</p>
-            <p className="text-xs text-textLight mb-4">Actualités, conseils et nouveautés Quotidia.</p>
+            <p className="text-xs text-textLight mb-4">Actualités, conseils et nouveautés {config.app.name}.</p>
             <div className="flex items-center justify-center gap-3">
               <a href={config.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram"
                 className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 text-purple-600 hover:from-purple-500/20 hover:to-pink-500/20 transition text-sm font-medium">

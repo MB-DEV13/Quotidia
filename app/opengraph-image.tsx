@@ -1,7 +1,8 @@
 import { ImageResponse } from "next/og";
+import { config } from "@/lib/config";
 
 export const runtime = "edge";
-export const alt = "Quotidia — Ton quotidien, en mieux.";
+export const alt = `${config.app.name} — ${config.app.tagline}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -50,7 +51,7 @@ export default function OGImage() {
         <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "24px" }}>
           <span style={{ fontSize: "64px" }}>🌀</span>
           <span style={{ fontSize: "56px", fontWeight: 800, color: "white", letterSpacing: "-2px" }}>
-            Quotidia
+            {config.app.name}
           </span>
         </div>
 
@@ -64,7 +65,7 @@ export default function OGImage() {
             fontWeight: 400,
           }}
         >
-          Ton quotidien, en mieux.
+          {config.app.tagline}
         </p>
 
         {/* Pills features */}
@@ -99,7 +100,7 @@ export default function OGImage() {
             fontSize: "18px",
           }}
         >
-          myquotidia.app
+          {config.app.domain}
         </p>
       </div>
     ),

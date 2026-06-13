@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { config } from "@/lib/config";
 
 interface OnboardingModalProps {
   isOpen: boolean;
@@ -12,7 +13,7 @@ interface OnboardingModalProps {
 const INTRO_STEPS = [
   {
     icon: "🎉",
-    title: "Bienvenue sur Quotidia !",
+    title: `Bienvenue sur ${config.app.name} !`,
     content:
       "Ton dashboard de vie personnel qui réunit habitudes, budget, objectifs et assistant IA. En quelques secondes, on te montre comment ça marche.",
   },

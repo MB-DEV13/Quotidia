@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { config } from "@/lib/config";
 
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);
@@ -29,7 +30,7 @@ export function CookieBanner() {
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-textDark mb-1">🍪 Nous utilisons des cookies</p>
           <p className="text-xs text-textLight leading-relaxed">
-            Quotidia utilise des cookies essentiels au fonctionnement du site (session, authentification) et des cookies analytiques anonymes pour améliorer l&apos;expérience.{" "}
+            {config.app.name} utilise des cookies essentiels au fonctionnement du site (session, authentification) et des cookies analytiques anonymes pour améliorer l&apos;expérience.{" "}
             <Link href="/legal/confidentialite" className="text-primary underline hover:no-underline">
               En savoir plus
             </Link>

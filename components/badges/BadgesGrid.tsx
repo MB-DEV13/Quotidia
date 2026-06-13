@@ -1,6 +1,7 @@
 "use client";
 
 import { formatDate } from "@/lib/utils";
+import { config } from "@/lib/config";
 
 interface BadgeItem {
   name: string;
@@ -77,7 +78,7 @@ export function BadgesGrid({ badges }: BadgesGridProps) {
         <div className="bg-white rounded-2xl shadow-soft p-8 text-center">
           <p className="text-3xl mb-2">🏅</p>
           <p className="text-textLight text-sm">
-            Commence à utiliser Quotidia pour débloquer des badges !
+            Commence à utiliser {config.app.name} pour débloquer des badges !
           </p>
         </div>
       )}

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { config } from "@/lib/config";
 
 export function LandingNav() {
   return (
@@ -12,7 +13,7 @@ export function LandingNav() {
           aria-label="Retour en haut"
         >
           <span className="text-2xl">🌀</span>
-          <span className="font-bold text-lg text-[#5B5EA6]">Quotidia</span>
+          <span className="font-bold text-lg text-[#5B5EA6]">{config.app.name}</span>
         </button>
         <nav className="hidden md:flex items-center gap-6 text-sm text-[#888888]">
           <a href="#features" className="hover:text-[#2D2D2D] transition">Fonctionnalités</a>

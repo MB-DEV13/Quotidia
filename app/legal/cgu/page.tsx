@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { config } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "Conditions Générales d'Utilisation",
-  description: "CGU de Quotidia — conditions d'utilisation du service, plan gratuit et Premium à 4,99€/mois.",
+  description: `CGU de ${config.app.name} — conditions d'utilisation du service, plan gratuit et Premium à 4,99€/mois.`,
 };
 
 export default function CguPage() {
@@ -22,13 +23,13 @@ export default function CguPage() {
           <section>
             <h2 className="text-lg font-bold mb-3">1. Objet</h2>
             <p>
-              Les présentes conditions générales régissent l&apos;utilisation du service Quotidia, accessible à <strong>quotidia.app</strong>, ainsi que la souscription à l&apos;abonnement Premium. En créant un compte, vous acceptez l&apos;intégralité des présentes conditions.
+              Les présentes conditions générales régissent l&apos;utilisation du service {config.app.name}, accessible à <strong>{config.app.domain}</strong>, ainsi que la souscription à l&apos;abonnement Premium. En créant un compte, vous acceptez l&apos;intégralité des présentes conditions.
             </p>
           </section>
 
           <section>
             <h2 className="text-lg font-bold mb-3">2. Description du service</h2>
-            <p className="mb-2">Quotidia est un dashboard de vie personnel qui propose :</p>
+            <p className="mb-2">{config.app.name} est un dashboard de vie personnel qui propose :</p>
             <ul className="space-y-1 text-textLight pl-4 border-l-2 border-gray-100">
               <li>Suivi d&apos;habitudes avec système de streaks et gamification</li>
               <li>Gestion de budget et dépenses</li>
@@ -41,7 +42,7 @@ export default function CguPage() {
           <section>
             <h2 className="text-lg font-bold mb-3">3. Compte utilisateur</h2>
             <p>
-              L&apos;inscription est gratuite. Vous êtes responsable de la confidentialité de vos identifiants. Tout accès via votre compte est réputé effectué par vous. Quotidia se réserve le droit de suspendre tout compte en cas de comportement abusif, fraude ou violation des présentes conditions.
+              L&apos;inscription est gratuite. Vous êtes responsable de la confidentialité de vos identifiants. Tout accès via votre compte est réputé effectué par vous. {config.app.name} se réserve le droit de suspendre tout compte en cas de comportement abusif, fraude ou violation des présentes conditions.
             </p>
           </section>
 
@@ -73,27 +74,27 @@ export default function CguPage() {
             </p>
             <h3 className="font-semibold mb-2 text-textDark">5.3 Droit de rétractation</h3>
             <p className="text-textLight">
-              Conformément à l&apos;article L221-28 du Code de la consommation, le droit de rétractation de 14 jours ne s&apos;applique pas aux services numériques dont l&apos;exécution a commencé avec votre accord avant l&apos;expiration du délai. Si vous souhaitez exercer ce droit avant toute utilisation, contactez-nous à <a href="mailto:contact@quotidia.app" className="text-primary hover:underline">contact@quotidia.app</a>.
+              Conformément à l&apos;article L221-28 du Code de la consommation, le droit de rétractation de 14 jours ne s&apos;applique pas aux services numériques dont l&apos;exécution a commencé avec votre accord avant l&apos;expiration du délai. Si vous souhaitez exercer ce droit avant toute utilisation, contactez-nous à <a href={`mailto:contact@${config.app.domain}`} className="text-primary hover:underline">contact@{config.app.domain}</a>.
             </p>
           </section>
 
           <section>
             <h2 className="text-lg font-bold mb-3">6. Disponibilité du service</h2>
             <p>
-              Quotidia s&apos;efforce d&apos;assurer une disponibilité maximale du service. Des interruptions peuvent survenir pour maintenance ou raisons techniques. Aucune indemnisation ne sera due pour les interruptions de service inférieures à 72 heures consécutives.
+              {config.app.name} s&apos;efforce d&apos;assurer une disponibilité maximale du service. Des interruptions peuvent survenir pour maintenance ou raisons techniques. Aucune indemnisation ne sera due pour les interruptions de service inférieures à 72 heures consécutives.
             </p>
           </section>
 
           <section>
             <h2 className="text-lg font-bold mb-3">7. Données utilisateur</h2>
             <p>
-              Vous restez propriétaire de vos données. Vous pouvez les exporter (Premium) ou supprimer votre compte à tout moment. En cas de fermeture de Quotidia, vous serez informé 30 jours à l&apos;avance pour récupérer vos données.
+              Vous restez propriétaire de vos données. Vous pouvez les exporter (Premium) ou supprimer votre compte à tout moment. En cas de fermeture de {config.app.name}, vous serez informé 30 jours à l&apos;avance pour récupérer vos données.
             </p>
           </section>
 
           <section>
             <h2 className="text-lg font-bold mb-3">8. Utilisation acceptable</h2>
-            <p className="mb-2">Il est interdit d&apos;utiliser Quotidia pour :</p>
+            <p className="mb-2">Il est interdit d&apos;utiliser {config.app.name} pour :</p>
             <ul className="space-y-1 text-textLight pl-4 border-l-2 border-gray-100">
               <li>Tout usage illégal ou frauduleux</li>
               <li>Tenter d&apos;accéder aux données d&apos;autres utilisateurs</li>
@@ -105,7 +106,7 @@ export default function CguPage() {
           <section>
             <h2 className="text-lg font-bold mb-3">9. Limitation de responsabilité</h2>
             <p>
-              Quotidia est un outil d&apos;aide à l&apos;organisation personnelle. Les conseils de l&apos;assistant IA sont fournis à titre indicatif et ne constituent pas un avis médical, financier ou juridique professionnel. La responsabilité de Quotidia ne saurait excéder le montant des sommes versées au cours des 3 derniers mois.
+              {config.app.name} est un outil d&apos;aide à l&apos;organisation personnelle. Les conseils de l&apos;assistant IA sont fournis à titre indicatif et ne constituent pas un avis médical, financier ou juridique professionnel. La responsabilité de {config.app.name} ne saurait excéder le montant des sommes versées au cours des 3 derniers mois.
             </p>
           </section>
 
