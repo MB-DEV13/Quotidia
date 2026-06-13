@@ -9,8 +9,8 @@ const onboardingSchema = z.object({
   region: z.string().max(100).optional().nullable(),
   city: z.string().max(100).optional().nullable(),
   showInLeaderboard: z.boolean().optional(),
-  avatar: z.string().max(500).refine(
-    (v) => !v || v.startsWith("preset:") || /^https:\/\/.+/.test(v),
+  avatar: z.string().max(200000).refine(
+    (v) => !v || v.startsWith("preset:") || v.startsWith("emoji:") || v.startsWith("data:image/") || /^https:\/\/.+/.test(v),
     { message: "Avatar invalide" }
   ).optional(),
 }).optional();
