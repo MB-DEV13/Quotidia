@@ -127,13 +127,19 @@ export async function checkAndAwardBadges(userId: string): Promise<{ name: strin
     const newBadges: { name: string; icon: string }[] = [];
     let xpBonus = 0;
     for (const badge of badgesToAward) {
-      await db.userBadge.upsert({
-        where: { userId_badgeId: { userId, badgeId: badge.id } },
-        create: { userId, badgeId: badge.id },
-        update: {},
-      });
-      xpBonus += badge.xpReward;
-      newBadges.push({ name: badge.name, icon: badge.icon });
+      try {
+        await db.userBadge.upsert({
+          where: { userId_badgeId: { userId, badgeId: badge.id } },
+          create: { userId, badgeId: badge.id },
+          update: {},
+        });
+        xpBonus += badge.xpReward;
+        newBadges.push({ name: badge.name, icon: badge.icon });
+      } catch (upsertErr) {
+        // P2003 = FK violation (race condition pgBouncer) — on ignore et on continue
+        const code = (upsertErr as { code?: string }).code;
+        if (code !== "P2003") throw upsertErr;
+      }
     }
 
     if (xpBonus > 0) {
