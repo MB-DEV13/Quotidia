@@ -25,19 +25,19 @@ const registerSchema = z.object({
 });
 
 export async function POST(req: Request) {
-  // 5 inscriptions max par IP par 15 minutes
-  const { allowed, retryAfterMs } = await rateLimitAsync(`register:${getIp(req)}`, 5, 15 * 60 * 1000);
-  if (!allowed) {
-    return NextResponse.json(
-      { success: false, error: "Trop de tentatives. Réessaie dans quelques minutes." },
-      {
-        status: 429,
-        headers: { "Retry-After": String(Math.ceil(retryAfterMs / 1000)) },
-      }
-    );
-  }
-
   try {
+    // 5 inscriptions max par IP par 15 minutes
+    const { allowed, retryAfterMs } = await rateLimitAsync(`register:${getIp(req)}`, 5, 15 * 60 * 1000);
+    if (!allowed) {
+      return NextResponse.json(
+        { success: false, error: "Trop de tentatives. Réessaie dans quelques minutes." },
+        {
+          status: 429,
+          headers: { "Retry-After": String(Math.ceil(retryAfterMs / 1000)) },
+        }
+      );
+    }
+
     const body = await req.json();
     const parsed = registerSchema.safeParse(body);
 
