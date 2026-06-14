@@ -25,9 +25,6 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
-  turbopack: {
-    root: __dirname,
-  },
   outputFileTracingRoot: __dirname,
   // Compression Gzip/Brotli pour tous les assets
   compress: true,

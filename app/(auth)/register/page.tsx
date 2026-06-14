@@ -93,22 +93,32 @@ export default function RegisterPage() {
     setError("");
     setLoading(true);
 
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password, avatar, country, region, city, showInLeaderboard, turnstileToken }),
-    });
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, avatar, country, region, city, showInLeaderboard, turnstileToken }),
+      });
 
-    const data = await res.json();
+      let data: { error?: string } = {};
+      try {
+        data = await res.json();
+      } catch {
+        // Le serveur a renvoyé du HTML (erreur 500 non-JSON)
+      }
 
-    if (!res.ok) {
-      setError(data.error || "Une erreur est survenue.");
+      if (!res.ok) {
+        setError(data.error || `Erreur serveur (${res.status}). Vérifie la console du serveur.`);
+        setLoading(false);
+        setStep(1);
+        return;
+      }
+
+      router.push(`/check-email?email=${encodeURIComponent(email)}`);
+    } catch {
+      setError("Erreur réseau. Vérifie ta connexion et réessaie.");
       setLoading(false);
-      setStep(1);
-      return;
     }
-
-    router.push(`/check-email?email=${encodeURIComponent(email)}`);
   }
 
   return (
