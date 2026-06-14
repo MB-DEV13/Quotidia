@@ -5,8 +5,26 @@ import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 
+// Le PrismaAdapter standard attend un champ `image` sur User,
+// mais notre schéma utilise `avatar`. On surcharge createUser pour mapper les deux.
+const prismaAdapter = PrismaAdapter(db);
+const customAdapter = {
+  ...prismaAdapter,
+  async createUser(user: { name?: string | null; email: string; emailVerified: Date | null; image?: string | null }) {
+    const created = await db.user.create({
+      data: {
+        name: user.name,
+        email: user.email,
+        emailVerified: user.emailVerified,
+        avatar: user.image ?? "preset:1",
+      },
+    });
+    return { ...created, image: created.avatar ?? null };
+  },
+};
+
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(db) as NextAuthOptions["adapter"],
+  adapter: customAdapter as NextAuthOptions["adapter"],
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 jours
