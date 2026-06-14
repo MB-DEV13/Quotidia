@@ -99,7 +99,11 @@ export async function rateLimitAsync(
   windowMs: number
 ): Promise<{ allowed: boolean; remaining: number; retryAfterMs: number }> {
   if (hasUpstash()) {
-    return rateLimitRedis(key, limit, windowMs);
+    try {
+      return await rateLimitRedis(key, limit, windowMs);
+    } catch (err) {
+      console.warn("[RATE_LIMIT] Redis indisponible, fallback mémoire:", err);
+    }
   }
   return rateLimitMemory(key, limit, windowMs);
 }
