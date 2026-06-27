@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { config } from "@/lib/config";
 
 function EyeIcon({ open }: { open: boolean }) {
@@ -43,15 +44,14 @@ function EyeIcon({ open }: { open: boolean }) {
   );
 }
 
-const PERKS = [
-  { icon: "✅", text: "Habitudes & streaks quotidiens" },
-  { icon: "💰", text: "Budget et dépenses en un coup d'œil" },
-  { icon: "🎯", text: "Objectifs avec progression visuelle" },
-  { icon: "🤖", text: "Coach IA personnalisé GPT-4o" },
-  { icon: "🏆", text: "Gamification XP, niveaux & badges" },
-];
-
 export default function LoginPage() {
+  const t = useTranslations("auth.login");
+  const tCommon = useTranslations("auth.common");
+
+  const PERK_ICONS = ["✅", "💰", "🎯", "🤖", "🏆"];
+  const perkTexts = t.raw("perks") as Array<{ text: string }>;
+  const PERKS = PERK_ICONS.map((icon, i) => ({ icon, text: perkTexts[i].text }));
+
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -65,11 +65,11 @@ export default function LoginPage() {
     const params = new URLSearchParams(window.location.search);
     const err = params.get("error");
     const verified = params.get("verified");
-    if (verified === "true") setSuccessMessage("Email vérifié ! Tu peux maintenant te connecter.");
-    else if (verified === "already") setSuccessMessage("Email déjà vérifié. Connecte-toi.");
-    else if (err === "EmailNotVerified") setError("Vérifie ton email avant de te connecter. Consulte ta boite mail.");
-    else if (err === "verification_expired") setError("Le lien de vérification a expiré. Inscris-toi à nouveau ou demande un nouveau lien.");
-    else if (err === "verification_invalid") setError("Lien de vérification invalide.");
+    if (verified === "true") setSuccessMessage(t("success.emailVerified"));
+    else if (verified === "already") setSuccessMessage(t("success.alreadyVerified"));
+    else if (err === "EmailNotVerified") setError(t("errors.emailNotVerified"));
+    else if (err === "verification_expired") setError(t("errors.verificationExpired"));
+    else if (err === "verification_invalid") setError(t("errors.verificationInvalid"));
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -86,7 +86,7 @@ export default function LoginPage() {
     setLoading(false);
 
     if (result?.error) {
-      setError("Email ou mot de passe incorrect.");
+      setError(t("errors.invalidCredentials"));
       setShake(true);
       setTimeout(() => setShake(false), 500);
     } else {
@@ -105,13 +105,10 @@ export default function LoginPage() {
 
         <div>
           <h2 className="text-3xl font-extrabold leading-tight mb-4">
-            Ton quotidien,
-            <br />
-            en mieux.
+            {t("sideTitle")}
           </h2>
           <p className="text-white/70 text-sm mb-8 leading-relaxed">
-            Un seul dashboard pour suivre tes habitudes, ton budget, tes
-            objectifs et être coaché par l&apos;IA.
+            {t("sideSubtitle")}
           </p>
           <ul className="space-y-3">
             {PERKS.map((p) => (
@@ -141,8 +138,8 @@ export default function LoginPage() {
           </Link>
 
           <div className="bg-white rounded-2xl shadow-card p-8">
-            <h1 className="text-2xl font-bold text-textDark mb-1">Connexion</h1>
-            <p className="text-textLight text-sm mb-6">Ravi de te revoir !</p>
+            <h1 className="text-2xl font-bold text-textDark mb-1">{t("title")}</h1>
+            <p className="text-textLight text-sm mb-6">{t("subtitle")}</p>
 
             {successMessage && (
               <div className="text-sm text-success bg-success/10 p-3 rounded-xl mb-4 font-medium">
@@ -173,12 +170,12 @@ export default function LoginPage() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              Continuer avec Google
+              {tCommon("continueWithGoogle")}
             </button>
 
             <div className="flex items-center gap-3 mb-4">
               <div className="flex-1 h-px bg-gray-200" />
-              <span className="text-xs text-textLight">ou</span>
+              <span className="text-xs text-textLight">{tCommon("or")}</span>
               <div className="flex-1 h-px bg-gray-200" />
             </div>
 
@@ -199,7 +196,7 @@ export default function LoginPage() {
                   htmlFor="email"
                   className="block text-sm font-medium text-textDark mb-1"
                 >
-                  Email
+                  {tCommon("emailLabel")}
                 </label>
                 <input
                   id="email"
@@ -209,7 +206,7 @@ export default function LoginPage() {
                   required
                   autoComplete="email"
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
-                  placeholder="toi@example.com"
+                  placeholder={tCommon("emailPlaceholder")}
                 />
               </div>
 
@@ -219,13 +216,13 @@ export default function LoginPage() {
                     htmlFor="password"
                     className="block text-sm font-medium text-textDark"
                   >
-                    Mot de passe
+                    {tCommon("passwordLabel")}
                   </label>
                   <Link
                     href="/forgot-password"
                     className="text-xs text-primary hover:underline"
                   >
-                    Mot de passe oublié ?
+                    {t("forgotPassword")}
                   </Link>
                 </div>
                 <div className="relative">
@@ -245,8 +242,8 @@ export default function LoginPage() {
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-textLight hover:text-textDark transition"
                     aria-label={
                       showPassword
-                        ? "Masquer le mot de passe"
-                        : "Afficher le mot de passe"
+                        ? tCommon("hidePassword")
+                        : tCommon("showPassword")
                     }
                   >
                     <EyeIcon open={showPassword} />
@@ -262,21 +259,21 @@ export default function LoginPage() {
                 {loading ? (
                   <>
                     <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Connexion...
+                    {t("submitting")}
                   </>
                 ) : (
-                  "Se connecter"
+                  t("submit")
                 )}
               </button>
             </form>
 
             <p className="text-center text-sm text-textLight mt-6">
-              Pas encore de compte ?{" "}
+              {t("noAccount")}{" "}
               <Link
                 href="/register"
                 className="text-primary font-medium hover:underline"
               >
-                S&apos;inscrire gratuitement
+                {t("register")}
               </Link>
             </p>
           </div>

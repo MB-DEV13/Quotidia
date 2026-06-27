@@ -6,31 +6,31 @@ import { signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { config } from "@/lib/config";
-
-const NAV_ITEMS = [
-  { href: "/dashboard", icon: "🏠", label: "Accueil" },
-  { href: "/habits", icon: "✅", label: "Habitudes" },
-  { href: "/budget", icon: "💰", label: "Budget" },
-  { href: "/goals", icon: "🎯", label: "Objectifs" },
-  { href: "/classement", icon: "🏆", label: "Classement" },
-  { href: "/stats", icon: "📊", label: "Stats" },
-  { href: "/bilan", icon: "📋", label: "Bilan" },
-];
-
-// Items affichés dans la bottom nav mobile (5 premiers)
-const MOBILE_MAIN = NAV_ITEMS.slice(0, 5);
-
-// Items dans le sous-menu "Plus"
-const MORE_ITEMS = [
-  { href: "/stats", icon: "📊", label: "Stats" },
-  { href: "/bilan", icon: "📋", label: "Bilan" },
-  { href: "/settings", icon: "⚙️", label: "Réglages" },
-];
+import { useTranslations } from "next-intl";
 
 export function Navbar() {
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations("navbar");
+
+  const NAV_ITEMS = [
+    { href: "/dashboard", icon: "🏠", label: t("home") },
+    { href: "/habits", icon: "✅", label: t("habits") },
+    { href: "/budget", icon: "💰", label: t("budget") },
+    { href: "/goals", icon: "🎯", label: t("goals") },
+    { href: "/classement", icon: "🏆", label: t("leaderboard") },
+    { href: "/stats", icon: "📊", label: t("stats") },
+    { href: "/bilan", icon: "📋", label: t("bilan") },
+  ];
+
+  const MOBILE_MAIN = NAV_ITEMS.slice(0, 5);
+
+  const MORE_ITEMS = [
+    { href: "/stats", icon: "📊", label: t("stats") },
+    { href: "/bilan", icon: "📋", label: t("bilan") },
+    { href: "/settings", icon: "⚙️", label: t("settings") },
+  ];
 
   // Ferme le menu si clic en dehors
   useEffect(() => {
@@ -89,14 +89,14 @@ export function Navbar() {
             }`}
           >
             <span>⚙️</span>
-            <span>Paramètres</span>
+            <span>{t("settingsLabel")}</span>
           </Link>
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-textLight hover:bg-red-50 hover:text-danger transition-all"
           >
             <span>🚪</span>
-            <span>Déconnexion</span>
+            <span>{t("signOut")}</span>
           </button>
         </div>
       </aside>
@@ -128,7 +128,7 @@ export function Navbar() {
             }`}
           >
             <span className="text-lg">•••</span>
-            <span>Plus</span>
+            <span>{t("more")}</span>
           </button>
 
           {/* Bulle sous-menu */}

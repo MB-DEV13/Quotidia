@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { config } from "@/lib/config";
 import { AvatarPicker } from "@/components/ui/AvatarPicker";
 import { Avatar } from "@/components/ui/Avatar";
@@ -23,20 +24,19 @@ function EyeIcon({ open }: { open: boolean }) {
   );
 }
 
-const STEPS = [
-  { num: 1, label: "Ton compte" },
-  { num: 2, label: "Ton profil" },
-];
-
-const PERKS = [
-  { icon: "🚀", text: "Inscription gratuite, sans carte bancaire" },
-  { icon: "✅", text: "Habitudes & streaks dès le premier jour" },
-  { icon: "🏆", text: "Classement mondial et badges" },
-  { icon: "🤖", text: "Coach IA personnel inclus" },
-  { icon: "🔒", text: "Tes données restent privées" },
-];
-
 export default function RegisterPage() {
+  const t = useTranslations("auth.register");
+  const tCommon = useTranslations("auth.common");
+
+  const STEPS = [
+    { num: 1, label: t("step1") },
+    { num: 2, label: t("step2") },
+  ];
+
+  const PERK_ICONS = ["🚀", "✅", "🏆", "🤖", "🔒"];
+  const perkTexts = t.raw("perks") as Array<{ text: string }>;
+  const PERKS = PERK_ICONS.map((icon, i) => ({ icon, text: perkTexts[i].text }));
+
   const router = useRouter();
   const [step, setStep] = useState(1);
 
@@ -62,7 +62,7 @@ export default function RegisterPage() {
 
   const passwordStrength =
     password.length === 0 ? 0 : password.length < 8 ? 1 : password.length < 12 ? 2 : 3;
-  const strengthLabel = ["", "Trop court", "Correct", "Fort"];
+  const strengthLabel = ["", tCommon("strength.tooShort"), tCommon("strength.ok"), tCommon("strength.strong")];
   const strengthColor = ["", "bg-danger", "bg-warning", "bg-success"];
   const strengthText = ["", "text-danger", "text-warning", "text-success"];
 
@@ -70,19 +70,19 @@ export default function RegisterPage() {
     e.preventDefault();
     setError("");
     if (password !== confirm) {
-      setError("Les mots de passe ne correspondent pas.");
+      setError(t("errors.passwordsMismatch"));
       return;
     }
     if (password.length < 8) {
-      setError("Le mot de passe doit contenir au moins 8 caractères.");
+      setError(t("errors.passwordTooShort"));
       return;
     }
     if (!acceptCgu) {
-      setError("Tu dois accepter les CGU pour continuer.");
+      setError(t("errors.cguRequired"));
       return;
     }
     if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !turnstileToken) {
-      setError("Valide le captcha pour continuer.");
+      setError(t("errors.captchaRequired"));
       return;
     }
     setStep(2);
@@ -108,7 +108,7 @@ export default function RegisterPage() {
       }
 
       if (!res.ok) {
-        setError(data.error || `Erreur serveur (${res.status}). Vérifie la console du serveur.`);
+        setError(data.error || t("errors.serverError", { status: res.status }));
         setLoading(false);
         setStep(1);
         return;
@@ -116,7 +116,7 @@ export default function RegisterPage() {
 
       router.push(`/check-email?email=${encodeURIComponent(email)}`);
     } catch {
-      setError("Erreur réseau. Vérifie ta connexion et réessaie.");
+      setError(t("errors.networkError"));
       setLoading(false);
     }
   }
@@ -133,10 +133,10 @@ export default function RegisterPage() {
 
         <div>
           <h2 className="text-3xl font-extrabold leading-tight mb-4">
-            Commence<br />gratuitement.
+            {t("sideTitle")}
           </h2>
           <p className="text-white/70 text-sm mb-8 leading-relaxed">
-            Rejoins des milliers d&apos;utilisateurs qui ont transformé leurs habitudes et leur quotidien.
+            {t("sideSubtitle")}
           </p>
           <ul className="space-y-3">
             {PERKS.map((p) => (
@@ -189,8 +189,8 @@ export default function RegisterPage() {
             {/* ── ÉTAPE 1 ── */}
             {step === 1 ? (
               <>
-                <h1 className="text-2xl font-bold text-textDark mb-1">Créer un compte</h1>
-                <p className="text-textLight text-sm mb-6">Commence à suivre ton quotidien dès maintenant.</p>
+                <h1 className="text-2xl font-bold text-textDark mb-1">{t("title")}</h1>
+                <p className="text-textLight text-sm mb-6">{t("subtitle")}</p>
 
                 {/* Google */}
                 <button
@@ -203,12 +203,12 @@ export default function RegisterPage() {
                     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                     <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                   </svg>
-                  Continuer avec Google
+                  {tCommon("continueWithGoogle")}
                 </button>
 
                 <div className="flex items-center gap-3 mb-4">
                   <div className="flex-1 h-px bg-gray-200" />
-                  <span className="text-xs text-textLight">ou</span>
+                  <span className="text-xs text-textLight">{tCommon("or")}</span>
                   <div className="flex-1 h-px bg-gray-200" />
                 </div>
 
@@ -217,30 +217,30 @@ export default function RegisterPage() {
 
                   {/* Prénom */}
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-textDark mb-1">Prénom</label>
+                    <label htmlFor="name" className="block text-sm font-medium text-textDark mb-1">{t("firstNameLabel")}</label>
                     <input
                       id="name" type="text" value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
-                      placeholder="Alex"
+                      placeholder={t("firstNamePlaceholder")}
                     />
                   </div>
 
                   {/* Email */}
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-textDark mb-1">Email</label>
+                    <label htmlFor="email" className="block text-sm font-medium text-textDark mb-1">{tCommon("emailLabel")}</label>
                     <input
                       id="email" type="email" value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required autoComplete="email"
                       className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
-                      placeholder="toi@example.com"
+                      placeholder={tCommon("emailPlaceholder")}
                     />
                   </div>
 
                   {/* Mot de passe */}
                   <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-textDark mb-1">Mot de passe</label>
+                    <label htmlFor="password" className="block text-sm font-medium text-textDark mb-1">{tCommon("passwordLabel")}</label>
                     <div className="relative">
                       <input
                         id="password"
@@ -249,11 +249,11 @@ export default function RegisterPage() {
                         onChange={(e) => setPassword(e.target.value)}
                         required minLength={8} autoComplete="new-password"
                         className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-11 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
-                        placeholder="8 caractères minimum"
+                        placeholder={tCommon("passwordMin")}
                       />
                       <button type="button" onClick={() => setShowPassword((v) => !v)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-textLight hover:text-textDark transition"
-                        aria-label={showPassword ? "Masquer" : "Afficher"}>
+                        aria-label={showPassword ? tCommon("hide") : tCommon("show")}>
                         <EyeIcon open={showPassword} />
                       </button>
                     </div>
@@ -274,7 +274,7 @@ export default function RegisterPage() {
 
                   {/* Confirmer le mot de passe */}
                   <div>
-                    <label htmlFor="confirm" className="block text-sm font-medium text-textDark mb-1">Confirmer le mot de passe</label>
+                    <label htmlFor="confirm" className="block text-sm font-medium text-textDark mb-1">{t("confirmPasswordLabel")}</label>
                     <div className="relative">
                       <input
                         id="confirm"
@@ -283,19 +283,19 @@ export default function RegisterPage() {
                         onChange={(e) => setConfirm(e.target.value)}
                         required autoComplete="new-password"
                         className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-11 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
-                        placeholder="Répète ton mot de passe"
+                        placeholder={t("confirmPasswordPlaceholder")}
                       />
                       <button type="button" onClick={() => setShowConfirm((v) => !v)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-textLight hover:text-textDark transition"
-                        aria-label={showConfirm ? "Masquer" : "Afficher"}>
+                        aria-label={showConfirm ? tCommon("hide") : tCommon("show")}>
                         <EyeIcon open={showConfirm} />
                       </button>
                     </div>
                     {confirm.length > 0 && password !== confirm && (
-                      <p className="text-xs text-danger mt-1">Les mots de passe ne correspondent pas.</p>
+                      <p className="text-xs text-danger mt-1">{t("passwordsMismatch")}</p>
                     )}
                     {confirm.length > 0 && password === confirm && password.length >= 8 && (
-                      <p className="text-xs text-success mt-1">✓ Les mots de passe correspondent.</p>
+                      <p className="text-xs text-success mt-1">{t("passwordsMatch")}</p>
                     )}
                   </div>
 
@@ -317,11 +317,11 @@ export default function RegisterPage() {
                       </div>
                     </div>
                     <span className="text-xs text-textLight leading-relaxed">
-                      J&apos;accepte les{" "}
-                      <Link href="/legal/cgu" target="_blank" className="text-primary hover:underline font-medium">CGU</Link>
-                      {" "}et la{" "}
-                      <Link href="/legal/confidentialite" target="_blank" className="text-primary hover:underline font-medium">politique de confidentialité</Link>
-                      {" "}de {config.app.name}.
+                      {t("cguAccept")}{" "}
+                      <Link href="/legal/cgu" target="_blank" className="text-primary hover:underline font-medium">{t("cgu")}</Link>
+                      {" "}{t("and")}{" "}
+                      <Link href="/legal/confidentialite" target="_blank" className="text-primary hover:underline font-medium">{t("privacy")}</Link>
+                      {" "}{t("of")} {config.app.name}.
                     </span>
                   </label>
 
@@ -335,21 +335,21 @@ export default function RegisterPage() {
                     type="submit"
                     className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-xl transition"
                   >
-                    Continuer → Ton profil
+                    {t("continueToProfile")}
                   </button>
                 </form>
 
                 <p className="text-center text-sm text-textLight mt-6">
-                  Déjà un compte ?{" "}
-                  <Link href="/login" className="text-primary font-medium hover:underline">Se connecter</Link>
+                  {t("alreadyAccount")}{" "}
+                  <Link href="/login" className="text-primary font-medium hover:underline">{t("signIn")}</Link>
                 </p>
               </>
 
             ) : (
               /* ── ÉTAPE 2 ── */
               <>
-                <h1 className="text-2xl font-bold text-textDark mb-1">Ton profil</h1>
-                <p className="text-textLight text-sm mb-6">Personnalise ton compte — modifiable plus tard dans les paramètres.</p>
+                <h1 className="text-2xl font-bold text-textDark mb-1">{t("profileTitle")}</h1>
+                <p className="text-textLight text-sm mb-6">{t("profileSubtitle")}</p>
 
                 <form onSubmit={handleStep2} className="space-y-5">
                   {error && <p className="text-sm text-danger bg-red-50 p-3 rounded-xl">{error}</p>}
@@ -359,8 +359,8 @@ export default function RegisterPage() {
                     <div className="flex items-center gap-3 mb-3">
                       <Avatar avatar={avatar} name={name} size="lg" />
                       <div>
-                        <p className="text-sm font-semibold text-textDark">Choisis ton avatar</p>
-                        <p className="text-xs text-textLight">6 presets ou lien image</p>
+                        <p className="text-sm font-semibold text-textDark">{t("chooseAvatar")}</p>
+                        <p className="text-xs text-textLight">{t("avatarHint")}</p>
                       </div>
                     </div>
                     <AvatarPicker value={avatar} onChange={setAvatar} />
@@ -369,7 +369,7 @@ export default function RegisterPage() {
                   {/* Localisation */}
                   <div>
                     <p className="text-sm font-semibold text-textDark mb-3">
-                      Localisation <span className="text-textLight font-normal">(pour le classement)</span>
+                      {t("locationLabel")} <span className="text-textLight font-normal">{t("locationHint")}</span>
                     </p>
                     <LocationPicker
                       country={country} setCountry={setCountry}
@@ -384,8 +384,8 @@ export default function RegisterPage() {
                     className="w-full flex items-center justify-between bg-gray-50 hover:bg-gray-100 rounded-xl p-4 transition"
                   >
                     <div className="text-left">
-                      <p className="text-sm font-medium text-textDark">Apparaître dans le classement</p>
-                      <p className="text-xs text-textLight mt-0.5">Comparaison avec les autres joueurs</p>
+                      <p className="text-sm font-medium text-textDark">{t("leaderboardLabel")}</p>
+                      <p className="text-xs text-textLight mt-0.5">{t("leaderboardHint")}</p>
                     </div>
                     <div className={`w-11 h-6 rounded-full transition-colors flex items-center px-0.5 flex-shrink-0 ml-4 ${showInLeaderboard ? "bg-primary" : "bg-gray-300"}`}>
                       <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${showInLeaderboard ? "translate-x-5" : "translate-x-0"}`} />
@@ -397,7 +397,7 @@ export default function RegisterPage() {
                       type="button" onClick={() => setStep(1)}
                       className="flex-1 py-3 border border-gray-200 rounded-xl text-sm font-medium text-textLight hover:bg-gray-50 transition"
                     >
-                      ← Retour
+                      {t("back")}
                     </button>
                     <button
                       type="submit" disabled={loading}
@@ -406,10 +406,10 @@ export default function RegisterPage() {
                       {loading ? (
                         <>
                           <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          Création...
+                          {t("submitting")}
                         </>
                       ) : (
-                        "C'est parti ! 🚀"
+                        t("submit")
                       )}
                     </button>
                   </div>
@@ -419,7 +419,7 @@ export default function RegisterPage() {
                     onClick={() => handleStep2({ preventDefault: () => {} } as React.FormEvent)}
                     className="w-full text-center text-xs text-textLight hover:text-textDark transition"
                   >
-                    Passer — je configurerai ça plus tard
+                    {t("skip")}
                   </button>
                 </form>
               </>

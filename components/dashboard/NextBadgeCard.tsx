@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 interface NextBadge {
   name: string;
   icon: string;
@@ -6,7 +8,8 @@ interface NextBadge {
   total: number;
 }
 
-export function NextBadgeCard({ badge }: { badge: NextBadge }) {
+export async function NextBadgeCard({ badge }: { badge: NextBadge }) {
+  const t = await getTranslations("dashboard.nextBadge");
   const pct = Math.min(Math.round((badge.progress / badge.total) * 100), 99);
 
   return (
@@ -16,7 +19,7 @@ export function NextBadgeCard({ badge }: { badge: NextBadge }) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-1">
-          <p className="text-xs font-semibold text-textLight uppercase tracking-wide">Prochain badge</p>
+          <p className="text-xs font-semibold text-textLight uppercase tracking-wide">{t("title")}</p>
           <span className="text-xs font-bold text-accent">{badge.progress}/{badge.total}</span>
         </div>
         <p className="text-sm font-bold text-textDark truncate">{badge.name}</p>

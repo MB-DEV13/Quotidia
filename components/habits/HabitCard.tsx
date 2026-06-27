@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { getFrequencyLabel } from "@/lib/utils";
 
 interface Habit {
@@ -24,6 +25,8 @@ interface HabitCardProps {
 }
 
 export function HabitCard({ habit, onArchive, onUnarchive, onDelete, onEdit }: HabitCardProps) {
+  const t = useTranslations("habits");
+  const locale = useLocale();
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -58,7 +61,7 @@ export function HabitCard({ habit, onArchive, onUnarchive, onDelete, onEdit }: H
                 <span className="ml-2">🔥 <span className="font-semibold text-warning">{habit.currentStreak}j</span></span>
               )}
               {habit.bestStreak > 1 && habit.bestStreak > habit.currentStreak && (
-                <span className="ml-2 text-textLight/70">record : {habit.bestStreak}j</span>
+                <span className="ml-2 text-textLight/70">{t("card.record", { count: habit.bestStreak })}</span>
               )}
             </p>
 
@@ -67,7 +70,7 @@ export function HabitCard({ habit, onArchive, onUnarchive, onDelete, onEdit }: H
               {last7.map((day, i) => (
                 <div
                   key={i}
-                  title={new Date(day + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "short", day: "numeric" })}
+                  title={new Date(day + "T12:00:00").toLocaleDateString(locale === "fr" ? "fr-FR" : "en-US", { weekday: "short", day: "numeric" })}
                   className={`w-4 h-4 rounded-sm transition-colors ${
                     completedDates.has(day) ? "bg-success" : "bg-gray-100"
                   }`}
@@ -82,7 +85,7 @@ export function HabitCard({ habit, onArchive, onUnarchive, onDelete, onEdit }: H
           <button
             onClick={() => { setMenuOpen((v) => !v); setConfirmDelete(false); }}
             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition text-textLight text-lg"
-            aria-label="Options"
+            aria-label={t("card.optionsLabel")}
           >
             ⋯
           </button>
@@ -98,7 +101,7 @@ export function HabitCard({ habit, onArchive, onUnarchive, onDelete, onEdit }: H
                     onClick={() => { onEdit(habit); closeMenu(); }}
                     className="w-full text-left px-4 py-2.5 text-sm text-textDark hover:bg-gray-50 transition flex items-center gap-2"
                   >
-                    <span>✏️</span> Modifier
+                    <span>✏️</span> {t("editBtn")}
                   </button>
                 )}
 
@@ -108,14 +111,14 @@ export function HabitCard({ habit, onArchive, onUnarchive, onDelete, onEdit }: H
                     onClick={() => { onArchive(habit.id); closeMenu(); }}
                     className="w-full text-left px-4 py-2.5 text-sm text-textDark hover:bg-gray-50 transition flex items-center gap-2"
                   >
-                    <span>📦</span> Archiver
+                    <span>📦</span> {t("archiveBtn")}
                   </button>
                 ) : (
                   <button
                     onClick={() => { onUnarchive(habit.id); closeMenu(); }}
                     className="w-full text-left px-4 py-2.5 text-sm text-textDark hover:bg-gray-50 transition flex items-center gap-2"
                   >
-                    <span>♻️</span> Restaurer
+                    <span>♻️</span> {t("unarchiveBtn")}
                   </button>
                 )}
 
@@ -125,23 +128,23 @@ export function HabitCard({ habit, onArchive, onUnarchive, onDelete, onEdit }: H
                     onClick={() => setConfirmDelete(true)}
                     className="w-full text-left px-4 py-2.5 text-sm text-danger hover:bg-red-50 transition flex items-center gap-2"
                   >
-                    <span>🗑️</span> Supprimer
+                    <span>🗑️</span> {t("deleteBtn")}
                   </button>
                 ) : (
                   <div className="px-3 py-2 border-t border-gray-100">
-                    <p className="text-xs text-textDark mb-2">Confirmer la suppression ?</p>
+                    <p className="text-xs text-textDark mb-2">{t("card.confirmDelete")}</p>
                     <div className="flex gap-2">
                       <button
                         onClick={() => setConfirmDelete(false)}
                         className="flex-1 py-1.5 text-xs rounded-lg border border-gray-200 text-textLight hover:bg-gray-50 transition"
                       >
-                        Non
+                        {t("card.confirmNo")}
                       </button>
                       <button
                         onClick={() => { onDelete(habit.id); closeMenu(); }}
                         className="flex-1 py-1.5 text-xs rounded-lg bg-danger text-white hover:bg-danger/90 transition font-medium"
                       >
-                        Oui
+                        {t("card.confirmYes")}
                       </button>
                     </div>
                   </div>

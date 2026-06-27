@@ -1,0 +1,1525 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "send": "Send",
+    "sending": "Sending...",
+    "error": "An error occurred.",
+    "networkError": "Network error. Check your connection and try again.",
+    "serverError": "Server error. Please try again in a moment.",
+    "or": "or",
+    "seeAll": "See all →",
+    "day": "day",
+    "days": "days",
+    "hide": "Hide",
+    "show": "Show",
+    "new": "New",
+    "optional": "optional",
+    "premium": "Premium",
+    "free": "Free",
+    "year": "year",
+    "month": "month"
+  },
+  "landing": {
+    "nav": {
+      "features": "Features",
+      "how": "How it works",
+      "pricing": "Pricing",
+      "login": "Log in",
+      "cta": "Get started for free",
+      "backToTop": "Back to top"
+    },
+    "hero": {
+      "titleStart": "Your daily life,",
+      "titleHighlight": "made better.",
+      "description": "{appName} brings together habits, budget, goals and AI assistant in one elegant dashboard. No more juggling 4 separate apps.",
+      "ctaPrimary": "🚀 Get started for free",
+      "ctaSecondary": "See how it works →"
+    },
+    "mockup": {
+      "label": "Explore the dashboard"
+    },
+    "how": {
+      "badge": "Simple & fast",
+      "title": "In just 3 steps",
+      "subtitle": "From zero to a complete dashboard in under 5 minutes.",
+      "cta": "Start now →",
+      "steps": [
+        {
+          "title": "Create your account",
+          "desc": "Sign up in 30 seconds, no credit card required. Connect via Google or email."
+        },
+        {
+          "title": "Set up your dashboard",
+          "desc": "Add your habits, enter your budget, set your goals. All in just a few minutes."
+        },
+        {
+          "title": "Progress every day",
+          "desc": "Check off your habits, track your spending, earn XP. Your AI coach is by your side."
+        }
+      ]
+    },
+    "features": {
+      "badge": "All in one",
+      "title": "Everything you need",
+      "subtitle": "Replace 4 apps with one space that truly understands your daily life.",
+      "items": [
+        {
+          "title": "Habits & Streaks",
+          "desc": "Build solid routines. Every day completed fuels your streak and brings you closer to your goals."
+        },
+        {
+          "title": "Smart Budget",
+          "desc": "Track your spending, connect your bank account for auto-sync (Premium — coming soon), and see where your money goes at a glance."
+        },
+        {
+          "title": "Concrete Goals",
+          "desc": "Set SMART goals with a progress bar. Milestones, deadlines — everything is tracked automatically."
+        },
+        {
+          "title": "Personal AI Coach",
+          "desc": "An assistant that analyzes your data and gives you personalized advice, every day."
+        },
+        {
+          "title": "Gamification",
+          "desc": "Earn XP, level up, unlock badges. Staying consistent has never been this addictive."
+        },
+        {
+          "title": "Stats & Reports",
+          "desc": "Visualize your progress over 7, 30 or 90 days. Get a weekly report by email (Premium)."
+        }
+      ]
+    },
+    "ai": {
+      "badge": "New — AI Coach GPT-4o",
+      "title": "A coach who truly knows you",
+      "description": "Your assistant analyzes your habits, budget and goals in real time to give you advice tailored to your situation — not generic messages.",
+      "bullets": [
+        "Personalized advice every morning based on your data",
+        "Detects your weak points and suggests adjustments",
+        "Chat available at any time to answer your questions",
+        "Proactive suggestions when your streak is at risk"
+      ],
+      "cta": "Try the AI Coach →",
+      "online": "Online",
+      "chatPlaceholder": "Ask a question...",
+      "sendLabel": "Send",
+      "chatMsg1": "Hey Alex 👋 Your fitness streak is at 8 days — you're on a great roll! Don't forget to log your session today before 5pm.",
+      "chatMsg2": "I struggle to keep up with my sessions during the week...",
+      "chatMsg3": "I see you mostly check in on weekends. Try scheduling a short 30-min session on Tuesday and Thursday — less ambitious, but far more consistent. Consistency beats intensity. 💪"
+    },
+    "comparison": {
+      "badge": "Why {appName}?",
+      "title": "One app to replace them all",
+      "subtitle": "Compare what you get with {appName} vs the alternatives.",
+      "featureCol": "Feature",
+      "todoApp": "To-do app",
+      "habitApp": "Habit app",
+      "budgetApp": "Budget app",
+      "footer": "{appName} is the only app that combines everything in a modern, gamified interface.",
+      "features": [
+        "Habits + streaks",
+        "Budget & expenses",
+        "Automatic bank sync (coming soon)",
+        "Goals with milestones",
+        "Personalized AI coach",
+        "XP gamification",
+        "Leaderboard",
+        "All-in-one"
+      ]
+    },
+    "stats": {
+      "title": "Real results",
+      "items": [
+        {
+          "value": "72%",
+          "label": "of users maintain their habits after 3 weeks"
+        },
+        {
+          "value": "€60",
+          "label": "saved on average per month with budget tracking"
+        },
+        {
+          "value": "9d",
+          "label": "average streak after 2 weeks of use"
+        },
+        {
+          "value": "4.7★",
+          "label": "user satisfaction"
+        }
+      ]
+    },
+    "testimonials": {
+      "badge": "Testimonials",
+      "title": "They transformed their daily lives",
+      "items": [
+        {
+          "quote": "I've kept my meditation streak for 18 days. Before, I'd give up after a week. Seeing the streak climb makes all the difference.",
+          "name": "Sophie M.",
+          "role": "Teacher"
+        },
+        {
+          "quote": "I finally understood where my money was going. The category chart showed I was spending €90/month on subscriptions. I saved half thanks to the suggested plan.",
+          "name": "Thomas K.",
+          "role": "Developer"
+        },
+        {
+          "quote": "The AI suggested starting with 10 minutes of reading instead of 30. Since then, I read regularly without forcing myself.",
+          "name": "Léa D.",
+          "role": "Student"
+        }
+      ]
+    },
+    "pricing": {
+      "badge": "Pricing",
+      "title": "Simple and transparent",
+      "subtitle": "Start for free. Go Premium when you're ready.",
+      "footer": "✓ No card required for free plan · ✓ Cancel anytime · ✓ Secure data",
+      "ctaFree": "Get started for free",
+      "ctaPaid": "Choose this plan",
+      "oldPriceLabel": "/ year",
+      "plans": [
+        {
+          "name": "Free",
+          "price": "€0",
+          "period": "forever",
+          "features": [
+            "3 active habits",
+            "2 goals",
+            "2 budget categories / month",
+            "5 AI requests / month",
+            "7-day stats",
+            "Global leaderboard"
+          ]
+        },
+        {
+          "name": "Premium",
+          "price": "€4.99",
+          "period": "/ month",
+          "badge": "⭐ Recommended",
+          "features": [
+            "Unlimited habits & goals",
+            "Unlimited budget categories",
+            "Automatic bank sync (coming soon)",
+            "Unlimited AI assistant",
+            "30 & 90-day stats",
+            "Exclusive badges & levels",
+            "Weekly email report",
+            "CSV export",
+            "Dark theme"
+          ]
+        },
+        {
+          "name": "Annual",
+          "price": "€39.99",
+          "oldPrice": "€59.99",
+          "period": "/ year",
+          "badge": "🔥 2 months free",
+          "features": [
+            "All Premium features",
+            "Just €3.33 / month",
+            "Save 33%",
+            "One-time annual payment",
+            "Priority support"
+          ]
+        }
+      ]
+    },
+    "faq": {
+      "badge": "FAQ",
+      "title": "Frequently asked questions",
+      "subtitle": "Everything you need to know before getting started.",
+      "items": [
+        {
+          "q": "Is my data private and secure?",
+          "a": "Yes. Your data is hosted in Europe on secure servers (Supabase / PostgreSQL). It is never sold or shared. You can delete your account and all your data at any time from the settings."
+        },
+        {
+          "q": "Can I cancel my subscription at any time?",
+          "a": "Absolutely. No commitment, no hassle. You can cancel in one click from your settings. You keep Premium access until the end of the paid period."
+        },
+        {
+          "q": "What's the difference between Free and Premium?",
+          "a": "The free version gives you 3 habits, 2 goals, 2 budget categories and 5 AI requests per month — more than enough to get started. Premium removes all these limits and adds advanced stats, downloadable reports, CSV export and themes."
+        },
+        {
+          "q": "Is there a mobile app?",
+          "a": "{appName} is a Progressive Web App (PWA): you can add it to your phone's home screen from the browser for a near-native experience. A dedicated iOS/Android app is on the roadmap."
+        },
+        {
+          "q": "Is the AI assistant truly personalized?",
+          "a": "Yes. The AI analyzes your habits, streaks, goals and budget in real time to give you advice tailored to your situation — not generic messages. It uses GPT-4o-mini from OpenAI."
+        },
+        {
+          "q": "What happens if I exceed the free limit?",
+          "a": "You'll receive a clear message indicating the limit has been reached. Your existing data is preserved and you can still view it. Only creating new entries is blocked until you upgrade to Premium."
+        }
+      ]
+    },
+    "footer": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "contact": "Contact",
+      "legal": "Legal notice",
+      "privacy": "Privacy",
+      "terms": "Terms & Conditions",
+      "copyright": "© {year} {appName}. All rights reserved. · Built by"
+    }
+  },
+  "auth": {
+    "common": {
+      "continueWithGoogle": "Continue with Google",
+      "or": "or",
+      "emailPlaceholder": "you@example.com",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "passwordMin": "Minimum 8 characters",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "show": "Show",
+      "hide": "Hide",
+      "strength": {
+        "tooShort": "Too short",
+        "ok": "Okay",
+        "strong": "Strong"
+      }
+    },
+    "login": {
+      "title": "Log in",
+      "subtitle": "Welcome back!",
+      "sideTitle": "Your daily life, made better.",
+      "sideSubtitle": "One dashboard to track your habits, budget, goals and get coached by AI.",
+      "forgotPassword": "Forgot password?",
+      "submit": "Log in",
+      "submitting": "Logging in...",
+      "noAccount": "Don't have an account?",
+      "register": "Sign up for free",
+      "errors": {
+        "invalidCredentials": "Incorrect email or password.",
+        "emailNotVerified": "Please verify your email before logging in. Check your inbox.",
+        "verificationExpired": "The verification link has expired. Sign up again or request a new link.",
+        "verificationInvalid": "Invalid verification link."
+      },
+      "success": {
+        "emailVerified": "Email verified! You can now log in.",
+        "alreadyVerified": "Email already verified. Log in."
+      },
+      "perks": [
+        {
+          "text": "Daily habits & streaks"
+        },
+        {
+          "text": "Budget and expenses at a glance"
+        },
+        {
+          "text": "Goals with visual progress"
+        },
+        {
+          "text": "Personalized AI coach GPT-4o"
+        },
+        {
+          "text": "XP gamification, levels & badges"
+        }
+      ]
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "Start tracking your daily life right now.",
+      "sideTitle": "Get started for free.",
+      "sideSubtitle": "Join thousands of users who have transformed their habits and daily lives.",
+      "step1": "Your account",
+      "step2": "Your profile",
+      "firstNameLabel": "First name",
+      "firstNamePlaceholder": "Alex",
+      "confirmPasswordLabel": "Confirm password",
+      "confirmPasswordPlaceholder": "Repeat your password",
+      "passwordsMatch": "✓ Passwords match.",
+      "passwordsMismatch": "Passwords do not match.",
+      "cguAccept": "I accept the",
+      "cgu": "Terms of Service",
+      "and": "and",
+      "privacy": "privacy policy",
+      "of": "of",
+      "continueToProfile": "Continue → Your profile",
+      "alreadyAccount": "Already have an account?",
+      "signIn": "Log in",
+      "profileTitle": "Your profile",
+      "profileSubtitle": "Customize your account — you can change this later in settings.",
+      "chooseAvatar": "Choose your avatar",
+      "avatarHint": "6 presets or image link",
+      "locationLabel": "Location",
+      "locationHint": "(for the leaderboard)",
+      "leaderboardLabel": "Appear in the leaderboard",
+      "leaderboardHint": "Compare with other players",
+      "back": "← Back",
+      "submit": "Let's go! 🚀",
+      "submitting": "Creating...",
+      "skip": "Skip — I'll set this up later",
+      "errors": {
+        "passwordsMismatch": "Passwords do not match.",
+        "passwordTooShort": "Password must be at least 8 characters.",
+        "cguRequired": "You must accept the Terms of Service to continue.",
+        "captchaRequired": "Please complete the captcha to continue.",
+        "serverError": "Server error ({status}). Check the server logs.",
+        "networkError": "Network error. Check your connection and try again."
+      },
+      "perks": [
+        {
+          "text": "Free sign-up, no credit card"
+        },
+        {
+          "text": "Habits & streaks from day one"
+        },
+        {
+          "text": "Global leaderboard and badges"
+        },
+        {
+          "text": "Personal AI coach included"
+        },
+        {
+          "text": "Your data stays private"
+        }
+      ]
+    },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "subtitle": "Enter your email and we'll send you a reset link.",
+      "emailLabel": "Email address",
+      "submit": "Send reset link",
+      "submitting": "Sending...",
+      "backToLogin": "← Back to login",
+      "sentTitle": "Email sent!",
+      "sentSubtitle": "If an account exists for {email}, you'll receive a reset link in a few minutes. Remember to check your spam folder.",
+      "sentValidity": "The link is valid for 1 hour.",
+      "backToLoginBtn": "Back to login",
+      "errors": {
+        "captchaRequired": "Please complete the captcha to continue.",
+        "serverError": "An error occurred. Please try again in a moment."
+      }
+    },
+    "resetPassword": {
+      "title": "New password",
+      "subtitle": "Choose a secure password of at least 8 characters.",
+      "newPasswordLabel": "New password",
+      "confirmLabel": "Confirm password",
+      "confirmPlaceholder": "Repeat the password",
+      "submit": "Update password",
+      "submitting": "Updating...",
+      "successTitle": "Password updated!",
+      "successSubtitle": "Your password has been reset. You will be redirected to login in a few seconds...",
+      "loginNow": "Log in now",
+      "errors": {
+        "passwordsMismatch": "Passwords do not match.",
+        "passwordTooShort": "Password must be at least 8 characters.",
+        "serverError": "An error occurred."
+      }
+    },
+    "checkEmail": {
+      "title": "Check your inbox",
+      "subtitle": "A confirmation email was sent to",
+      "hint": "Click the link in the email to activate your account. Also check your spam folder if you don't see it.",
+      "resend": "Resend email",
+      "resending": "Sending...",
+      "resent": "Email resent!",
+      "backToLogin": "Back to login",
+      "alreadyVerified": "Already verified?",
+      "signIn": "Log in"
+    }
+  },
+  "navbar": {
+    "home": "Home",
+    "habits": "Habits",
+    "budget": "Budget",
+    "goals": "Goals",
+    "leaderboard": "Leaderboard",
+    "stats": "Stats",
+    "bilan": "Report",
+    "more": "More",
+    "settings": "Settings",
+    "signOut": "Log out",
+    "settingsLabel": "Settings"
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "upgradePremium": "✨ Go Premium",
+    "habits": {
+      "title": "Today's habits",
+      "empty": "No habits for today",
+      "emptyHint": "Start by creating your first habit!",
+      "createBtn": "+ Create a habit",
+      "allDone": "All habits completed!",
+      "allDoneMsg": "Excellent work today!",
+      "badgeUnlocked": "Badge unlocked!",
+      "streakDay": "{count} day streak",
+      "streakDays": "{count} day streak",
+      "completed": "Completed",
+      "markDone": "Mark as done",
+      "close": "Close"
+    },
+    "xp": {
+      "level": "Level {level}",
+      "progress": "{percentage}% to level {next}",
+      "badge": "{count} badge unlocked",
+      "badges": "{count} badges unlocked",
+      "seeAll": "See all →",
+      "noBadges": "Complete your habits to unlock badges"
+    },
+    "streak": {
+      "title": "Current best streak",
+      "day": "day",
+      "days": "days"
+    },
+    "nextBadge": {
+      "title": "Next badge"
+    }
+  },
+  "habits": {
+    "pageTitle": "My habits",
+    "activeCount": "{count} active habit",
+    "activeCountPlural": "{count} active habits",
+    "remainingFree": "{count} remaining on free",
+    "remainingFreePlural": "{count} remaining on free",
+    "usedFree": "{used}/{max} free",
+    "createBtn": "Add a habit",
+    "editBtn": "Edit",
+    "deleteBtn": "Delete",
+    "archiveBtn": "Archive",
+    "unarchiveBtn": "Restore",
+    "frequency": {
+      "daily": "Daily",
+      "weekly": "Weekly"
+    },
+    "freemiumBanner": "Free account: <strong>{used}/{max} habits</strong> used. <accent>Premium</accent> for unlimited habits.",
+    "freemiumUsed": "{used}/{max} habits",
+    "freemiumCta": "Premium",
+    "freemiumUpgrade": "for unlimited habits.",
+    "limitTitle": "Free limit reached ({max} habits)",
+    "limitSubtitle": "Upgrade to <accent>Premium</accent> for unlimited habits.",
+    "limitUpgradeCta": "Premium",
+    "emptyTitle": "No habits yet",
+    "emptySubtitle": "Create your first habit above!",
+    "archivedSection": "Archived ({count})",
+    "suggested": {
+      "title": "Popular suggestions",
+      "meditation": "Meditation",
+      "sport": "Exercise",
+      "reading": "Reading",
+      "hydration": "Hydration",
+      "stretching": "Stretching",
+      "healthyEating": "Healthy eating",
+      "clickToCustomize": "Daily · Click to customize",
+      "addBtn": "+ Add",
+      "list": [
+        {
+          "name": "Meditation",
+          "icon": "🧘",
+          "color": "#9B72CF",
+          "frequency": "daily"
+        },
+        {
+          "name": "Exercise",
+          "icon": "🏃",
+          "color": "#4CAF50",
+          "frequency": "daily"
+        },
+        {
+          "name": "Reading",
+          "icon": "📚",
+          "color": "#5B5EA6",
+          "frequency": "daily"
+        },
+        {
+          "name": "Hydration",
+          "icon": "💧",
+          "color": "#0EA5E9",
+          "frequency": "daily"
+        },
+        {
+          "name": "Stretching",
+          "icon": "🤸",
+          "color": "#FF9800",
+          "frequency": "daily"
+        },
+        {
+          "name": "Healthy eating",
+          "icon": "🥗",
+          "color": "#4CAF50",
+          "frequency": "daily"
+        }
+      ]
+    },
+    "form": {
+      "title": "New habit",
+      "editTitle": "Edit habit",
+      "nameLabel": "Name",
+      "namePlaceholder": "e.g: Meditation, Exercise, Reading...",
+      "iconLabel": "Icon",
+      "colorLabel": "Color",
+      "frequencyLabel": "Recurrence",
+      "submit": "Create",
+      "submitEdit": "Save",
+      "submitting": "Saving...",
+      "cancel": "Cancel",
+      "freqDaily": "Every day",
+      "freqDays": "Specific days",
+      "freqOnce": "Single date",
+      "selectDaysLabel": "Select days:",
+      "selectDaysError": "Select at least one day.",
+      "chooseDateLabel": "Choose a date:",
+      "iconGroups": {
+        "sport": "🏃 Sport",
+        "wellness": "🧘 Wellness",
+        "knowledge": "📚 Knowledge",
+        "nutrition": "🍏 Nutrition",
+        "productivity": "💼 Productivity",
+        "creativity": "🎨 Creativity",
+        "lifestyle": "🌟 Lifestyle"
+      },
+      "weekDays": {
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat",
+        "sun": "Sun"
+      }
+    },
+    "card": {
+      "optionsLabel": "Options",
+      "record": "record: {count}d",
+      "confirmDelete": "Confirm deletion?",
+      "confirmNo": "No",
+      "confirmYes": "Yes"
+    },
+    "empty": {
+      "title": "No habits yet",
+      "subtitle": "Create your first habit to get started.",
+      "cta": "Create a habit"
+    },
+    "limitReached": "Limit reached. Upgrade to Premium to add more.",
+    "streakDay": "{count} day streak",
+    "streakDays": "{count} day streak"
+  },
+  "budget": {
+    "pageTitle": "My budget",
+    "subtitle": "Income & expenses",
+    "addExpense": "Add expense",
+    "totalExpenses": "Total expenses",
+    "thisMonth": "This month",
+    "income": "Income",
+    "balance": "Balance",
+    "expenseBtn": "Expense",
+    "incomeBtn": "Income",
+    "freemiumBanner": "Free account: {used}/2 categories used this month. Premium for unlimited categories.",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "tabs": {
+      "all": "All",
+      "income": "💵 Income",
+      "expenses": "💸 Expenses"
+    },
+    "alerts": {
+      "overBudgetTitle": "Budget exceeded!",
+      "overBudgetMsg": "You've exceeded your income by {amount} this month.",
+      "warningTitle": "Warning threshold reached",
+      "warningMsg": "You've spent {spent} out of your {threshold} threshold. {remaining} left before the limit."
+    },
+    "bridge": {
+      "success": "Bank connected! Your transactions have been imported.",
+      "failed": "Bank connection failed. Try again from the settings."
+    },
+    "overview": {
+      "income": "Income",
+      "expenses": "Expenses",
+      "balance": "Balance",
+      "percentUsed": "{percent}% of income spent",
+      "overBudget": "🚨 Over by {amount}",
+      "warningReached": "⚠️ Threshold reached — {amount} left",
+      "remaining": "{amount} left",
+      "ceiling": "Limit: {amount}",
+      "warningThreshold": "⚠️ Alert: {amount}",
+      "topExpenses": "Top expenses this month",
+      "byCategory": "Expenses by category",
+      "vsPrevMonth": "{pct}% vs last month"
+    },
+    "form": {
+      "amount": "Amount",
+      "amountLabel": "Amount (€)",
+      "category": "Category",
+      "categoryLabel": "Category",
+      "label": "Description",
+      "descriptionLabel": "Description",
+      "descriptionOptional": "(optional)",
+      "expensePlaceholder": "e.g. Lunch...",
+      "incomePlaceholder": "e.g. March freelance...",
+      "date": "Date",
+      "dateLabel": "Date",
+      "recurringLabel": "Recurring?",
+      "recurringHintExpense": "Rent, subscription, repayment...",
+      "recurringHintIncome": "Salary, regular income...",
+      "recurringMonthly": "Every month",
+      "recurringWeekly": "Every week",
+      "recurringCustom": "Custom (X days)",
+      "everyLabel": "Every",
+      "daysLabel": "days",
+      "newExpense": "New expense",
+      "newIncome": "New income",
+      "editExpense": "Edit expense",
+      "editIncome": "Edit income",
+      "submit": "Add",
+      "submitEdit": "Save",
+      "submitting": "Saving...",
+      "cancel": "Cancel"
+    },
+    "transaction": {
+      "empty": "No transactions this month",
+      "emptyHint": "Use the Expense and Income buttons above to get started.",
+      "bankSource": "Bank",
+      "recurrence": {
+        "monthly": "Monthly",
+        "weekly": "Weekly",
+        "custom": "Recurring"
+      },
+      "confirmNo": "No",
+      "confirmYes": "Yes",
+      "editLabel": "Edit",
+      "deleteLabel": "Delete"
+    },
+    "setup": {
+      "title": "Set up your budget",
+      "subtitle": "A few details to personalize your tracking",
+      "incomeLabel": "Your recurring income",
+      "incomeHint": "Salary, pension, main income...",
+      "incomeLabelField": "Label",
+      "incomeLabelOptional": "(optional)",
+      "incomeLabelPlaceholder": "e.g. Salary, Pension...",
+      "frequencyLabel": "Payment frequency",
+      "weekly": "Weekly",
+      "biweekly": "Bi-weekly",
+      "monthly": "Monthly",
+      "custom": "Custom",
+      "everyLabel": "Every",
+      "daysLabel": "days",
+      "nextBtn": "Next →",
+      "skipBtn": "Skip this step",
+      "budgetLabel": "Monthly spending limit",
+      "budgetHint": "We'll alert you when you're close. Leave empty to use your income as reference.",
+      "incomeHintField": "💡 Your income: {amount} € — leave empty to use it as the limit",
+      "backBtn": "← Back",
+      "submitBtn": "Let's go! 🚀",
+      "submitting": "Saving..."
+    },
+    "bank": {
+      "banner": {
+        "title": "Connect your bank and forget manual entry",
+        "subtitle": "With Premium, your expenses and income sync automatically from your bank account.",
+        "cta": "Go Premium →"
+      },
+      "modal": {
+        "closeLabel": "Close",
+        "comingSoonTitle": "Coming soon",
+        "comingSoonDesc": "Automatic bank connection is under development. This feature will be available very soon!",
+        "features": [
+          "Automatic import of your transactions",
+          "Intelligent expense categorization",
+          "Secure connection via Bridge by Bankin' (PSD2)",
+          "Manual editing always possible"
+        ],
+        "hint": "In the meantime, you can enter your expenses manually from the Budget page.",
+        "okBtn": "Got it!",
+        "title": "Bank connection",
+        "subtitle": "Connect your bank account to automatically import your transactions.",
+        "connectBtn": "Connect my bank →",
+        "laterBtn": "Later"
+      },
+      "status": {
+        "connected": "Bank connected",
+        "active": "✓ Active",
+        "error": "⚠ Error",
+        "inactive": "Inactive",
+        "lastSync": "Last sync: {date}",
+        "syncBtn": "Sync",
+        "syncError": "Sync error",
+        "synced": "✓ Synced!"
+      }
+    },
+    "categories": {
+      "food": "Food",
+      "transport": "Transport",
+      "entertainment": "Entertainment",
+      "health": "Health",
+      "shopping": "Shopping",
+      "housing": "Housing",
+      "other": "Other"
+    },
+    "empty": "No expenses this month.",
+    "limitReached": "Category limit reached. Upgrade to Premium for more."
+  },
+  "goals": {
+    "pageTitle": "My goals",
+    "headerTitle": "Goals",
+    "headerSubtitle": "Track your progress toward your goals",
+    "createBtn": "New goal",
+    "progress": "{current}/{target} {unit}",
+    "deadline": "Deadline: {date}",
+    "completed": "Goal reached!",
+    "updateProgress": "Update progress",
+    "freeLimitCount": "{count}/2 goals",
+    "freeLimitSuffix": "used.",
+    "freeLimitPremiumLabel": "Premium",
+    "freeLimitPremiumSuffix": "for unlimited goals.",
+    "activeSection": "In progress ({count})",
+    "completedToggle": "{count} goal completed",
+    "completedTogglePlural": "{count} goals completed",
+    "allCompleted": "All your goals have been reached!",
+    "allCompletedSubtitle": "Ready for new challenges?",
+    "nextToFinish": "Next to finish",
+    "inProgress": "In progress",
+    "completedCount": "Completed",
+    "globalProgress": "Overall progress",
+    "tipTitle": "Tip of the day",
+    "tips": {
+      "title": "Tip of the day"
+    },
+    "suggestedTitle": "Popular suggestions",
+    "suggestedGoals": [
+      {
+        "title": "Save €1,000",
+        "icon": "💰",
+        "color": "#4CAF50",
+        "target": 1000,
+        "unit": "€"
+      },
+      {
+        "title": "Read 12 books",
+        "icon": "📚",
+        "color": "#5B5EA6",
+        "target": 12,
+        "unit": "books"
+      },
+      {
+        "title": "Run 100 km",
+        "icon": "🏃",
+        "color": "#F97316",
+        "target": 100,
+        "unit": "km"
+      },
+      {
+        "title": "Lose 5 kg",
+        "icon": "⚖️",
+        "color": "#0EA5E9",
+        "target": 5,
+        "unit": "kg"
+      },
+      {
+        "title": "Do 50 sessions",
+        "icon": "🏋️",
+        "color": "#EF4444",
+        "target": 50,
+        "unit": "sessions"
+      },
+      {
+        "title": "Save €3,000",
+        "icon": "🏦",
+        "color": "#14B8A6",
+        "target": 3000,
+        "unit": "€"
+      },
+      {
+        "title": "Learn a language",
+        "icon": "🎓",
+        "color": "#9B72CF",
+        "target": 100,
+        "unit": "lessons"
+      },
+      {
+        "title": "Visit 3 countries",
+        "icon": "✈️",
+        "color": "#EC4899",
+        "target": 3,
+        "unit": "countries"
+      }
+    ],
+    "card": {
+      "lateByDays": "{days}d late",
+      "today": "Today!",
+      "inDays": "In {days}d",
+      "perWeekPace": "+{value} {unit}/week to stay on track",
+      "perDayPace": "+{value} {unit}/day to stay on track",
+      "defaultUnit": "units",
+      "completedBadge": "Completed",
+      "justCompletedBanner": "Goal reached! +150 XP",
+      "completedMsg": "Goal reached!",
+      "menuEdit": "Edit",
+      "menuRestart": "Restart",
+      "menuDelete": "Delete",
+      "confirmDelete": "Confirm?",
+      "confirmNo": "No",
+      "confirmYes": "Yes",
+      "incrementOther": "+ Other",
+      "incrementPlaceholder": "+{unit}",
+      "incrementOk": "OK",
+      "incrementLoading": "...",
+      "menuOptionsLabel": "Options"
+    },
+    "form": {
+      "title": "New goal",
+      "editTitle": "Edit goal",
+      "titleLabel": "Title",
+      "titlePlaceholder": "e.g: Read 12 books, Save €1,000...",
+      "iconLabel": "Icon",
+      "colorLabel": "Color",
+      "targetLabel": "Target value",
+      "targetPlaceholder": "e.g: 12",
+      "currentLabel": "Current value",
+      "unitLabel": "Unit",
+      "unitOptional": "optional",
+      "unitPlaceholder": "e.g: books, km, €, kg...",
+      "deadlineLabel": "Deadline",
+      "deadlineOptional": "optional",
+      "submit": "Create",
+      "submitEdit": "Edit",
+      "submitting": "Saving...",
+      "cancel": "Cancel",
+      "limitTitle": "Limit reached",
+      "limitText": "Free accounts can create up to 2 goals. Upgrade to Premium for unlimited goals.",
+      "limitPremiumBadge": "✨ Premium — €4.99/month · Unlimited goals, unlimited AI, and much more.",
+      "close": "Close",
+      "iconGroups": [
+        {
+          "label": "Finance"
+        },
+        {
+          "label": "Knowledge"
+        },
+        {
+          "label": "Sport"
+        },
+        {
+          "label": "Travel"
+        },
+        {
+          "label": "Wellness"
+        },
+        {
+          "label": "Creativity"
+        },
+        {
+          "label": "Home"
+        },
+        {
+          "label": "Other"
+        }
+      ]
+    },
+    "empty": {
+      "title": "No goals yet",
+      "subtitle": "Create your first goal and start making progress!",
+      "cta": "Create a goal"
+    },
+    "suggested": {
+      "title": "Goal ideas"
+    },
+    "tipsArray": [
+      {
+        "icon": "🎯",
+        "text": "Break down each big goal into small steps. Every bit of progress counts."
+      },
+      {
+        "icon": "📅",
+        "text": "Set a realistic deadline. A goal without a date is just a dream."
+      },
+      {
+        "icon": "📈",
+        "text": "Track your progress regularly. What gets measured gets improved."
+      },
+      {
+        "icon": "🔁",
+        "text": "Consistency beats intensity. A little every day outperforms one big push."
+      },
+      {
+        "icon": "🏆",
+        "text": "Celebrate every milestone. Motivation thrives on small victories."
+      },
+      {
+        "icon": "💡",
+        "text": "Share your goals with someone you trust. Social commitment boosts success."
+      }
+    ]
+  },
+  "settings": {
+    "pageTitle": "Settings",
+    "tabs": {
+      "info": "My information",
+      "progression": "My progress",
+      "export": "Export & report",
+      "contact": "Contact"
+    },
+    "profile": {
+      "title": "Profile",
+      "memberSince": "Member since",
+      "nameLabel": "First name",
+      "displayName": "Display name",
+      "displayNamePlaceholder": "Your first name or nickname",
+      "emailLabel": "Email",
+      "avatarLabel": "Avatar",
+      "locationLabel": "Location",
+      "save": "Save changes",
+      "saving": "Saving...",
+      "saved": "Changes saved!",
+      "savedProfile": "Profile updated",
+      "edit": "Edit",
+      "cancel": "Cancel",
+      "defaultUser": "User",
+      "visibleInLeaderboard": "Visible in the leaderboard",
+      "hiddenFromLeaderboard": "Hidden from the leaderboard"
+    },
+    "preferences": {
+      "title": "Preferences",
+      "language": "Language",
+      "languageHint": "Choose the interface language",
+      "theme": "Theme",
+      "themeHint": "Switch between light and dark mode",
+      "notifications": "Notifications",
+      "darkMode": "Dark mode",
+      "reminderTime": "Reminder time",
+      "dailyReminder": "Daily reminder"
+    },
+    "security": {
+      "title": "Security",
+      "changePassword": "Password",
+      "changePasswordHint": "Change your login password",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "newPasswordPlaceholder": "New password (min. 8 characters)",
+      "confirmPassword": "Confirm password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "googleLogin": "Google login",
+      "googleLoginHint": "No password — you sign in via Google",
+      "submit": "Change password",
+      "submitting": "Saving...",
+      "success": "Password updated",
+      "errorMismatch": "Passwords do not match.",
+      "errorTooShort": "New password must be at least 8 characters.",
+      "errorUnknown": "Unknown error",
+      "errorNetwork": "Network error"
+    },
+    "subscription": {
+      "title": "Subscription",
+      "free": "Free",
+      "premium": "Premium",
+      "unlimitedAccess": "Unlimited access to all features.",
+      "renewsAt": "Renews on {date}",
+      "upgradeCta": "Upgrade to Premium",
+      "manageBtn": "Manage subscription",
+      "manageBtnLoading": "Loading...",
+      "cancelBtn": "Cancel subscription",
+      "freeHabits": "3 habits max",
+      "freeGoals": "2 goals max",
+      "aiRemaining": "{count} AI request remaining this month",
+      "aiRemainingPlural": "{count} AI requests remaining this month",
+      "upgradePremiumCta": "✨ Go Premium — €4.99/month →",
+      "bankConnection": "Bank connection",
+      "modeManual": "✏️ Manual",
+      "modeAutomatic": "🏦 Automatic",
+      "bankConnected": "Bank connected",
+      "bankActive": "✓ Active",
+      "bankSync": "Sync: {date}",
+      "bankDisconnect": "Disconnect",
+      "bankDisconnecting": "...",
+      "noBankConnected": "No bank connected",
+      "connectBank": "Connect →",
+      "errorPortal": "Portal error",
+      "errorNetwork": "Network error"
+    },
+    "account": {
+      "title": "Account",
+      "email": "Email",
+      "memberSince": "Member since",
+      "plan": "Plan",
+      "planFree": "Free",
+      "planPremium": "✨ Premium"
+    },
+    "export": {
+      "title": "Export & Report",
+      "bilanTitle": "Report",
+      "bilanDescription": "Generate a complete report of your habits, budget and goals in PDF format.",
+      "csvTitle": "Data export",
+      "csvDescription": "Download all your habits, expenses and goals as CSV.",
+      "csv": "Export my data (CSV)",
+      "csvLoading": "Exporting...",
+      "pdf": "Download PDF report",
+      "premiumRequired": "Premium feature",
+      "premiumTooltip": "Premium feature",
+      "weekly": "Weekly report",
+      "monthly": "Monthly report",
+      "downloadPdf": "Download as PDF",
+      "errorExport": "Export error",
+      "errorDownload": "Download error",
+      "errorServer": "Server error",
+      "bilanEmailTitle": "Email reports",
+      "emailPremiumRequired": "🔒 Email reports are reserved for Premium members.",
+      "emailUpgradeCta": "✨ Go Premium",
+      "emailWeeklyBtn": "📊 Weekly report",
+      "emailMonthlyBtn": "🗓️ Monthly report",
+      "emailSending": "Sending...",
+      "emailSentWeekly": "Weekly report sent! Check your inbox. 📬",
+      "emailSentMonthly": "Monthly report sent! Check your inbox. 📬",
+      "emailErrorSend": "Send error",
+      "emailErrorNetwork": "Network error. Please try again.",
+      "emailDescription": "The weekly report covers the previous week. The monthly report covers the previous month.",
+      "premiumLocked": "🔒 Premium required"
+    },
+    "danger": {
+      "title": "Account deletion",
+      "description": "Account deletion is permanent and irreversible. All your data will be erased in compliance with GDPR.",
+      "deleteAccount": "Delete my account",
+      "deleteConfirm": "This action is irreversible. All your data will be deleted.",
+      "irreversibleTitle": "⚠️ Irreversible action",
+      "irreversibleDesc": "All your data will be permanently deleted: habits, expenses, goals, badges and history. This action cannot be undone.",
+      "typeToConfirm": "Type {word} to confirm:",
+      "deleteWord": "DELETE",
+      "deleteBtn": "Delete permanently",
+      "deleting": "Deleting...",
+      "cancel": "Cancel",
+      "errorUnknown": "Unknown error",
+      "errorNetwork": "Network error"
+    },
+    "signOut": "Log out",
+    "location": {
+      "title": "Location",
+      "hint": "Used for the local leaderboard"
+    },
+    "leaderboard": {
+      "label": "Appear in the leaderboard",
+      "hint": "Compare with other players",
+      "toggleLabel": "Appear in the leaderboard",
+      "toggleHint": "Visible to other players"
+    },
+    "progression": {
+      "levelTitle": "Level & XP",
+      "xpTotal": "{xp} XP total",
+      "levelLabel": "Level {level}",
+      "xpProgress": "{current} / {needed} XP",
+      "xpToNext": "{percentage}% toward level {next}",
+      "loginStreakTitle": "Login streak",
+      "loginStreakDesc": "{count} consecutive week · +30 XP/week",
+      "loginStreakDescPlural": "{count} consecutive weeks · +30 XP/week",
+      "badgesTitle": "Badges — {earned}/{total} unlocked"
+    },
+    "contact": {
+      "title": "Contact us",
+      "subtitle": "A question, a bug or a suggestion? We reply within 24-48h.",
+      "socialTitle": "Follow us on social media",
+      "socialSubtitle": "News, tips and updates from {appName}."
+    },
+    "notifications": {
+      "mobileTitle": "Mobile notifications",
+      "mobileDenied": "Blocked in your browser settings",
+      "mobileActive": "Habit reminders, budget alerts and badges",
+      "mobileInactive": "Get alerts directly on your phone",
+      "dailyReminderTitle": "Daily reminder",
+      "dailyReminderActive": "Receive a reminder email each evening if your habits are not validated",
+      "dailyReminderPremiumOnly": "Available with the Premium plan"
+    }
+  },
+  "gamification": {
+    "levelPrefix": "Level",
+    "xpUnit": "XP",
+    "levelNames": {
+      "beginner": "Beginner",
+      "regular": "Regular",
+      "disciplined": "Disciplined",
+      "legend": "Legend"
+    }
+  },
+  "ui": {
+    "cookie": {
+      "message": "🍪 This site uses essential cookies to function (session, preferences). No advertising tracking.",
+      "accept": "Accept",
+      "decline": "Decline"
+    },
+    "pwa": {
+      "title": "Install the app",
+      "subtitle": "Add Quotidia to your home screen for quick access.",
+      "install": "Install",
+      "later": "Later"
+    },
+    "themeToggle": {
+      "light": "Light mode",
+      "dark": "Dark mode"
+    }
+  },
+  "stats": {
+    "pageTitle": "Advanced statistics",
+    "premiumTitle": "Advanced statistics",
+    "premiumDesc": "Access your stats for 30 and 90 days, visualise the evolution of your habits and expenses. Available with Premium.",
+    "premiumCta": "✨ Go Premium — €4.99/month",
+    "client": {
+      "period7": "7 days",
+      "period30": "30 days",
+      "period90": "90 days",
+      "kpiCompletions": "Completions",
+      "kpiOnDays": "over {period} days",
+      "kpiAvgRate": "Average rate",
+      "kpiExpenses": "Expenses",
+      "kpiActiveHabits": "Active habits",
+      "trendLabel": "Trend over period",
+      "trendImproving": "Improving",
+      "trendDeclining": "Declining",
+      "trendStable": "Stable",
+      "trendVsStart": "vs start",
+      "bestDayLabel": "Your most productive day",
+      "bestDayRate": "{rate}% average completion",
+      "calendarTitle": "Completion calendar",
+      "legendLess": "Less",
+      "legendMore": "More",
+      "chartCompletionTitle": "Completion rate — {period} days",
+      "chartAvgLabel": "{rate}% avg.",
+      "noData": "No data for this period.",
+      "topHabitsTitle": "Top habits by completion",
+      "categoryTitle": "Expenses by category",
+      "monthlyTitle": "Expenses by month",
+      "incomeVsExpTitle": "Income vs Expenses — {period} days",
+      "income": "Income",
+      "expenses": "Expenses",
+      "netBalance": "Net balance",
+      "goalsTitle": "Goals",
+      "goalsActive": "Active",
+      "goalsCompleted": "Completed",
+      "goalsProgress": "Progress",
+      "goalsMostAdvanced": "Most advanced",
+      "revenues": "+{amount} income",
+      "tooltipRate": "Rate",
+      "tooltipTotal": "Total",
+      "errorLoading": "Loading error",
+      "errorNetwork": "Network error"
+    }
+  },
+  "bilan": {
+    "pageTitle": "Weekly report",
+    "premiumTitle": "Weekly report",
+    "premiumDesc": "Receive a weekly summary of your habits, expenses, goals and XP earned. Identify your strengths and areas for improvement.",
+    "premiumCta": "✨ Go Premium — €4.99/month",
+    "client": {
+      "navPrev": "← Previous",
+      "navNext": "Next →",
+      "loading": "Loading...",
+      "completionByDay": "Completion by day",
+      "legendLess": "Less",
+      "legendMore": "More",
+      "habitsSection": "Habits",
+      "completionRate": "Completion rate",
+      "completions": "{completed} / {total} completions",
+      "mostRegular": "Most consistent habit",
+      "timesThisWeek": "{count} times this week",
+      "streaksSection": "Streaks",
+      "streakSingular": "1 day in a row 🔥",
+      "streakPlural": "{count} days in a row 🔥",
+      "streakNoCompletion": "No completion this week",
+      "budgetSection": "Budget",
+      "budgetWeekly": "/ {budget} (weekly budget)",
+      "budgetOverBudget": "Over budget by {amount}",
+      "budgetOk": "On track 👍 ({amount} remaining)",
+      "topCategories": "Top categories",
+      "goalsSection": "Active goals",
+      "downloadPdf": "Download as PDF",
+      "errorLoading": "Loading error",
+      "errorNetwork": "Network error",
+      "gradeA": "Excellent",
+      "gradeB": "Good",
+      "gradeC": "Fair",
+      "gradeD": "Needs improvement",
+      "gradeF": "Keep trying",
+      "pdfHeader": "Weekly Report — {appName}",
+      "pdfScoreGlobal": "Global score: {score}/100",
+      "pdfXpWeek": "Estimated XP this week: +{xp} XP",
+      "pdfHabitsTitle": "Habits",
+      "pdfCompletionRate": "Completion rate: {rate}% ({completed}/{total})",
+      "pdfVsPrevPositive": "+{diff}% vs previous week",
+      "pdfVsPrevNegative": "{diff}% vs previous week",
+      "pdfBestHabit": "Most consistent habit: {name} ({count}x)",
+      "pdfStreaksLabel": "Streaks:",
+      "pdfStreakEntry": "{status} {name} — {streak} day(s) in a row",
+      "pdfBudgetTitle": "Budget",
+      "pdfExpensesWithBudget": "Expenses: {total} / {budget}",
+      "pdfOverBudget": "Over budget: +{amount}",
+      "pdfBudgetRemaining": "Remaining balance: {amount}",
+      "pdfTotalExpenses": "Total expenses: {total}",
+      "pdfGoalsTitle": "Goals",
+      "pdfFooter": "Generated on {date} by {appName} — {domain}"
+    }
+  },
+  "classement": {
+    "pageTitle": "Leaderboard",
+    "global": "Global",
+    "local": "Local",
+    "rank": "Rank",
+    "xp": "XP",
+    "streak": "Streak",
+    "you": "You",
+    "empty": "No users in the leaderboard."
+  },
+  "upgrade": {
+    "modal": {
+      "closeLabel": "Close",
+      "title": "Go Premium",
+      "subtitle": "Unlock all features",
+      "priceFrom": "From",
+      "price": "€4.99/month",
+      "ctaBtn": "See plans",
+      "laterBtn": "Later",
+      "perks": [
+        "Unlimited habits",
+        "Unlimited goals",
+        "Unlimited AI assistant",
+        "Advanced badges levels",
+        "CSV data export",
+        "Advanced stats (30/90 days)",
+        "Weekly report",
+        "Dark theme"
+      ]
+    },
+    "page": {
+      "backLink": "← Back to dashboard",
+      "badge": "Level up",
+      "titlePremium": "Your Premium subscription",
+      "titleFree": "Go Premium",
+      "subtitlePremium": "Thank you for supporting {appName}! You enjoy all features without limits.",
+      "subtitleFree": "Unlock all features and truly transform your daily life.",
+      "alreadyPremiumTitle": "You are Premium!",
+      "activeUntil": "Subscription active until {date}",
+      "manageBtn": "Manage subscription",
+      "loading": "Loading...",
+      "bankFeatureTitle": "New feature - Automatic bank connection",
+      "bankFeatureDesc": "Connect your bank account in 1 click (via Open Banking PSD2). Your transactions arrive automatically in your budget. No more manual entry.",
+      "bankFeatureBadge": "Premium exclusive",
+      "monthlyLabel": "Monthly",
+      "monthlyPrice": "€4.99",
+      "monthlyPer": "/month",
+      "monthlyBilling": "Billed monthly",
+      "yearlyLabel": "Yearly",
+      "yearlyPrice": "€39.99",
+      "yearlyPer": "/year",
+      "yearlyPerMonth": "That’s €3.33/month - Save 20%",
+      "yearlyBadge": "⭐ 2 months free",
+      "startBtn": "Get started",
+      "comparisonTitle": "Free vs Premium comparison",
+      "colFeature": "Feature",
+      "colFree": "Free",
+      "colPremium": "Premium ✨",
+      "footer": "Secure payment via Stripe - Cancel anytime - No commitment",
+      "errorRedirect": "Redirect error",
+      "errorNetwork": "Network error. Please try again.",
+      "errorPortal": "Portal error",
+      "perks": [
+        "Unlimited habits & goals",
+        "🏦 Automatic bank connection",
+        "Unlimited AI assistant",
+        "Exclusive badges & advanced levels",
+        "Stats for 30 and 90 days",
+        "Personalised weekly report",
+        "CSV export of all your data",
+        "Dark theme",
+        "Priority support"
+      ],
+      "features": [
+        {
+          "label": "Habits",
+          "free": "3 max",
+          "premium": "Unlimited"
+        },
+        {
+          "label": "Goals",
+          "free": "2 max",
+          "premium": "Unlimited"
+        },
+        {
+          "label": "Budget",
+          "free": "1 category",
+          "premium": "Unlimited"
+        },
+        {
+          "label": "🏦 Bank connection",
+          "free": "-",
+          "premium": "Auto sync"
+        },
+        {
+          "label": "History",
+          "free": "30 days",
+          "premium": "Unlimited"
+        },
+        {
+          "label": "AI assistant",
+          "free": "5 req./month",
+          "premium": "Unlimited"
+        },
+        {
+          "label": "Gamification",
+          "free": "Streaks only",
+          "premium": "Badges + Levels + XP"
+        },
+        {
+          "label": "Advanced stats",
+          "free": "7 days",
+          "premium": "30 / 90 days"
+        },
+        {
+          "label": "Periodic report",
+          "free": "-",
+          "premium": "Weekly + Monthly"
+        },
+        {
+          "label": "Themes",
+          "free": "Light only",
+          "premium": "Light + Dark"
+        },
+        {
+          "label": "Data export",
+          "free": "-",
+          "premium": "CSV"
+        }
+      ]
+    }
+  },
+  "onboarding": {
+    "stepAccount": "Your account",
+    "stepProfile": "Your profile",
+    "leftTitle": "Start for free.",
+    "leftSubtitle": "Join thousands of users who have transformed their habits and daily life.",
+    "footer": "© {year} {appName} - {tagline}",
+    "profileTitle": "Your profile",
+    "profileSubtitle": "Personalise your account - editable later in settings.",
+    "avatarTitle": "Choose your avatar",
+    "avatarSubtitle": "Emojis or your own photo",
+    "locationLabel": "Location",
+    "locationHint": "(for the leaderboard)",
+    "leaderboardLabel": "Appear in the leaderboard",
+    "leaderboardHint": "Compare with other players",
+    "saving": "Saving...",
+    "submitBtn": "Let’s go! 🚀",
+    "skipBtn": "Skip - I’ll set this up later",
+    "prevBtn": "Previous",
+    "nextBtn": "Next",
+    "finishBtn": "Create my first habit →",
+    "perks": [
+      {
+        "icon": "🚀",
+        "text": "Free sign-up, no credit card required"
+      },
+      {
+        "icon": "✅",
+        "text": "Habits streaks from day one"
+      },
+      {
+        "icon": "🏆",
+        "text": "Global leaderboard and badges"
+      },
+      {
+        "icon": "🤖",
+        "text": "Personal AI coach included"
+      },
+      {
+        "icon": "🔒",
+        "text": "Your data stays private"
+      }
+    ],
+    "introSteps": [
+      {
+        "icon": "✅",
+        "title": "Your habits",
+        "content": "Create daily or weekly habits. Each validated day builds your streak and earns you XP."
+      },
+      {
+        "icon": "💰",
+        "title": "Your budget",
+        "content": "Log your expenses by category and visualise where your money goes each month."
+      },
+      {
+        "icon": "🚀",
+        "title": "Let’s go!",
+        "content": "You are ready! Create your first habit and start today."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Contact us",
+    "subtitle": "A question, a problem or a suggestion? We are here to help.",
+    "quickReplyTitle": "Quick reply",
+    "quickReplyDesc": "We usually reply within 24 to 48 business hours.",
+    "privacyTitle": "Privacy",
+    "privacyDesc": "Your data remains private and is never shared.",
+    "socialTitle": "Follow us on social media",
+    "socialSubtitle": "News, tips and updates from {appName}.",
+    "form": {
+      "nameLabel": "Name *",
+      "namePlaceholder": "Your first name",
+      "emailLabel": "Email *",
+      "subjectLabel": "Subject *",
+      "messageLabel": "Message *",
+      "messagePlaceholder": "Describe your request in detail...",
+      "submit": "Send message",
+      "submitting": "Sending...",
+      "successTitle": "Message sent!",
+      "successSubtitle": "We will reply as soon as possible.",
+      "sendAnother": "Send another message",
+      "error": "An error occurred. Please try again in a moment.",
+      "subjects": [
+        "General question",
+        "Technical issue",
+        "Report a bug",
+        "Feature suggestion",
+        "Billing / subscription",
+        "Other"
+      ]
+    }
+  },
+  "offline": {
+    "title": "No connection",
+    "description": "{appName} requires an internet connection. Check your network and try again.",
+    "retry": "Try again"
+  },
+  "leaderboard": {
+    "title": "🏆 Leaderboard",
+    "subtitle": "Top {appName} players",
+    "podiumLabel": "Podium",
+    "rank1": "1st",
+    "rank2": "2nd",
+    "rank3": "3rd",
+    "meLabel": "Me",
+    "meTag": "(me)",
+    "rankLabel": "ranking",
+    "levelPrefix": "Level",
+    "levelShort": "Lv.",
+    "xpGap": "⬆️ {xp} XP to overtake {name}",
+    "xpGapAnon": "the player ahead",
+    "scopeGlobal": "🌍 Global",
+    "scopeCountry": "My country",
+    "scopeRegion": "📍 My region",
+    "allCountries": "🌍 All countries",
+    "allRegions": "All regions",
+    "playerCount": "{count} player",
+    "playerCountPlural": "{count} players",
+    "emptyTitle": "No players in this area.",
+    "emptySubtitle": "Be the first to join!",
+    "showMore": "Show {count} more",
+    "top10Label": "Top 10",
+    "anonPlayer": "Anonymous player",
+    "privacyNote": "Don’t want to appear in the leaderboard?",
+    "privacyLink": "Manage in settings",
+    "toNextLevel": "→ Lv. {level}",
+    "streakSuffix": "d"
+  }
+}

@@ -2,6 +2,7 @@ import { generateUserContext } from "@/lib/ai-context";
 import { openai } from "@/lib/openai";
 import { AITipCard } from "@/components/ai/AITipCard";
 import { config } from "@/lib/config";
+import { getLocale } from "next-intl/server";
 
 interface Props {
   userId: string;
@@ -11,12 +12,24 @@ interface Props {
 export async function AISuggestion({ userId, hasHabits }: Props) {
   if (!process.env.OPENAI_API_KEY || !hasHabits) return null;
   try {
-    const userContext = await generateUserContext(userId);
+    const [userContext, locale] = await Promise.all([
+      generateUserContext(userId),
+      getLocale(),
+    ]);
+
+    const isEn = locale === "en";
+    const systemPrompt = isEn
+      ? `You are ${config.app.name} Coach, a supportive and motivating assistant. Give ONE short, personalized and actionable tip (2-3 sentences max). Reply in English.`
+      : `Tu es ${config.app.name} Coach, un assistant bienveillant et motivant. Donne UN conseil court, personnalisé et actionnable (2-3 phrases max). Réponds en français.`;
+    const userPrompt = isEn
+      ? `Here is my data for today:\n${userContext}\n\nGive me a motivating tip for today.`
+      : `Voici mes données du jour :\n${userContext}\n\nDonne-moi un conseil motivant pour aujourd'hui.`;
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: `Tu es ${config.app.name} Coach, un assistant bienveillant et motivant. Donne UN conseil court, personnalisé et actionnable (2-3 phrases max). Réponds en français.` },
-        { role: "user", content: `Voici mes données du jour :\n${userContext}\n\nDonne-moi un conseil motivant pour aujourd'hui.` },
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
       ],
       max_tokens: 120,
       temperature: 0.8,

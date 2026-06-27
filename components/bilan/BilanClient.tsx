@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { formatCurrency } from "@/lib/utils";
 import { config } from "@/lib/config";
+import { useTranslations, useLocale } from "next-intl";
 
 interface GoalProgress {
   title: string;
@@ -70,13 +71,13 @@ function BilanSkeleton() {
   );
 }
 
-// --- Score grade config ---
-const GRADE_CONFIG = {
-  A: { label: "Excellent", color: "#4CAF50", bg: "bg-success/10", text: "text-success", border: "border-success/20" },
-  B: { label: "Bien", color: "#9B72CF", bg: "bg-accent/10", text: "text-accent", border: "border-accent/20" },
-  C: { label: "Correct", color: "#FF9800", bg: "bg-warning/10", text: "text-warning", border: "border-warning/20" },
-  D: { label: "Peut mieux faire", color: "#F97316", bg: "bg-orange-50", text: "text-orange-500", border: "border-orange-200" },
-  F: { label: "À reprendre", color: "#EF4444", bg: "bg-danger/10", text: "text-danger", border: "border-danger/20" },
+// --- Score grade config (static — labels added inside component) ---
+const GRADE_CONFIG_STATIC = {
+  A: { color: "#4CAF50", bg: "bg-success/10", text: "text-success", border: "border-success/20" },
+  B: { color: "#9B72CF", bg: "bg-accent/10", text: "text-accent", border: "border-accent/20" },
+  C: { color: "#FF9800", bg: "bg-warning/10", text: "text-warning", border: "border-warning/20" },
+  D: { color: "#F97316", bg: "bg-orange-50", text: "text-orange-500", border: "border-orange-200" },
+  F: { color: "#EF4444", bg: "bg-danger/10", text: "text-danger", border: "border-danger/20" },
 };
 
 function getDayColor(rate: number) {
@@ -88,6 +89,18 @@ function getDayColor(rate: number) {
 }
 
 export function BilanClient() {
+  const t = useTranslations("bilan.client");
+  const locale = useLocale();
+  const dateLocale = locale === "fr" ? "fr-FR" : "en-US";
+
+  const GRADE_CONFIG = {
+    A: { ...GRADE_CONFIG_STATIC.A, label: t("gradeA") },
+    B: { ...GRADE_CONFIG_STATIC.B, label: t("gradeB") },
+    C: { ...GRADE_CONFIG_STATIC.C, label: t("gradeC") },
+    D: { ...GRADE_CONFIG_STATIC.D, label: t("gradeD") },
+    F: { ...GRADE_CONFIG_STATIC.F, label: t("gradeF") },
+  };
+
   const [week, setWeek] = useState<string | null>(null);
   const [data, setData] = useState<BilanData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -102,16 +115,16 @@ export function BilanClient() {
       const res = await fetch(url);
       const json = await res.json();
       if (!res.ok || !json.success) {
-        setError(json.error ?? "Erreur chargement");
+        setError(json.error ?? t("errorLoading"));
         return;
       }
       setData(json.data as BilanData);
     } catch {
-      setError("Erreur réseau");
+      setError(t("errorNetwork"));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => { fetchBilan(week); }, [week, fetchBilan]);
 
@@ -134,8 +147,8 @@ export function BilanClient() {
     ] as [number, number, number];
 
     let y = 20;
-    const lm = 20; // left margin
-    const pw = 170; // page width
+    const lm = 20;
+    const pw = 170;
 
     // Header
     doc.setFillColor(...primary);
@@ -143,7 +156,7 @@ export function BilanClient() {
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
-    doc.text(`Bilan Hebdomadaire — ${config.app.name}`, lm + 6, y + 9);
+    doc.text(t("pdfHeader", { appName: config.app.name }), lm + 6, y + 9);
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
     doc.text(data.period.label, lm + 6, y + 16);
@@ -164,8 +177,8 @@ export function BilanClient() {
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(...gray);
-    doc.text(`Score global : ${data.score}/100`, lm + 46, y + 15);
-    doc.text(`XP estimé cette semaine : +${data.xpThisWeek} XP`, lm + 46, y + 21);
+    doc.text(t("pdfScoreGlobal", { score: data.score }), lm + 46, y + 15);
+    doc.text(t("pdfXpWeek", { xp: data.xpThisWeek }), lm + 46, y + 21);
     y += 30;
 
     // Message
@@ -182,19 +195,26 @@ export function BilanClient() {
     doc.setTextColor(...primary);
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text("Habitudes", lm, y);
+    doc.text(t("pdfHabitsTitle"), lm, y);
     y += 6;
 
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(...dark);
-    doc.text(`Taux de complétion : ${data.habits.completionRate}%  (${data.habits.totalCompleted}/${data.habits.totalPossible})`, lm, y);
+    doc.text(
+      t("pdfCompletionRate", {
+        rate: data.habits.completionRate,
+        completed: data.habits.totalCompleted,
+        total: data.habits.totalPossible,
+      }),
+      lm, y,
+    );
     y += 5;
 
     if (data.prevComparison) {
       const diffText = data.prevComparison.diff >= 0
-        ? `+${data.prevComparison.diff}% vs semaine précédente`
-        : `${data.prevComparison.diff}% vs semaine précédente`;
+        ? t("pdfVsPrevPositive", { diff: data.prevComparison.diff })
+        : t("pdfVsPrevNegative", { diff: data.prevComparison.diff });
       doc.setTextColor(...(data.prevComparison.diff >= 0 ? success : danger));
       doc.text(diffText, lm, y);
       doc.setTextColor(...dark);
@@ -202,7 +222,10 @@ export function BilanClient() {
     }
 
     if (data.habits.bestHabit) {
-      doc.text(`Habitude la plus régulière : ${data.habits.bestHabit.name} (${data.habits.bestHabit.count}x)`, lm, y);
+      doc.text(
+        t("pdfBestHabit", { name: data.habits.bestHabit.name, count: data.habits.bestHabit.count }),
+        lm, y,
+      );
       y += 8;
     }
 
@@ -210,11 +233,11 @@ export function BilanClient() {
     if (data.streakHighlights.length > 0) {
       doc.setTextColor(...gray);
       doc.setFontSize(8);
-      doc.text("Streaks :", lm, y);
+      doc.text(t("pdfStreaksLabel"), lm, y);
       y += 5;
       for (const s of data.streakHighlights) {
         const status = s.maintained ? "✓" : "–";
-        doc.text(`  ${status}  ${s.name}  —  ${s.streak} jour(s) de suite`, lm, y);
+        doc.text("  " + t("pdfStreakEntry", { status, name: s.name, streak: s.streak }), lm, y);
         y += 4;
       }
       y += 4;
@@ -224,26 +247,38 @@ export function BilanClient() {
     doc.setTextColor(...primary);
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text("Budget", lm, y);
+    doc.text(t("pdfBudgetTitle"), lm, y);
     y += 6;
 
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(...dark);
     if (data.expenses.budget) {
-      doc.text(`Dépenses : ${formatCurrency(data.expenses.total)} / ${formatCurrency(data.expenses.budget)}`, lm, y);
+      doc.text(
+        t("pdfExpensesWithBudget", {
+          total: formatCurrency(data.expenses.total),
+          budget: formatCurrency(data.expenses.budget),
+        }),
+        lm, y,
+      );
       y += 5;
       if (data.expenses.overBudget) {
         doc.setTextColor(...danger);
-        doc.text(`Dépassement : +${formatCurrency(data.expenses.total - data.expenses.budget!)}`, lm, y);
+        doc.text(
+          t("pdfOverBudget", { amount: formatCurrency(data.expenses.total - data.expenses.budget!) }),
+          lm, y,
+        );
       } else {
         doc.setTextColor(...success);
-        doc.text(`Solde restant : ${formatCurrency(data.expenses.budget - data.expenses.total)}`, lm, y);
+        doc.text(
+          t("pdfBudgetRemaining", { amount: formatCurrency(data.expenses.budget - data.expenses.total) }),
+          lm, y,
+        );
       }
       doc.setTextColor(...dark);
       y += 5;
     } else {
-      doc.text(`Total dépenses : ${formatCurrency(data.expenses.total)}`, lm, y);
+      doc.text(t("pdfTotalExpenses", { total: formatCurrency(data.expenses.total) }), lm, y);
       y += 5;
     }
 
@@ -262,7 +297,7 @@ export function BilanClient() {
       doc.setTextColor(...primary);
       doc.setFontSize(11);
       doc.setFont("helvetica", "bold");
-      doc.text("Objectifs", lm, y);
+      doc.text(t("pdfGoalsTitle"), lm, y);
       y += 6;
 
       doc.setFontSize(9);
@@ -284,7 +319,14 @@ export function BilanClient() {
     y += 5;
     doc.setFontSize(7);
     doc.setTextColor(...gray);
-    doc.text(`Généré le ${new Date().toLocaleDateString("fr-FR")} par ${config.app.name} — ${config.app.domain}`, lm, y);
+    doc.text(
+      t("pdfFooter", {
+        date: new Date().toLocaleDateString(dateLocale),
+        appName: config.app.name,
+        domain: config.app.domain,
+      }),
+      lm, y,
+    );
 
     doc.save(`bilan-${data.period.label.replace(/\s/g, "-")}.pdf`);
   }
@@ -298,17 +340,17 @@ export function BilanClient() {
           disabled={loading}
           className="text-sm text-primary hover:text-primary/80 transition disabled:opacity-40 font-medium"
         >
-          ← Précédente
+          {t("navPrev")}
         </button>
         <span className="text-sm font-medium text-textDark">
-          {loading ? "Chargement..." : (data?.period.label ?? "—")}
+          {loading ? t("loading") : (data?.period.label ?? "—")}
         </span>
         <button
           onClick={() => data && !data.navigation.isCurrentWeek && setWeek(data.navigation.nextWeek)}
           disabled={loading || data?.navigation.isCurrentWeek}
           className="text-sm text-primary hover:text-primary/80 transition disabled:opacity-40 font-medium"
         >
-          Suivante →
+          {t("navNext")}
         </button>
       </div>
 
@@ -323,8 +365,10 @@ export function BilanClient() {
             const cfg = GRADE_CONFIG[data.grade];
             return (
               <div className={`rounded-2xl p-5 border ${cfg.bg} ${cfg.border} flex items-center gap-5`}>
-                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0`}
-                  style={{ backgroundColor: cfg.color }}>
+                <div
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: cfg.color }}
+                >
                   <span className="text-3xl font-black text-white">{data.grade}</span>
                 </div>
                 <div className="flex-1 min-w-0">
@@ -353,13 +397,15 @@ export function BilanClient() {
           {/* Grille jour par jour */}
           <div className="bg-white rounded-2xl shadow-soft p-5">
             <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-4">
-              Complétion par jour
+              {t("completionByDay")}
             </h2>
             <div className="grid grid-cols-7 gap-2">
               {data.dayByDay.map((d, i) => (
                 <div key={i} className="flex flex-col items-center gap-1.5">
-                  <div className={`w-full aspect-square rounded-xl ${getDayColor(d.rate)} flex items-center justify-center transition-transform hover:scale-105`}
-                    title={`${d.dayLabel} — ${d.rate}%`}>
+                  <div
+                    className={`w-full aspect-square rounded-xl ${getDayColor(d.rate)} flex items-center justify-center transition-transform hover:scale-105`}
+                    title={`${d.dayLabel} — ${d.rate}%`}
+                  >
                     {d.rate === 100 && <span className="text-xs text-white font-bold">✓</span>}
                   </div>
                   <span className="text-[10px] text-textLight font-medium">{d.dayLabel}</span>
@@ -368,22 +414,22 @@ export function BilanClient() {
               ))}
             </div>
             <div className="flex items-center gap-2 mt-3 justify-end">
-              <span className="text-[10px] text-textLight">Moins</span>
+              <span className="text-[10px] text-textLight">{t("legendLess")}</span>
               {["bg-gray-100", "bg-success/25", "bg-success/55", "bg-success/80", "bg-success"].map((c, i) => (
                 <div key={i} className={`w-3 h-3 rounded-sm ${c}`} />
               ))}
-              <span className="text-[10px] text-textLight">Plus</span>
+              <span className="text-[10px] text-textLight">{t("legendMore")}</span>
             </div>
           </div>
 
           {/* Habitudes */}
           <div className="bg-white rounded-2xl shadow-soft p-5">
             <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-4">
-              Habitudes
+              {t("habitsSection")}
             </h2>
             <div className="mb-3">
               <div className="flex justify-between text-sm mb-1.5">
-                <span className="text-textDark font-medium">Taux de complétion</span>
+                <span className="text-textDark font-medium">{t("completionRate")}</span>
                 <span className={`font-bold ${
                   data.habits.completionRate >= 70 ? "text-success"
                   : data.habits.completionRate >= 40 ? "text-warning"
@@ -403,7 +449,7 @@ export function BilanClient() {
                 />
               </div>
               <p className="text-xs text-textLight mt-1">
-                {data.habits.totalCompleted} / {data.habits.totalPossible} complétions
+                {t("completions", { completed: data.habits.totalCompleted, total: data.habits.totalPossible })}
               </p>
             </div>
 
@@ -411,9 +457,9 @@ export function BilanClient() {
               <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-3 mt-2">
                 <span className="text-xl">{data.habits.bestHabit.icon ?? "⭐"}</span>
                 <div>
-                  <p className="text-xs text-textLight">Habitude la plus régulière</p>
+                  <p className="text-xs text-textLight">{t("mostRegular")}</p>
                   <p className="text-sm font-semibold text-textDark">{data.habits.bestHabit.name}</p>
-                  <p className="text-xs text-primary">{data.habits.bestHabit.count} fois cette semaine</p>
+                  <p className="text-xs text-primary">{t("timesThisWeek", { count: data.habits.bestHabit.count })}</p>
                 </div>
               </div>
             )}
@@ -423,7 +469,7 @@ export function BilanClient() {
           {data.streakHighlights.length > 0 && (
             <div className="bg-white rounded-2xl shadow-soft p-5">
               <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-3">
-                Streaks
+                {t("streaksSection")}
               </h2>
               <div className="space-y-2">
                 {data.streakHighlights.map((s, i) => (
@@ -437,8 +483,8 @@ export function BilanClient() {
                       <p className="text-sm font-medium text-textDark truncate">{s.icon} {s.name}</p>
                       <p className={`text-xs ${s.maintained ? "text-warning" : "text-textLight"}`}>
                         {s.maintained
-                          ? `${s.streak} jour${s.streak > 1 ? "s" : ""} de suite 🔥`
-                          : "Pas de complétion cette semaine"}
+                          ? (s.streak === 1 ? t("streakSingular") : t("streakPlural", { count: s.streak }))
+                          : t("streakNoCompletion")}
                       </p>
                     </div>
                   </div>
@@ -450,7 +496,7 @@ export function BilanClient() {
           {/* Budget */}
           <div className="bg-white rounded-2xl shadow-soft p-5">
             <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-4">
-              Budget
+              {t("budgetSection")}
             </h2>
             {data.expenses.budget ? (
               <>
@@ -459,7 +505,7 @@ export function BilanClient() {
                     {formatCurrency(data.expenses.total)}
                   </span>
                   <span className="text-sm text-textLight mb-0.5">
-                    / {formatCurrency(data.expenses.budget)} (budget hebdo)
+                    {t("budgetWeekly", { budget: formatCurrency(data.expenses.budget) })}
                   </span>
                 </div>
                 <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-2">
@@ -470,11 +516,11 @@ export function BilanClient() {
                 </div>
                 {data.expenses.overBudget ? (
                   <p className="text-xs text-danger font-medium">
-                    Dépassement de {formatCurrency(data.expenses.total - data.expenses.budget)}
+                    {t("budgetOverBudget", { amount: formatCurrency(data.expenses.total - data.expenses.budget) })}
                   </p>
                 ) : (
                   <p className="text-xs text-success font-medium">
-                    Dans les clous 👍 ({formatCurrency(data.expenses.budget - data.expenses.total)} restants)
+                    {t("budgetOk", { amount: formatCurrency(data.expenses.budget - data.expenses.total) })}
                   </p>
                 )}
               </>
@@ -484,7 +530,7 @@ export function BilanClient() {
 
             {data.expenses.topCategories.length > 0 && (
               <div className="mt-4 space-y-2">
-                <p className="text-xs text-textLight font-medium uppercase tracking-wide">Top catégories</p>
+                <p className="text-xs text-textLight font-medium uppercase tracking-wide">{t("topCategories")}</p>
                 {data.expenses.topCategories.map((cat, i) => (
                   <div key={i} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -502,7 +548,7 @@ export function BilanClient() {
           {data.goals.length > 0 && (
             <div className="bg-white rounded-2xl shadow-soft p-5">
               <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-4">
-                Objectifs en cours
+                {t("goalsSection")}
               </h2>
               <div className="space-y-3">
                 {data.goals.map((goal, i) => (
@@ -544,7 +590,7 @@ export function BilanClient() {
             <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M8 12l4 4m0 0l4-4m-4 4V4" />
             </svg>
-            Télécharger en PDF
+            {t("downloadPdf")}
           </button>
         </div>
       ) : null}

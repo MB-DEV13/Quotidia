@@ -1,23 +1,24 @@
 import { LandingNav } from "@/components/landing/LandingNav";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { config } from "@/lib/config";
+import { getTranslations } from "next-intl/server";
 
 export const metadata = {
   title: `Contact — ${config.app.name}`,
   description: `Une question, un problème ou une suggestion ? Contacte l'équipe ${config.app.name}.`,
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const t = await getTranslations("contact");
+
   return (
     <main className="min-h-screen bg-background">
       <LandingNav />
 
       <div className="max-w-2xl mx-auto px-4 pt-28 pb-16">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold text-textDark">Contacte-nous</h1>
-          <p className="text-textLight mt-2 text-sm">
-            Une question, un problème ou une suggestion ? On est là pour t&apos;aider.
-          </p>
+          <h1 className="text-3xl font-extrabold text-textDark">{t("title")}</h1>
+          <p className="text-textLight mt-2 text-sm">{t("subtitle")}</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-soft p-6 mb-6">
@@ -28,26 +29,22 @@ export default function ContactPage() {
           <div className="bg-white rounded-xl shadow-soft p-4 flex items-start gap-3">
             <span className="text-2xl">⚡</span>
             <div>
-              <p className="font-semibold text-textDark">Réponse rapide</p>
-              <p className="text-textLight text-xs mt-0.5">
-                On répond généralement sous 24 à 48h ouvrées.
-              </p>
+              <p className="font-semibold text-textDark">{t("quickReplyTitle")}</p>
+              <p className="text-textLight text-xs mt-0.5">{t("quickReplyDesc")}</p>
             </div>
           </div>
           <div className="bg-white rounded-xl shadow-soft p-4 flex items-start gap-3">
             <span className="text-2xl">🔒</span>
             <div>
-              <p className="font-semibold text-textDark">Confidentialité</p>
-              <p className="text-textLight text-xs mt-0.5">
-                Tes données restent privées et ne sont jamais partagées.
-              </p>
+              <p className="font-semibold text-textDark">{t("privacyTitle")}</p>
+              <p className="text-textLight text-xs mt-0.5">{t("privacyDesc")}</p>
             </div>
           </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-soft p-5 text-center">
-          <p className="text-sm font-semibold text-textDark mb-1">Suis-nous sur les réseaux</p>
-          <p className="text-xs text-textLight mb-4">Actualités, conseils et nouveautés {config.app.name}.</p>
+          <p className="text-sm font-semibold text-textDark mb-1">{t("socialTitle")}</p>
+          <p className="text-xs text-textLight mb-4">{t("socialSubtitle", { appName: config.app.name })}</p>
           <div className="flex items-center justify-center gap-4">
             <a
               href={config.social.instagram}

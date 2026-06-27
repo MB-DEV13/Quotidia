@@ -1,16 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
-const ICON_GROUPS = [
-  { label: "Finance",     icons: ["💰", "💵", "💳", "🏦", "📈", "💎", "🪙", "💸"] },
-  { label: "Savoir",      icons: ["📚", "📖", "🎓", "📝", "🧠", "💡", "🔬", "🎯"] },
-  { label: "Sport",       icons: ["🏃", "🚴", "🏊", "🏋️", "⚽", "🎾", "🧘", "🥊"] },
-  { label: "Voyages",     icons: ["✈️", "🌍", "🏖️", "🗺️", "🧳", "🏔️", "🚂", "⛵"] },
-  { label: "Bien-être",   icons: ["💪", "🥗", "😴", "❤️", "🌿", "🧴", "🫶", "🌸"] },
-  { label: "Créativité",  icons: ["🎨", "🎵", "🎸", "📸", "✍️", "🎭", "🎬", "🎤"] },
-  { label: "Maison",      icons: ["🏠", "🛋️", "🔨", "🌱", "🐕", "🛒", "🪴", "🧹"] },
-  { label: "Autre",       icons: ["⭐", "🚀", "🏆", "🎪", "💫", "🔥", "✨", "🎉"] },
+const ICON_GROUPS_DATA = [
+  { icons: ["💰", "💵", "💳", "🏦", "📈", "💎", "🪙", "💸"] },
+  { icons: ["📚", "📖", "🎓", "📝", "🧠", "💡", "🔬", "🎯"] },
+  { icons: ["🏃", "🚴", "🏊", "🏋️", "⚽", "🎾", "🧘", "🥊"] },
+  { icons: ["✈️", "🌍", "🏖️", "🗺️", "🧳", "🏔️", "🚂", "⛵"] },
+  { icons: ["💪", "🥗", "😴", "❤️", "🌿", "🧴", "🫶", "🌸"] },
+  { icons: ["🎨", "🎵", "🎸", "📸", "✍️", "🎭", "🎬", "🎤"] },
+  { icons: ["🏠", "🛋️", "🔨", "🌱", "🐕", "🛒", "🪴", "🧹"] },
+  { icons: ["⭐", "🚀", "🏆", "🎪", "💫", "🔥", "✨", "🎉"] },
 ];
 
 const COLORS = [
@@ -38,6 +39,14 @@ interface GoalFormProps {
 }
 
 export function GoalForm({ onSubmit, onCancel, initialData, canAddMore, isPremium }: GoalFormProps) {
+  const t = useTranslations("goals");
+
+  const iconGroupLabels = t.raw("form.iconGroups") as Array<{ label: string }>;
+  const ICON_GROUPS = ICON_GROUPS_DATA.map((g, i) => ({
+    icons: g.icons,
+    label: iconGroupLabels[i]?.label ?? String(i),
+  }));
+
   const [title, setTitle]       = useState(initialData?.title ?? "");
   const [icon, setIcon]         = useState(initialData?.icon ?? "🎯");
   const [color, setColor]       = useState(initialData?.color ?? "#5B5EA6");
@@ -56,19 +65,15 @@ export function GoalForm({ onSubmit, onCancel, initialData, canAddMore, isPremiu
     return (
       <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4">
         <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-card">
-          <h2 className="text-lg font-semibold text-textDark mb-3">Limite atteinte</h2>
-          <p className="text-sm text-textLight mb-4">
-            Les comptes gratuits peuvent créer jusqu&apos;à{" "}
-            <strong>2 objectifs</strong>. Passe en{" "}
-            <span className="text-accent font-semibold">Premium</span> pour des objectifs illimités.
-          </p>
+          <h2 className="text-lg font-semibold text-textDark mb-3">{t("form.limitTitle")}</h2>
+          <p className="text-sm text-textLight mb-4">{t("form.limitText")}</p>
           {!isPremium && (
             <p className="text-xs bg-accent/10 text-accent rounded-xl p-3 mb-4">
-              ✨ Premium — 4,99€/mois · Objectifs illimités, IA illimitée, et bien plus.
+              {t("form.limitPremiumBadge")}
             </p>
           )}
           <button onClick={onCancel} className="w-full py-3 rounded-xl border border-gray-200 text-sm font-medium text-textLight hover:bg-gray-50 transition">
-            Fermer
+            {t("form.close")}
           </button>
         </div>
       </div>
@@ -105,7 +110,7 @@ export function GoalForm({ onSubmit, onCancel, initialData, canAddMore, isPremiu
             {icon}
           </div>
           <h2 className="text-lg font-semibold text-textDark">
-            {isEditing ? "Modifier l'objectif" : "Nouvel objectif"}
+            {isEditing ? t("form.editTitle") : t("form.title")}
           </h2>
         </div>
 
@@ -113,17 +118,17 @@ export function GoalForm({ onSubmit, onCancel, initialData, canAddMore, isPremiu
 
           {/* Titre */}
           <div>
-            <label className="block text-sm font-medium text-textDark mb-1">Titre</label>
+            <label className="block text-sm font-medium text-textDark mb-1">{t("form.titleLabel")}</label>
             <input
               type="text" value={title} onChange={(e) => setTitle(e.target.value)}
-              required autoFocus placeholder="ex: Lire 12 livres, Épargner 1000€..."
+              required autoFocus placeholder={t("form.titlePlaceholder")}
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
             />
           </div>
 
           {/* Icône */}
           <div>
-            <label className="block text-sm font-medium text-textDark mb-2">Icône</label>
+            <label className="block text-sm font-medium text-textDark mb-2">{t("form.iconLabel")}</label>
             <div className="space-y-1">
               {ICON_GROUPS.map((group) => (
                 <div key={group.label} className="border border-gray-100 rounded-xl overflow-hidden">
@@ -156,7 +161,7 @@ export function GoalForm({ onSubmit, onCancel, initialData, canAddMore, isPremiu
 
           {/* Couleur */}
           <div>
-            <label className="block text-sm font-medium text-textDark mb-2">Couleur</label>
+            <label className="block text-sm font-medium text-textDark mb-2">{t("form.colorLabel")}</label>
             <div className="flex flex-wrap gap-2">
               {COLORS.map((c) => (
                 <button
@@ -171,15 +176,15 @@ export function GoalForm({ onSubmit, onCancel, initialData, canAddMore, isPremiu
           {/* Cible & Actuel */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-textDark mb-1">Valeur cible</label>
+              <label className="block text-sm font-medium text-textDark mb-1">{t("form.targetLabel")}</label>
               <input
                 type="number" step="any" min="0.01" value={target}
-                onChange={(e) => setTarget(e.target.value)} required placeholder="ex: 12"
+                onChange={(e) => setTarget(e.target.value)} required placeholder={t("form.targetPlaceholder")}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-textDark mb-1">Valeur actuelle</label>
+              <label className="block text-sm font-medium text-textDark mb-1">{t("form.currentLabel")}</label>
               <input
                 type="number" step="any" min="0" value={current}
                 onChange={(e) => setCurrent(e.target.value)} placeholder="0"
@@ -191,11 +196,11 @@ export function GoalForm({ onSubmit, onCancel, initialData, canAddMore, isPremiu
           {/* Unité */}
           <div>
             <label className="block text-sm font-medium text-textDark mb-1">
-              Unité <span className="text-textLight font-normal">(optionnel)</span>
+              {t("form.unitLabel")} <span className="text-textLight font-normal">({t("form.unitOptional")})</span>
             </label>
             <input
               type="text" value={unit} onChange={(e) => setUnit(e.target.value)}
-              placeholder="ex: livres, km, €, kg..."
+              placeholder={t("form.unitPlaceholder")}
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
             />
           </div>
@@ -203,7 +208,7 @@ export function GoalForm({ onSubmit, onCancel, initialData, canAddMore, isPremiu
           {/* Échéance */}
           <div>
             <label className="block text-sm font-medium text-textDark mb-1">
-              Échéance <span className="text-textLight font-normal">(optionnel)</span>
+              {t("form.deadlineLabel")} <span className="text-textLight font-normal">({t("form.deadlineOptional")})</span>
             </label>
             <input
               type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)}
@@ -216,11 +221,11 @@ export function GoalForm({ onSubmit, onCancel, initialData, canAddMore, isPremiu
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onCancel}
               className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-medium text-textLight hover:bg-gray-50 transition">
-              Annuler
+              {t("form.cancel")}
             </button>
             <button type="submit" disabled={loading || !title.trim() || !target}
               className="flex-1 py-3 rounded-xl bg-primary hover:bg-primary/90 disabled:opacity-60 text-white text-sm font-semibold transition">
-              {loading ? "Enregistrement..." : isEditing ? "Modifier" : "Créer"}
+              {loading ? t("form.submitting") : isEditing ? t("form.submitEdit") : t("form.submit")}
             </button>
           </div>
         </form>

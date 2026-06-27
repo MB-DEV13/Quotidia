@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { formatCurrency } from "@/lib/utils";
 import { BudgetOverview } from "./BudgetOverview";
 import { BudgetSetupModal } from "./BudgetSetupModal";
@@ -55,7 +56,7 @@ interface BudgetClientProps {
   prevMonthExpenses?: number;
   budgetMode?: string;
   bankConnection?: BankConnectionData | null;
-  bridgeStatus?: string | null; // "success" | "error" | null
+  bridgeStatus?: string | null;
 }
 
 export function BudgetClient({
@@ -70,6 +71,9 @@ export function BudgetClient({
   bankConnection,
   bridgeStatus,
 }: BudgetClientProps) {
+  const t = useTranslations("budget");
+  const tCommon = useTranslations("common");
+  const locale = useLocale();
   const router = useRouter();
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
   const [summary, setSummary] = useState(initialSummary);
@@ -81,7 +85,6 @@ export function BudgetClient({
   const [showSetup, setShowSetup] = useState(!initialConfig?.configured);
   const [month, setMonth] = useState(currentMonth);
 
-  // Modal Bridge : afficher si Premium + pas encore de banque connectée + pas déjà refusé
   const [showBankModal, setShowBankModal] = useState(() => {
     if (!isPremium) return false;
     if (bankConnection?.status === "active") return false;
@@ -134,14 +137,13 @@ export function BudgetClient({
       if (res.status === 403 && json.limitReached) {
         setShowForm(null);
       } else {
-        setFormError(json.error ?? "Une erreur est survenue.");
+        setFormError(json.error ?? tCommon("error"));
       }
       return;
     }
 
     setShowForm(null);
     setFormError(null);
-    // Ajout optimiste dans la liste
     const newTx: Transaction = {
       ...json.data,
       date: json.data.date ?? new Date().toISOString(),
@@ -169,8 +171,8 @@ export function BudgetClient({
       const oldAmount = editingTransaction.amount;
       const newAmount = data.amount ?? oldAmount;
       const type = editingTransaction.type;
-      setTransactions((prev) => prev.map((t) =>
-        t.id === editingTransaction.id ? { ...t, ...data, amount: newAmount } : t
+      setTransactions((prev) => prev.map((tx) =>
+        tx.id === editingTransaction.id ? { ...tx, ...data, amount: newAmount } : tx
       ));
       setSummary((prev) => ({
         ...prev,
@@ -183,10 +185,10 @@ export function BudgetClient({
 
   async function handleDelete(id: string, type: "expense" | "income") {
     const endpoint = type === "expense" ? `/api/budget/${id}` : `/api/income/${id}`;
-    const tx = transactions.find((t) => t.id === id);
+    const tx = transactions.find((tx) => tx.id === id);
     const res = await fetch(endpoint, { method: "DELETE" });
     if (res.ok && tx) {
-      setTransactions((prev) => prev.filter((t) => t.id !== id));
+      setTransactions((prev) => prev.filter((tx) => tx.id !== id));
       setSummary((prev) => ({
         ...prev,
         totalExpenses: type === "expense" ? prev.totalExpenses - tx.amount : prev.totalExpenses,
@@ -197,62 +199,54 @@ export function BudgetClient({
 
   const [yearStr, monStr] = month.split("-");
   const monthLabel = new Date(parseInt(yearStr), parseInt(monStr) - 1, 1).toLocaleDateString(
-    "fr-FR",
+    locale === "fr" ? "fr-FR" : "en-US",
     { month: "long", year: "numeric" }
   );
 
-  const filteredTransactions = transactions.filter((t) =>
-    activeTab === "all" ? true : t.type === activeTab
+  const filteredTransactions = transactions.filter((tx) =>
+    activeTab === "all" ? true : tx.type === activeTab
   );
 
-  const expenseTransactions = transactions.filter((t) => t.type === "expense");
+  const expenseTransactions = transactions.filter((tx) => tx.type === "expense");
 
-  // Top 3 dépenses par montant
   const top3 = [...expenseTransactions]
     .sort((a, b) => b.amount - a.amount)
     .slice(0, 3)
-    .map((t) => ({ label: t.label ?? "", amount: t.amount, category: t.category }));
+    .map((tx) => ({ label: tx.label ?? "", amount: tx.amount, category: tx.category }));
 
-  // Seuils budget
   const effectiveBudget = summary.budget > 0 ? summary.budget : 0;
   const isOverBudget = effectiveBudget > 0 && summary.totalExpenses > effectiveBudget;
   const isNearWarning = !isOverBudget && summary.warningThreshold > 0 && summary.totalExpenses >= summary.warningThreshold;
 
-  // Catégories utilisées ce mois (mois affiché)
   const usedCategoriesThisMonth = new Set(
-    expenseTransactions.filter((t) => {
-      const d = new Date(t.date);
+    expenseTransactions.filter((tx) => {
+      const d = new Date(tx.date);
       const [y, m] = month.split("-").map(Number);
       return d.getFullYear() === y && d.getMonth() + 1 === m;
-    }).map((t) => t.category)
+    }).map((tx) => tx.category)
   ).size;
 
   return (
     <div>
-      {/* Modal Bridge (Premium sans banque connectée) */}
       {showBankModal && (
         <BankConnectionModal onDismiss={() => setShowBankModal(false)} />
       )}
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-textDark">Budget</h1>
-        <p className="text-textLight text-sm mt-1">Revenus & dépenses</p>
+        <h1 className="text-2xl font-bold text-textDark">{t("pageTitle")}</h1>
+        <p className="text-textLight text-sm mt-1">{t("subtitle")}</p>
         {!isPremium && (
           <div className="mt-3 bg-accent/5 border border-accent/20 rounded-2xl px-4 py-3 text-center">
             <p className="text-xs text-textLight">
-              Compte gratuit :{" "}
-              <strong className="text-textDark">{usedCategoriesThisMonth}/2 catégories</strong> utilisées ce mois.{" "}
-              <span className="text-accent font-semibold">Premium</span> pour des catégories illimitées.
+              {t("freemiumBanner", { used: usedCategoriesThisMonth })}
             </p>
           </div>
         )}
       </div>
 
-      {/* Bandeau Bridge — non-abonnés */}
       {!isPremium && <BankConnectionBanner />}
 
-      {/* Statut connexion bancaire — abonnés avec banque connectée */}
       {isPremium && bankConnection?.status === "active" && budgetMode === "automatic" && (
         <BankConnectionStatus
           bankName={bankConnection.bankName}
@@ -261,17 +255,16 @@ export function BudgetClient({
         />
       )}
 
-      {/* Alerte Bridge success/error */}
       {bridgeStatus === "success" && (
         <div className="mb-6 bg-green-50 border border-green-100 rounded-2xl px-4 py-3 flex items-center gap-3">
           <span className="text-xl">✅</span>
-          <p className="text-sm text-green-700 font-medium">Banque connectée ! Tes transactions ont été importées.</p>
+          <p className="text-sm text-green-700 font-medium">{t("bridge.success")}</p>
         </div>
       )}
       {bridgeStatus === "error" && (
         <div className="mb-6 bg-red-50 border border-red-100 rounded-2xl px-4 py-3 flex items-center gap-3">
           <span className="text-xl">⚠️</span>
-          <p className="text-sm text-red-700 font-medium">La connexion bancaire a échoué. Réessaie depuis les paramètres.</p>
+          <p className="text-sm text-red-700 font-medium">{t("bridge.failed")}</p>
         </div>
       )}
 
@@ -279,34 +272,34 @@ export function BudgetClient({
         <BudgetSetupModal isOpen={showSetup} onComplete={handleSetupComplete} />
       )}
 
-      {/* Alerte rouge — plafond dépassé */}
       {isOverBudget && (
         <div className="mb-6 bg-danger/10 border border-danger/30 rounded-2xl px-4 py-3 flex items-center gap-3">
           <span className="text-2xl">🚨</span>
           <div>
-            <p className="text-sm font-semibold text-danger">Budget dépassé !</p>
+            <p className="text-sm font-semibold text-danger">{t("alerts.overBudgetTitle")}</p>
             <p className="text-xs text-danger/80">
-              Tu as dépassé ton revenu de <strong>{formatCurrency(summary.totalExpenses - effectiveBudget)}</strong> ce mois.
+              {t("alerts.overBudgetMsg", { amount: formatCurrency(summary.totalExpenses - effectiveBudget) })}
             </p>
           </div>
         </div>
       )}
 
-      {/* Alerte orange — seuil d'alerte atteint */}
       {isNearWarning && (
         <div className="mb-6 bg-warning/10 border border-warning/30 rounded-2xl px-4 py-3 flex items-center gap-3">
           <span className="text-2xl">⚠️</span>
           <div>
-            <p className="text-sm font-semibold text-warning">Seuil d&apos;alerte atteint</p>
+            <p className="text-sm font-semibold text-warning">{t("alerts.warningTitle")}</p>
             <p className="text-xs text-warning/80">
-              Tu as dépensé {formatCurrency(summary.totalExpenses)} sur ton seuil de {formatCurrency(summary.warningThreshold)}.{" "}
-              Il te reste {formatCurrency(effectiveBudget - summary.totalExpenses)} avant le plafond.
+              {t("alerts.warningMsg", {
+                spent: formatCurrency(summary.totalExpenses),
+                threshold: formatCurrency(summary.warningThreshold),
+                remaining: formatCurrency(effectiveBudget - summary.totalExpenses),
+              })}
             </p>
           </div>
         </div>
       )}
 
-      {/* Modal édition */}
       {editingTransaction && (
         <TransactionForm
           type={editingTransaction.type}
@@ -339,13 +332,12 @@ export function BudgetClient({
         </>
       )}
 
-
       {/* Month navigation */}
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => navigateMonth(-1)}
           className="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-soft text-textLight hover:text-textDark transition text-lg"
-          aria-label="Mois précédent"
+          aria-label={t("prevMonth")}
         >
           ‹
         </button>
@@ -353,7 +345,7 @@ export function BudgetClient({
         <button
           onClick={() => navigateMonth(1)}
           className="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-soft text-textLight hover:text-textDark transition text-lg"
-          aria-label="Mois suivant"
+          aria-label={t("nextMonth")}
         >
           ›
         </button>
@@ -371,18 +363,18 @@ export function BudgetClient({
           className="flex items-center justify-center gap-2 bg-danger hover:bg-danger/90 text-white font-semibold py-3 rounded-2xl transition"
         >
           <span className="text-lg leading-none">−</span>
-          Dépense
+          {t("expenseBtn")}
         </button>
         <button
           onClick={() => setShowForm("income")}
           className="flex items-center justify-center gap-2 bg-success hover:bg-success/90 text-white font-semibold py-3 rounded-2xl transition"
         >
           <span className="text-lg leading-none">+</span>
-          Revenu
+          {t("incomeBtn")}
         </button>
       </div>
 
-      {/* Charts (dépenses only) */}
+      {/* Charts */}
       {expenseTransactions.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
           <CategoryPie data={summary.byCategory} />
@@ -400,14 +392,12 @@ export function BudgetClient({
               activeTab === tab ? "bg-primary text-white" : "bg-white shadow-soft text-textLight hover:text-textDark"
             }`}
           >
-            {tab === "all" ? "Tout" : tab === "income" ? "💵 Revenus" : "💸 Dépenses"}
+            {tab === "all" ? t("tabs.all") : tab === "income" ? t("tabs.income") : t("tabs.expenses")}
           </button>
         ))}
       </div>
 
-      {/* Transaction list */}
       <TransactionList transactions={filteredTransactions} onDelete={handleDelete} onEdit={setEditingTransaction} />
-
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 interface UpgradeModalProps {
   isOpen: boolean;
@@ -9,19 +10,10 @@ interface UpgradeModalProps {
   reason?: string;
 }
 
-const PREMIUM_PERKS = [
-  "Habitudes illimitées",
-  "Objectifs illimités",
-  "Assistant IA illimité",
-  "Badges & niveaux avancés",
-  "Export CSV de tes données",
-  "Stats avancées (30/90 jours)",
-  "Bilan hebdomadaire",
-  "Thème sombre",
-];
-
 export function UpgradeModal({ isOpen, onClose, reason }: UpgradeModalProps) {
   const router = useRouter();
+  const t = useTranslations("upgrade.modal");
+  const perks = t.raw("perks") as string[];
 
   return (
     <AnimatePresence>
@@ -48,7 +40,7 @@ export function UpgradeModal({ isOpen, onClose, reason }: UpgradeModalProps) {
             <button
               onClick={onClose}
               className="absolute top-4 right-4 text-textLight hover:text-textDark transition text-lg leading-none"
-              aria-label="Fermer"
+              aria-label={t("closeLabel")}
             >
               ✕
             </button>
@@ -56,8 +48,8 @@ export function UpgradeModal({ isOpen, onClose, reason }: UpgradeModalProps) {
             {/* Header */}
             <div className="text-center mb-5">
               <div className="text-4xl mb-2">✨</div>
-              <h2 className="text-xl font-bold text-textDark">Passe à Premium</h2>
-              <p className="text-sm text-textLight mt-1">Débloque toutes les fonctionnalités</p>
+              <h2 className="text-xl font-bold text-textDark">{t("title")}</h2>
+              <p className="text-sm text-textLight mt-1">{t("subtitle")}</p>
             </div>
 
             {/* Reason highlight */}
@@ -69,7 +61,7 @@ export function UpgradeModal({ isOpen, onClose, reason }: UpgradeModalProps) {
 
             {/* Perks list */}
             <ul className="space-y-2 mb-5">
-              {PREMIUM_PERKS.map((perk) => (
+              {perks.map((perk) => (
                 <li key={perk} className="flex items-center gap-2 text-sm text-textDark">
                   <span className="text-success font-bold">✓</span>
                   {perk}
@@ -79,7 +71,7 @@ export function UpgradeModal({ isOpen, onClose, reason }: UpgradeModalProps) {
 
             {/* Price */}
             <p className="text-center text-sm text-textLight mb-4">
-              À partir de <span className="font-bold text-textDark">4,99€/mois</span>
+              {t("priceFrom")} <span className="font-bold text-textDark">{t("price")}</span>
             </p>
 
             {/* CTA */}
@@ -90,14 +82,14 @@ export function UpgradeModal({ isOpen, onClose, reason }: UpgradeModalProps) {
               }}
               className="w-full bg-gradient-to-r from-primary to-accent text-white font-semibold py-3 rounded-xl transition hover:opacity-90"
             >
-              Voir les offres
+              {t("ctaBtn")}
             </button>
 
             <button
               onClick={onClose}
               className="w-full mt-2 py-2.5 text-sm text-textLight hover:text-textDark transition"
             >
-              Plus tard
+              {t("laterBtn")}
             </button>
           </motion.div>
         </div>

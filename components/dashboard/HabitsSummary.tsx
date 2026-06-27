@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import Link from "next/link";
 import { getStreakMultiplierLabel } from "@/lib/gamification";
+import { useTranslations } from "next-intl";
 
 interface Habit {
   id: string;
@@ -22,6 +23,7 @@ interface HabitsSummaryProps {
 export function HabitsSummary({ habits }: HabitsSummaryProps) {
   const router = useRouter();
   const ph = usePostHog();
+  const t = useTranslations("dashboard.habits");
   const [completing, setCompleting] = useState<string | null>(null);
 
   // Habitudes déjà complétées au chargement → cachées d'emblée
@@ -34,8 +36,8 @@ export function HabitsSummary({ habits }: HabitsSummaryProps) {
   const [newBadge, setNewBadge] = useState<{ name: string; icon: string } | null>(null);
   useEffect(() => {
     if (!newBadge) return;
-    const t = setTimeout(() => setNewBadge(null), 5000);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setNewBadge(null), 5000);
+    return () => clearTimeout(timer);
   }, [newBadge]);
 
   const total = habits.length;
@@ -58,15 +60,12 @@ export function HabitsSummary({ habits }: HabitsSummaryProps) {
           badge_unlocked: data.data?.newBadges?.length > 0,
         });
 
-        // Badge débloqué ?
         if (data.data?.newBadges?.length > 0) {
           setNewBadge(data.data.newBadges[0]);
         }
 
-        // Après 600ms (bref affichage du ✓), lancer l'animation de sortie
         setTimeout(() => {
           setAnimatingOut((prev) => new Set([...prev, habitId]));
-          // Après l'animation (350ms), supprimer de la liste
           setTimeout(() => {
             setRemoved((prev) => new Set([...prev, habitId]));
             setAnimatingOut((prev) => { const s = new Set(prev); s.delete(habitId); return s; });
@@ -83,19 +82,18 @@ export function HabitsSummary({ habits }: HabitsSummaryProps) {
     return (
       <div className="bg-white rounded-2xl shadow-soft p-8 text-center">
         <p className="text-4xl mb-3">🌱</p>
-        <p className="text-textDark font-semibold mb-1">Aucune habitude pour aujourd&apos;hui</p>
-        <p className="text-textLight text-sm mb-4">Commence par créer ta première habitude !</p>
+        <p className="text-textDark font-semibold mb-1">{t("empty")}</p>
+        <p className="text-textLight text-sm mb-4">{t("emptyHint")}</p>
         <Link
           href="/habits"
           className="inline-block bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-primary/90 transition"
         >
-          + Créer une habitude
+          {t("createBtn")}
         </Link>
       </div>
     );
   }
 
-  // Habitudes visibles (non supprimées), non complétées en premier
   const visibleHabits = habits
     .filter((h) => !removed.has(h.id) || animatingOut.has(h.id))
     .sort((a, b) => {
@@ -111,13 +109,13 @@ export function HabitsSummary({ habits }: HabitsSummaryProps) {
         <div className="mb-4 bg-accent/10 border border-accent/20 rounded-2xl px-4 py-3 flex items-center gap-3">
           <span className="text-3xl">{newBadge.icon}</span>
           <div>
-            <p className="text-xs font-semibold text-accent uppercase tracking-wide">Badge débloqué !</p>
+            <p className="text-xs font-semibold text-accent uppercase tracking-wide">{t("badgeUnlocked")}</p>
             <p className="text-sm font-bold text-textDark">{newBadge.name}</p>
           </div>
           <button
             onClick={() => setNewBadge(null)}
             className="ml-auto text-textLight hover:text-textDark transition text-lg leading-none"
-            aria-label="Fermer"
+            aria-label={t("close")}
           >
             ×
           </button>
@@ -126,7 +124,7 @@ export function HabitsSummary({ habits }: HabitsSummaryProps) {
 
       {/* En-tête avec barre de progression */}
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold text-textDark">Habitudes du jour</h2>
+        <h2 className="text-lg font-semibold text-textDark">{t("title")}</h2>
         <span className={`text-sm font-bold ${isAllDone ? "text-success" : "text-primary"}`}>
           {doneCount}/{total}
         </span>
@@ -159,8 +157,8 @@ export function HabitsSummary({ habits }: HabitsSummaryProps) {
             <span key={i} className="confetti-piece" style={{ backgroundColor: color, left: `${10 + i * 15}%`, top: "8px", animationDelay: `${i * 0.15}s` }} />
           ))}
           <p className="text-2xl mb-1">🎉</p>
-          <p className="text-success font-bold text-sm">Toutes les habitudes complétées !</p>
-          <p className="text-success/70 text-xs mt-0.5">Excellent travail aujourd&apos;hui !</p>
+          <p className="text-success font-bold text-sm">{t("allDone")}</p>
+          <p className="text-success/70 text-xs mt-0.5">{t("allDoneMsg")}</p>
         </div>
       )}
 
@@ -205,7 +203,7 @@ export function HabitsSummary({ habits }: HabitsSummaryProps) {
                       </div>
                       {habit.currentStreak > 0 && (
                         <p className="text-xs text-textLight">
-                          🔥 {habit.currentStreak} jour{habit.currentStreak > 1 ? "s" : ""} de streak
+                          🔥 {habit.currentStreak > 1 ? t("streakDays", { count: habit.currentStreak }) : t("streakDay", { count: habit.currentStreak })}
                         </p>
                       )}
                     </div>
@@ -219,7 +217,7 @@ export function HabitsSummary({ habits }: HabitsSummaryProps) {
                         ? "bg-success text-white"
                         : "border-2 border-gray-200 hover:border-primary text-transparent hover:text-primary"
                     }`}
-                    aria-label={isDone ? "Complété" : "Marquer comme fait"}
+                    aria-label={isDone ? t("completed") : t("markDone")}
                   >
                     {isLoading ? (
                       <span className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />

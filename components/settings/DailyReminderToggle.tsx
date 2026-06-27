@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface DailyReminderToggleProps {
   enabled: boolean;
@@ -8,6 +9,7 @@ interface DailyReminderToggleProps {
 }
 
 export function DailyReminderToggle({ enabled: initialEnabled, isPremium }: DailyReminderToggleProps) {
+  const t = useTranslations("settings.notifications");
   const [enabled, setEnabled] = useState(initialEnabled);
   const [loading, setLoading] = useState(false);
 
@@ -40,7 +42,7 @@ export function DailyReminderToggle({ enabled: initialEnabled, isPremium }: Dail
     >
       <div className="text-left">
         <div className="flex items-center gap-2">
-          <p className="text-sm font-medium text-textDark">Rappel quotidien</p>
+          <p className="text-sm font-medium text-textDark">{t("dailyReminderTitle")}</p>
           {!isPremium && (
             <span className="text-[10px] bg-accent/10 text-accent font-semibold px-1.5 py-0.5 rounded-full">
               Premium
@@ -48,9 +50,7 @@ export function DailyReminderToggle({ enabled: initialEnabled, isPremium }: Dail
           )}
         </div>
         <p className="text-xs text-textLight mt-0.5">
-          {isPremium
-            ? "Reçois un email de rappel chaque soir si tes habitudes ne sont pas validées"
-            : "Disponible avec le plan Premium"}
+          {isPremium ? t("dailyReminderActive") : t("dailyReminderPremiumOnly")}
         </p>
       </div>
       <div

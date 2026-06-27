@@ -8,23 +8,14 @@ import { AvatarPicker } from "@/components/ui/AvatarPicker";
 import { Avatar } from "@/components/ui/Avatar";
 import { LocationPicker } from "@/components/ui/LocationPicker";
 import { config } from "@/lib/config";
-
-const PERKS = [
-  { icon: "🚀", text: "Inscription gratuite, sans carte bancaire" },
-  { icon: "✅", text: "Habitudes & streaks dès le premier jour" },
-  { icon: "🏆", text: "Classement mondial et badges" },
-  { icon: "🤖", text: "Coach IA personnel inclus" },
-  { icon: "🔒", text: "Tes données restent privées" },
-];
-
-const INTRO_STEPS = [
-  { icon: "✅", title: "Tes habitudes", content: "Crée des habitudes quotidiennes ou hebdomadaires. Chaque jour validé construit ton streak et te rapporte des XP." },
-  { icon: "💰", title: "Ton budget", content: "Enregistre tes dépenses par catégorie et visualise où va ton argent chaque mois." },
-  { icon: "🚀", title: "C'est parti !", content: "Tu es prêt ! Crée ta première habitude et commence dès aujourd'hui." },
-];
+import { useTranslations } from "next-intl";
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const t = useTranslations("onboarding");
+  const PERKS = t.raw("perks") as Array<{ icon: string; text: string }>;
+  const INTRO_STEPS = t.raw("introSteps") as Array<{ icon: string; title: string; content: string }>;
+
   const [phase, setPhase] = useState<"profile" | "intro">("profile");
   const [introStep, setIntroStep] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -80,10 +71,12 @@ export default function OnboardingPage() {
 
         <div>
           <h2 className="text-3xl font-extrabold leading-tight mb-4">
-            Commence<br />gratuitement.
+            {t("leftTitle").split("\n").map((line, i) => (
+              <span key={i}>{line}{i === 0 ? <br /> : null}</span>
+            ))}
           </h2>
           <p className="text-white/70 text-sm mb-8 leading-relaxed">
-            Rejoins des milliers d&apos;utilisateurs qui ont transformé leurs habitudes et leur quotidien.
+            {t("leftSubtitle")}
           </p>
           <ul className="space-y-3">
             {PERKS.map((p) => (
@@ -114,7 +107,10 @@ export default function OnboardingPage() {
 
             {/* Indicateur de progression */}
             <div className="flex items-center gap-2 mb-7">
-              {[{ num: 1, label: "Ton compte" }, { num: 2, label: "Ton profil" }].map((s, i) => (
+              {[
+                { num: 1, label: t("stepAccount") },
+                { num: 2, label: t("stepProfile") },
+              ].map((s, i) => (
                 <div key={s.num} className="flex items-center gap-2 flex-1">
                   <div className="flex items-center gap-2">
                     <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all flex-shrink-0 ${
@@ -144,8 +140,8 @@ export default function OnboardingPage() {
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <h1 className="text-2xl font-bold text-textDark mb-1">Ton profil</h1>
-                  <p className="text-textLight text-sm mb-6">Personnalise ton compte — modifiable plus tard dans les paramètres.</p>
+                  <h1 className="text-2xl font-bold text-textDark mb-1">{t("profileTitle")}</h1>
+                  <p className="text-textLight text-sm mb-6">{t("profileSubtitle")}</p>
 
                   <form onSubmit={handleProfileSave} className="space-y-5">
 
@@ -154,8 +150,8 @@ export default function OnboardingPage() {
                       <div className="flex items-center gap-3 mb-3">
                         <Avatar avatar={avatar} name="" size="lg" />
                         <div>
-                          <p className="text-sm font-semibold text-textDark">Choisis ton avatar</p>
-                          <p className="text-xs text-textLight">Emojis ou ta propre photo</p>
+                          <p className="text-sm font-semibold text-textDark">{t("avatarTitle")}</p>
+                          <p className="text-xs text-textLight">{t("avatarSubtitle")}</p>
                         </div>
                       </div>
                       <AvatarPicker value={avatar} onChange={setAvatar} />
@@ -164,7 +160,7 @@ export default function OnboardingPage() {
                     {/* Localisation */}
                     <div>
                       <p className="text-sm font-semibold text-textDark mb-3">
-                        Localisation <span className="text-textLight font-normal">(pour le classement)</span>
+                        {t("locationLabel")} <span className="text-textLight font-normal">{t("locationHint")}</span>
                       </p>
                       <LocationPicker
                         country={country} setCountry={setCountry}
@@ -180,8 +176,8 @@ export default function OnboardingPage() {
                       className="w-full flex items-center justify-between bg-gray-50 hover:bg-gray-100 rounded-xl p-4 transition"
                     >
                       <div className="text-left">
-                        <p className="text-sm font-medium text-textDark">Apparaître dans le classement</p>
-                        <p className="text-xs text-textLight mt-0.5">Comparaison avec les autres joueurs</p>
+                        <p className="text-sm font-medium text-textDark">{t("leaderboardLabel")}</p>
+                        <p className="text-xs text-textLight mt-0.5">{t("leaderboardHint")}</p>
                       </div>
                       <div className={`w-11 h-6 rounded-full transition-colors flex items-center px-0.5 flex-shrink-0 ml-4 ${showInLeaderboard ? "bg-primary" : "bg-gray-300"}`}>
                         <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${showInLeaderboard ? "translate-x-5" : "translate-x-0"}`} />
@@ -196,9 +192,9 @@ export default function OnboardingPage() {
                       {saving ? (
                         <>
                           <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          Enregistrement...
+                          {t("saving")}
                         </>
-                      ) : "C'est parti ! 🚀"}
+                      ) : t("submitBtn")}
                     </button>
 
                     <button
@@ -206,14 +202,14 @@ export default function OnboardingPage() {
                       onClick={handleSkip}
                       className="w-full text-center text-xs text-textLight hover:text-textDark transition"
                     >
-                      Passer — je configurerai ça plus tard
+                      {t("skipBtn")}
                     </button>
                   </form>
                 </motion.div>
               )}
 
               {/* ── Phase intro ───────────────────────────────────────── */}
-              {phase === "intro" && (
+              {phase === "intro" && current && (
                 <motion.div
                   key={`intro-${introStep}`}
                   initial={{ opacity: 0, x: 20 }}
@@ -242,7 +238,7 @@ export default function OnboardingPage() {
                         onClick={() => setIntroStep((s) => s - 1)}
                         className="flex-1 py-3 border border-gray-200 rounded-xl text-sm font-medium text-textLight hover:bg-gray-50 transition"
                       >
-                        Précédent
+                        {t("prevBtn")}
                       </button>
                     )}
                     {isLast ? (
@@ -250,14 +246,14 @@ export default function OnboardingPage() {
                         onClick={handleFinish}
                         className="flex-1 py-3 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-xl transition"
                       >
-                        Créer ma première habitude →
+                        {t("finishBtn")}
                       </button>
                     ) : (
                       <button
                         onClick={() => setIntroStep((s) => s + 1)}
                         className="flex-1 py-3 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-xl transition"
                       >
-                        Suivant
+                        {t("nextBtn")}
                       </button>
                     )}
                   </div>

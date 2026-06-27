@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const withNextIntl = require("next-intl/plugin")("./i18n/request.ts");
 const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -47,4 +48,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = withNextIntl(nextConfig);

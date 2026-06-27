@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { config } from "@/lib/config";
 
 interface PdfBilanButtonProps {
@@ -9,9 +10,11 @@ interface PdfBilanButtonProps {
 }
 
 export function PdfBilanButton({ type, isPremium }: PdfBilanButtonProps) {
+  const t = useTranslations("settings.export");
+  const locale = useLocale();
   const [loading, setLoading] = useState(false);
 
-  const label = type === "weekly" ? "Bilan hebdomadaire" : "Bilan mensuel";
+  const label = type === "weekly" ? t("weekly") : t("monthly");
   const icon = type === "weekly" ? "📅" : "📆";
 
   async function handleDownload() {
@@ -19,11 +22,11 @@ export function PdfBilanButton({ type, isPremium }: PdfBilanButtonProps) {
     setLoading(true);
     try {
       const res = await fetch(`/api/export/bilan?type=${type}`);
-      if (!res.ok) throw new Error("Erreur serveur");
+      if (!res.ok) throw new Error(t("errorServer"));
       const data = await res.json();
-      openPrintWindow(data, type);
+      openPrintWindow(data, type, locale, t);
     } catch {
-      alert("Erreur lors de la génération du bilan.");
+      alert(t("errorDownload"));
     } finally {
       setLoading(false);
     }
@@ -35,7 +38,7 @@ export function PdfBilanButton({ type, isPremium }: PdfBilanButtonProps) {
         <span className="text-xl">{icon}</span>
         <div className="flex-1">
           <p className="text-sm font-medium text-textDark">{label}</p>
-          <p className="text-xs text-textLight">🔒 Premium requis</p>
+          <p className="text-xs text-textLight">{t("premiumLocked")}</p>
         </div>
       </div>
     );
@@ -50,7 +53,7 @@ export function PdfBilanButton({ type, isPremium }: PdfBilanButtonProps) {
       <span className="text-xl">{icon}</span>
       <div className="flex-1">
         <p className="text-sm font-semibold text-primary">{label}</p>
-        <p className="text-xs text-textLight">Télécharger en PDF</p>
+        <p className="text-xs text-textLight">{t("downloadPdf")}</p>
       </div>
       {loading ? (
         <span className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin flex-shrink-0" />
@@ -61,9 +64,15 @@ export function PdfBilanButton({ type, isPremium }: PdfBilanButtonProps) {
   );
 }
 
-function openPrintWindow(data: Record<string, unknown>, type: "weekly" | "monthly") {
-  const period = type === "weekly" ? "Semaine" : "Mois";
-  const now = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+function openPrintWindow(
+  data: Record<string, unknown>,
+  type: "weekly" | "monthly",
+  locale: string,
+  t: (key: string) => string
+) {
+  const period = type === "weekly" ? t("weekly") : t("monthly");
+  const dateLocale = locale === "fr" ? "fr-FR" : "en-US";
+  const now = new Date().toLocaleDateString(dateLocale, { day: "numeric", month: "long", year: "numeric" });
 
   const habits = (data.habits as Array<{ name: string; currentStreak: number; completionRate: number }>) ?? [];
   const expenses = (data.expenses as Array<{ label?: string; category: string; amount: number; date: string }>) ?? [];
@@ -72,10 +81,10 @@ function openPrintWindow(data: Record<string, unknown>, type: "weekly" | "monthl
   const summary = data.summary as { totalExpenses: number; totalIncome: number; balance: number } | undefined;
 
   const html = `<!DOCTYPE html>
-<html lang="fr">
+<html lang="${locale}">
 <head>
   <meta charset="UTF-8"/>
-  <title>${config.app.name} — Bilan ${period}</title>
+  <title>${config.app.name} — ${period}</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #2D2D2D; padding: 40px; max-width: 800px; margin: auto; }
@@ -95,42 +104,42 @@ function openPrintWindow(data: Record<string, unknown>, type: "weekly" | "monthl
   </style>
 </head>
 <body>
-  <h1>🌀 ${config.app.name} — Bilan ${period}</h1>
-  <p class="date">Généré le ${now}</p>
+  <h1>🌀 ${config.app.name} — ${period}</h1>
+  <p class="date">${now}</p>
 
   ${summary ? `
-  <h2>Résumé financier</h2>
+  <h2>${locale === "fr" ? "Résumé financier" : "Financial summary"}</h2>
   <div class="summary-box">
-    <div class="summary-item"><div>Revenus</div><div class="val amount-pos">+${summary.totalIncome.toFixed(2)} €</div></div>
-    <div class="summary-item"><div>Dépenses</div><div class="val amount-neg">-${summary.totalExpenses.toFixed(2)} €</div></div>
-    <div class="summary-item"><div>Solde</div><div class="val ${summary.balance >= 0 ? "amount-pos" : "amount-neg"}">${summary.balance >= 0 ? "+" : ""}${summary.balance.toFixed(2)} €</div></div>
+    <div class="summary-item"><div>${locale === "fr" ? "Revenus" : "Income"}</div><div class="val amount-pos">+${summary.totalIncome.toFixed(2)} €</div></div>
+    <div class="summary-item"><div>${locale === "fr" ? "Dépenses" : "Expenses"}</div><div class="val amount-neg">-${summary.totalExpenses.toFixed(2)} €</div></div>
+    <div class="summary-item"><div>${locale === "fr" ? "Solde" : "Balance"}</div><div class="val ${summary.balance >= 0 ? "amount-pos" : "amount-neg"}">${summary.balance >= 0 ? "+" : ""}${summary.balance.toFixed(2)} €</div></div>
   </div>` : ""}
 
   ${habits.length > 0 ? `
-  <h2>Habitudes (${habits.length})</h2>
+  <h2>${locale === "fr" ? `Habitudes (${habits.length})` : `Habits (${habits.length})`}</h2>
   <table>
-    <tr><th>Habitude</th><th>Streak actuel</th><th>Taux de complétion</th></tr>
-    ${habits.map((h) => `<tr><td>${h.name}</td><td>🔥 ${h.currentStreak}j</td><td>${h.completionRate}%</td></tr>`).join("")}
+    <tr><th>${locale === "fr" ? "Habitude" : "Habit"}</th><th>${locale === "fr" ? "Streak actuel" : "Current streak"}</th><th>${locale === "fr" ? "Taux de complétion" : "Completion rate"}</th></tr>
+    ${habits.map((h) => `<tr><td>${h.name}</td><td>🔥 ${h.currentStreak}${locale === "fr" ? "j" : "d"}</td><td>${h.completionRate}%</td></tr>`).join("")}
   </table>` : ""}
 
   ${expenses.length > 0 ? `
-  <h2>Dépenses (${expenses.length})</h2>
+  <h2>${locale === "fr" ? `Dépenses (${expenses.length})` : `Expenses (${expenses.length})`}</h2>
   <table>
-    <tr><th>Libellé</th><th>Catégorie</th><th>Montant</th><th>Date</th></tr>
-    ${expenses.map((e) => `<tr><td>${e.label ?? "—"}</td><td>${e.category}</td><td class="amount-neg">-${e.amount.toFixed(2)} €</td><td>${new Date(e.date).toLocaleDateString("fr-FR")}</td></tr>`).join("")}
+    <tr><th>${locale === "fr" ? "Libellé" : "Label"}</th><th>${locale === "fr" ? "Catégorie" : "Category"}</th><th>${locale === "fr" ? "Montant" : "Amount"}</th><th>Date</th></tr>
+    ${expenses.map((e) => `<tr><td>${e.label ?? "—"}</td><td>${e.category}</td><td class="amount-neg">-${e.amount.toFixed(2)} €</td><td>${new Date(e.date).toLocaleDateString(dateLocale)}</td></tr>`).join("")}
   </table>` : ""}
 
   ${incomes.length > 0 ? `
-  <h2>Revenus (${incomes.length})</h2>
+  <h2>${locale === "fr" ? `Revenus (${incomes.length})` : `Income (${incomes.length})`}</h2>
   <table>
-    <tr><th>Libellé</th><th>Catégorie</th><th>Montant</th><th>Date</th></tr>
-    ${incomes.map((i) => `<tr><td>${i.label ?? "—"}</td><td>${i.category}</td><td class="amount-pos">+${i.amount.toFixed(2)} €</td><td>${new Date(i.date).toLocaleDateString("fr-FR")}</td></tr>`).join("")}
+    <tr><th>${locale === "fr" ? "Libellé" : "Label"}</th><th>${locale === "fr" ? "Catégorie" : "Category"}</th><th>${locale === "fr" ? "Montant" : "Amount"}</th><th>Date</th></tr>
+    ${incomes.map((i) => `<tr><td>${i.label ?? "—"}</td><td>${i.category}</td><td class="amount-pos">+${i.amount.toFixed(2)} €</td><td>${new Date(i.date).toLocaleDateString(dateLocale)}</td></tr>`).join("")}
   </table>` : ""}
 
   ${goals.length > 0 ? `
-  <h2>Objectifs (${goals.length})</h2>
+  <h2>${locale === "fr" ? `Objectifs (${goals.length})` : `Goals (${goals.length})`}</h2>
   <table>
-    <tr><th>Titre</th><th>Progression</th></tr>
+    <tr><th>${locale === "fr" ? "Titre" : "Title"}</th><th>${locale === "fr" ? "Progression" : "Progress"}</th></tr>
     ${goals.map((g) => `<tr><td>${g.title}</td><td>${g.current}/${g.target}${g.unit ? " " + g.unit : ""} (${Math.min(Math.round((g.current / g.target) * 100), 100)}%)</td></tr>`).join("")}
   </table>` : ""}
 

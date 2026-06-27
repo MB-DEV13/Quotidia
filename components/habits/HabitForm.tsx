@@ -1,26 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 const COLORS = [
   "#5B5EA6", "#9B72CF", "#4CAF50", "#FF9800",
   "#EF4444", "#0EA5E9", "#EC4899", "#14B8A6",
 ];
 
-const ICON_GROUPS = [
-  { id: "sport",       label: "🏃 Sport",        icons: ["🏃", "🚴", "🏊", "🏋️", "⚽", "🎾", "🥊", "🏀", "🧗", "🤸", "🎿", "🏄"] },
-  { id: "wellness",    label: "🧘 Bien-être",     icons: ["🧘", "😴", "💆", "🌿", "💊", "🩺", "❤️", "💪", "🫁", "🌬️"] },
-  { id: "knowledge",   label: "📚 Savoir",        icons: ["📚", "✍️", "🎓", "💻", "🔬", "📖", "🗣️", "🧠", "🌐", "🔭"] },
-  { id: "nutrition",   label: "🍏 Nutrition",     icons: ["🥗", "💧", "🍎", "🥦", "🍵", "🫖", "🥤", "🍳", "🥑", "🫐"] },
-  { id: "productivity",label: "💼 Productivité",  icons: ["💼", "🎯", "✅", "📋", "⏰", "📊", "📝", "🔧", "📱", "💡"] },
-  { id: "creativity",  label: "🎨 Créativité",    icons: ["🎵", "🎨", "📸", "🎬", "✏️", "🎭", "🎸", "🎹", "🖌️", "🎤"] },
-  { id: "lifestyle",   label: "🌟 Lifestyle",     icons: ["🌙", "☀️", "🌱", "💰", "🏠", "🤝", "🐕", "🌍", "🧹", "💝"] },
+const ICON_GROUPS_DATA = [
+  { id: "sport",        icons: ["🏃", "🚴", "🏊", "🏋️", "⚽", "🎾", "🥊", "🏀", "🧗", "🤸", "🎿", "🏄"] },
+  { id: "wellness",     icons: ["🧘", "😴", "💆", "🌿", "💊", "🩺", "❤️", "💪", "🫁", "🌬️"] },
+  { id: "knowledge",    icons: ["📚", "✍️", "🎓", "💻", "🔬", "📖", "🗣️", "🧠", "🌐", "🔭"] },
+  { id: "nutrition",    icons: ["🥗", "💧", "🍎", "🥦", "🍵", "🫖", "🥤", "🍳", "🥑", "🫐"] },
+  { id: "productivity", icons: ["💼", "🎯", "✅", "📋", "⏰", "📊", "📝", "🔧", "📱", "💡"] },
+  { id: "creativity",   icons: ["🎵", "🎨", "📸", "🎬", "✏️", "🎭", "🎸", "🎹", "🖌️", "🎤"] },
+  { id: "lifestyle",    icons: ["🌙", "☀️", "🌱", "💰", "🏠", "🤝", "🐕", "🌍", "🧹", "💝"] },
 ];
 
-const WEEK_DAYS = [
-  { iso: 1, label: "Lun" }, { iso: 2, label: "Mar" }, { iso: 3, label: "Mer" },
-  { iso: 4, label: "Jeu" }, { iso: 5, label: "Ven" }, { iso: 6, label: "Sam" }, { iso: 7, label: "Dim" },
-];
+const WEEK_DAYS_ISO = [
+  { iso: 1, key: "mon" }, { iso: 2, key: "tue" }, { iso: 3, key: "wed" },
+  { iso: 4, key: "thu" }, { iso: 5, key: "fri" }, { iso: 6, key: "sat" }, { iso: 7, key: "sun" },
+] as const;
 
 type FrequencyMode = "daily" | "days" | "once";
 
@@ -43,6 +44,7 @@ interface HabitFormProps {
 }
 
 export function HabitForm({ onSubmit, onCancel, initialValues, editMode = false }: HabitFormProps) {
+  const t = useTranslations("habits");
   const parsed = initialValues ? parseFrequency(initialValues.frequency) : { freqMode: "daily" as FrequencyMode, selectedDays: [], onceDate: "" };
 
   const [name, setName] = useState(initialValues?.name ?? "");
@@ -54,7 +56,7 @@ export function HabitForm({ onSubmit, onCancel, initialValues, editMode = false 
   const [loading, setLoading] = useState(false);
   const [openGroup, setOpenGroup] = useState<string>(() => {
     if (!initialValues?.icon) return "sport";
-    return ICON_GROUPS.find((g) => g.icons.includes(initialValues.icon))?.id ?? "sport";
+    return ICON_GROUPS_DATA.find((g) => g.icons.includes(initialValues.icon))?.id ?? "sport";
   });
 
   function buildFrequency(): string {
@@ -82,6 +84,12 @@ export function HabitForm({ onSubmit, onCancel, initialValues, editMode = false 
     setLoading(false);
   }
 
+  const FREQ_OPTIONS: { key: FrequencyMode; label: string; icon: string }[] = [
+    { key: "daily", label: t("form.freqDaily"), icon: "🔁" },
+    { key: "days",  label: t("form.freqDays"),  icon: "📅" },
+    { key: "once",  label: t("form.freqOnce"),  icon: "📌" },
+  ];
+
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4">
       <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-card max-h-[90vh] overflow-y-auto">
@@ -93,34 +101,34 @@ export function HabitForm({ onSubmit, onCancel, initialValues, editMode = false 
             {icon}
           </div>
           <h2 className="text-lg font-semibold text-textDark">
-            {editMode ? "Modifier l'habitude" : "Nouvelle habitude"}
+            {editMode ? t("form.editTitle") : t("form.title")}
           </h2>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Nom */}
           <div>
-            <label className="block text-sm font-medium text-textDark mb-1">Nom</label>
+            <label className="block text-sm font-medium text-textDark mb-1">{t("form.nameLabel")}</label>
             <input
               type="text" value={name} onChange={(e) => setName(e.target.value)}
               required autoFocus
-              placeholder="ex: Méditation, Sport, Lecture..."
+              placeholder={t("form.namePlaceholder")}
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
             />
           </div>
 
           {/* Icône — accordéon par catégorie */}
           <div>
-            <label className="block text-sm font-medium text-textDark mb-2">Icône</label>
+            <label className="block text-sm font-medium text-textDark mb-2">{t("form.iconLabel")}</label>
             <div className="border border-gray-100 rounded-xl overflow-hidden">
-              {ICON_GROUPS.map((group, i) => (
+              {ICON_GROUPS_DATA.map((group, i) => (
                 <div key={group.id} className={i > 0 ? "border-t border-gray-100" : ""}>
                   <button
                     type="button"
                     onClick={() => setOpenGroup(openGroup === group.id ? "" : group.id)}
                     className="w-full flex items-center justify-between px-4 py-2.5 text-sm text-textDark hover:bg-gray-50 transition"
                   >
-                    <span className="font-medium">{group.label}</span>
+                    <span className="font-medium">{t(`form.iconGroups.${group.id}`)}</span>
                     <span className="text-textLight text-xs">{openGroup === group.id ? "▾" : "▸"}</span>
                   </button>
                   {openGroup === group.id && (
@@ -144,7 +152,7 @@ export function HabitForm({ onSubmit, onCancel, initialValues, editMode = false 
 
           {/* Couleur */}
           <div>
-            <label className="block text-sm font-medium text-textDark mb-2">Couleur</label>
+            <label className="block text-sm font-medium text-textDark mb-2">{t("form.colorLabel")}</label>
             <div className="flex gap-2">
               {COLORS.map((c) => (
                 <button
@@ -158,13 +166,9 @@ export function HabitForm({ onSubmit, onCancel, initialValues, editMode = false 
 
           {/* Récurrence */}
           <div>
-            <label className="block text-sm font-medium text-textDark mb-2">Récurrence</label>
+            <label className="block text-sm font-medium text-textDark mb-2">{t("form.frequencyLabel")}</label>
             <div className="grid grid-cols-3 gap-2 mb-3">
-              {([
-                { key: "daily", label: "Tous les jours", icon: "🔁" },
-                { key: "days",  label: "Jours précis",   icon: "📅" },
-                { key: "once",  label: "Date unique",    icon: "📌" },
-              ] as { key: FrequencyMode; label: string; icon: string }[]).map((opt) => (
+              {FREQ_OPTIONS.map((opt) => (
                 <button
                   key={opt.key} type="button" onClick={() => setFreqMode(opt.key)}
                   className={`flex flex-col items-center gap-1 py-3 rounded-xl text-xs font-medium transition ${
@@ -179,28 +183,28 @@ export function HabitForm({ onSubmit, onCancel, initialValues, editMode = false 
 
             {freqMode === "days" && (
               <div>
-                <p className="text-xs text-textLight mb-2">Sélectionne les jours :</p>
+                <p className="text-xs text-textLight mb-2">{t("form.selectDaysLabel")}</p>
                 <div className="flex gap-1.5">
-                  {WEEK_DAYS.map((day) => (
+                  {WEEK_DAYS_ISO.map((day) => (
                     <button
                       key={day.iso} type="button" onClick={() => toggleDay(day.iso)}
                       className={`flex-1 py-2 rounded-lg text-xs font-semibold transition ${
                         selectedDays.includes(day.iso) ? "bg-primary text-white" : "bg-gray-100 text-textLight hover:bg-gray-200"
                       }`}
                     >
-                      {day.label}
+                      {t(`form.weekDays.${day.key}`)}
                     </button>
                   ))}
                 </div>
                 {selectedDays.length === 0 && (
-                  <p className="text-xs text-danger mt-1">Sélectionne au moins un jour.</p>
+                  <p className="text-xs text-danger mt-1">{t("form.selectDaysError")}</p>
                 )}
               </div>
             )}
 
             {freqMode === "once" && (
               <div>
-                <p className="text-xs text-textLight mb-2">Choisir la date :</p>
+                <p className="text-xs text-textLight mb-2">{t("form.chooseDateLabel")}</p>
                 <input
                   type="date" value={onceDate} onChange={(e) => setOnceDate(e.target.value)}
                   min={new Date().toISOString().slice(0, 10)}
@@ -216,13 +220,13 @@ export function HabitForm({ onSubmit, onCancel, initialValues, editMode = false 
               type="button" onClick={onCancel}
               className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-medium text-textLight hover:bg-gray-50 transition"
             >
-              Annuler
+              {t("form.cancel")}
             </button>
             <button
               type="submit" disabled={loading || !isValid()}
               className="flex-1 py-3 rounded-xl bg-primary hover:bg-primary/90 disabled:opacity-60 text-white text-sm font-semibold transition"
             >
-              {loading ? "Enregistrement..." : editMode ? "Enregistrer" : "Créer"}
+              {loading ? t("form.submitting") : editMode ? t("form.submitEdit") : t("form.submit")}
             </button>
           </div>
         </form>

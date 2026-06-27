@@ -5,37 +5,12 @@ import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { config } from "@/lib/config";
 import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
 
 interface UpgradePageClientProps {
   isPremium: boolean;
   stripeCurrentPeriodEnd: string | null;
 }
-
-const FEATURES = [
-  { label: "Habitudes", free: "3 max", premium: "Illimitées" },
-  { label: "Objectifs", free: "2 max", premium: "Illimités" },
-  { label: "Budget", free: "1 catégorie", premium: "Illimité" },
-  { label: "🏦 Connexion bancaire", free: "—", premium: "Sync auto" },
-  { label: "Historique", free: "30 jours", premium: "Illimité" },
-  { label: "Assistant IA", free: "5 req./mois", premium: "Illimité" },
-  { label: "Gamification", free: "Streaks uniquement", premium: "Badges + Niveaux + XP" },
-  { label: "Stats avancées", free: "7 jours", premium: "30 / 90 jours" },
-  { label: "Bilan périodique", free: "—", premium: "Hebdo + Mensuel" },
-  { label: "Thèmes", free: "Clair uniquement", premium: "Clair + Sombre" },
-  { label: "Export données", free: "—", premium: "CSV" },
-];
-
-const PERKS = [
-  "Habitudes & objectifs illimités",
-  "🏦 Connexion bancaire automatique",
-  "Assistant IA sans limite",
-  "Badges exclusifs & niveaux avancés",
-  "Stats sur 30 et 90 jours",
-  "Bilan hebdomadaire personnalisé",
-  "Export CSV de toutes tes données",
-  "Thème sombre",
-  "Support prioritaire",
-];
 
 export function UpgradePageClient({
   isPremium,
@@ -45,6 +20,12 @@ export function UpgradePageClient({
   const ph = usePostHog();
   const [loading, setLoading] = useState<"monthly" | "yearly" | "portal" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations("upgrade.page");
+  const locale = useLocale();
+  const dateLocale = locale === "fr" ? "fr-FR" : "en-US";
+
+  const FEATURES = t.raw("features") as Array<{ label: string; free: string; premium: string }>;
+  const PERKS = t.raw("perks") as string[];
 
   async function handleCheckout(priceId: "monthly" | "yearly") {
     setLoading(priceId);
@@ -58,7 +39,7 @@ export function UpgradePageClient({
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        setError(json.error ?? "Erreur lors de la redirection");
+        setError(json.error ?? t("errorRedirect"));
         ph.capture("checkout_error", { plan: priceId, error: json.error });
         return;
       }
@@ -66,7 +47,7 @@ export function UpgradePageClient({
         window.location.href = json.data.url;
       }
     } catch {
-      setError("Erreur réseau. Réessaie.");
+      setError(t("errorNetwork"));
     } finally {
       setLoading(null);
     }
@@ -79,14 +60,14 @@ export function UpgradePageClient({
       const res = await fetch("/api/stripe/portal", { method: "POST" });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        setError(json.error ?? "Erreur portail");
+        setError(json.error ?? t("errorPortal"));
         return;
       }
       if (json.data?.url) {
         window.location.href = json.data.url;
       }
     } catch {
-      setError("Erreur réseau. Réessaie.");
+      setError(t("errorNetwork"));
     } finally {
       setLoading(null);
     }
@@ -100,21 +81,21 @@ export function UpgradePageClient({
           href="/dashboard"
           className="inline-flex items-center gap-2 text-sm text-textLight hover:text-textDark transition mb-8"
         >
-          ← Retour au dashboard
+          {t("backLink")}
         </Link>
 
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-soft text-sm text-accent font-medium mb-4">
-            <span>✨</span> Passe au niveau supérieur
+            <span>✨</span> {t("badge")}
           </div>
           <h1 className="text-4xl font-bold text-textDark mb-3">
-            {isPremium ? "Ton abonnement Premium" : "Passez à Premium"}
+            {isPremium ? t("titlePremium") : t("titleFree")}
           </h1>
           <p className="text-textLight text-lg max-w-xl mx-auto">
             {isPremium
-              ? `Merci de soutenir ${config.app.name} ! Tu profites de toutes les fonctionnalités sans limite.`
-              : "Débloque toutes les fonctionnalités et transforme vraiment ton quotidien."}
+              ? t("subtitlePremium", { appName: config.app.name })
+              : t("subtitleFree")}
           </p>
         </div>
 
@@ -122,17 +103,16 @@ export function UpgradePageClient({
         {isPremium ? (
           <div className="max-w-md mx-auto bg-white rounded-2xl shadow-soft p-8 text-center">
             <div className="text-5xl mb-4">🏆</div>
-            <h2 className="text-xl font-bold text-textDark mb-2">Tu es Premium !</h2>
+            <h2 className="text-xl font-bold text-textDark mb-2">{t("alreadyPremiumTitle")}</h2>
             {stripeCurrentPeriodEnd && (
               <p className="text-sm text-textLight mb-6">
-                Abonnement actif jusqu&apos;au{" "}
-                <span className="font-semibold text-textDark">
-                  {new Date(stripeCurrentPeriodEnd).toLocaleDateString("fr-FR", {
+                {t("activeUntil", {
+                  date: new Date(stripeCurrentPeriodEnd).toLocaleDateString(dateLocale, {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
-                  })}
-                </span>
+                  }),
+                })}
               </p>
             )}
             <button
@@ -140,7 +120,7 @@ export function UpgradePageClient({
               disabled={loading === "portal"}
               className="w-full py-3 rounded-xl bg-primary hover:bg-primary/90 text-white font-semibold transition disabled:opacity-60"
             >
-              {loading === "portal" ? "Chargement..." : "Gérer mon abonnement"}
+              {loading === "portal" ? t("loading") : t("manageBtn")}
             </button>
             {error && <p className="text-xs text-danger mt-3">{error}</p>}
           </div>
@@ -153,14 +133,14 @@ export function UpgradePageClient({
               </div>
               <div className="text-center sm:text-left">
                 <h3 className="text-base font-bold text-textDark mb-1">
-                  Nouvelle fonctionnalité — Connexion bancaire automatique
+                  {t("bankFeatureTitle")}
                 </h3>
                 <p className="text-sm text-textLight leading-relaxed">
-                  Connecte ton compte bancaire en 1 clic (via Open Banking PSD2). Tes transactions arrivent automatiquement dans ton budget, catégorisées intelligemment. Fini la saisie manuelle.
+                  {t("bankFeatureDesc")}
                 </p>
               </div>
               <span className="shrink-0 bg-blue-500 text-white text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap">
-                Premium exclusif
+                {t("bankFeatureBadge")}
               </span>
             </div>
 
@@ -170,13 +150,13 @@ export function UpgradePageClient({
               <div className="bg-white rounded-2xl shadow-soft p-6 border-2 border-transparent hover:border-primary/20 transition">
                 <div className="mb-4">
                   <p className="text-sm font-medium text-textLight uppercase tracking-wide mb-1">
-                    Mensuel
+                    {t("monthlyLabel")}
                   </p>
                   <div className="flex items-end gap-1">
-                    <span className="text-4xl font-bold text-textDark">4,99€</span>
-                    <span className="text-textLight mb-1">/mois</span>
+                    <span className="text-4xl font-bold text-textDark">{t("monthlyPrice")}</span>
+                    <span className="text-textLight mb-1">{t("monthlyPer")}</span>
                   </div>
-                  <p className="text-xs text-textLight mt-1">Facturé mensuellement</p>
+                  <p className="text-xs text-textLight mt-1">{t("monthlyBilling")}</p>
                 </div>
 
                 <ul className="space-y-2 mb-6">
@@ -193,7 +173,7 @@ export function UpgradePageClient({
                   disabled={loading !== null}
                   className="w-full py-3 rounded-xl border-2 border-primary text-primary font-semibold hover:bg-primary hover:text-white transition disabled:opacity-60"
                 >
-                  {loading === "monthly" ? "Chargement..." : "Commencer maintenant"}
+                  {loading === "monthly" ? t("loading") : t("startBtn")}
                 </button>
               </div>
 
@@ -201,19 +181,19 @@ export function UpgradePageClient({
               <div className="relative bg-gradient-to-br from-primary to-accent rounded-2xl shadow-card p-6 text-white">
                 {/* Badge */}
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-warning text-white text-xs font-bold px-3 py-1 rounded-full shadow">
-                  ⭐ 2 mois offerts
+                  {t("yearlyBadge")}
                 </div>
 
                 <div className="mb-4">
                   <p className="text-sm font-medium text-white/70 uppercase tracking-wide mb-1">
-                    Annuel
+                    {t("yearlyLabel")}
                   </p>
                   <div className="flex items-end gap-1">
-                    <span className="text-4xl font-bold">39,99€</span>
-                    <span className="text-white/70 mb-1">/an</span>
+                    <span className="text-4xl font-bold">{t("yearlyPrice")}</span>
+                    <span className="text-white/70 mb-1">{t("yearlyPer")}</span>
                   </div>
                   <p className="text-xs text-white/60 mt-1">
-                    Soit 3,33€/mois · Économise 20%
+                    {t("yearlyPerMonth")}
                   </p>
                 </div>
 
@@ -231,7 +211,7 @@ export function UpgradePageClient({
                   disabled={loading !== null}
                   className="w-full py-3 rounded-xl bg-white text-primary font-semibold hover:bg-white/90 transition disabled:opacity-60"
                 >
-                  {loading === "yearly" ? "Chargement..." : "Commencer maintenant"}
+                  {loading === "yearly" ? t("loading") : t("startBtn")}
                 </button>
               </div>
             </div>
@@ -244,7 +224,7 @@ export function UpgradePageClient({
             <div className="bg-white rounded-2xl shadow-soft overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-100">
                 <h2 className="text-base font-semibold text-textDark">
-                  Comparaison Gratuit vs Premium
+                  {t("comparisonTitle")}
                 </h2>
               </div>
               <div className="overflow-x-auto">
@@ -252,13 +232,13 @@ export function UpgradePageClient({
                   <thead>
                     <tr className="border-b border-gray-100">
                       <th className="text-left px-6 py-3 font-medium text-textLight">
-                        Fonctionnalité
+                        {t("colFeature")}
                       </th>
                       <th className="text-center px-4 py-3 font-medium text-textLight">
-                        Gratuit
+                        {t("colFree")}
                       </th>
                       <th className="text-center px-4 py-3 font-medium text-accent">
-                        Premium ✨
+                        {t("colPremium")}
                       </th>
                     </tr>
                   </thead>
@@ -282,7 +262,7 @@ export function UpgradePageClient({
 
             {/* Footer note */}
             <p className="text-center text-xs text-textLight mt-6">
-              Paiement sécurisé via Stripe · Annulation à tout moment · Sans engagement
+              {t("footer")}
             </p>
           </>
         )}

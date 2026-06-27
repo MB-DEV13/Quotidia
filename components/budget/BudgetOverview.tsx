@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { formatCurrency } from "@/lib/utils";
 
 interface CategorySummary {
@@ -46,16 +47,16 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export function BudgetOverview({ totalExpenses, totalIncome, budget, warningThreshold, byCategory, prevMonthExpenses, top3 }: BudgetOverviewProps) {
+  const t = useTranslations("budget");
+
   const balance = totalIncome - totalExpenses;
   const effectiveBudget = budget > 0 ? budget : 0;
   const percentageUsed = effectiveBudget > 0 ? Math.min(Math.round((totalExpenses / effectiveBudget) * 100), 100) : 0;
   const isOverBudget = effectiveBudget > 0 && totalExpenses > effectiveBudget;
   const isNearWarning = !isOverBudget && warningThreshold > 0 && totalExpenses >= warningThreshold;
 
-  // Couleur de la barre : vert → orange → rouge
   const barColor = isOverBudget ? "bg-danger" : isNearWarning ? "bg-warning" : "bg-success";
 
-  // Comparaison mois précédent
   const diffPct = prevMonthExpenses && prevMonthExpenses > 0
     ? Math.round(((totalExpenses - prevMonthExpenses) / prevMonthExpenses) * 100)
     : null;
@@ -65,22 +66,22 @@ export function BudgetOverview({ totalExpenses, totalIncome, budget, warningThre
       {/* Revenus / Dépenses / Solde */}
       <div className="grid grid-cols-3 gap-4 mb-5">
         <div className="text-center">
-          <p className="text-xs text-textLight mb-1">Revenus</p>
+          <p className="text-xs text-textLight mb-1">{t("overview.income")}</p>
           <p className="text-lg font-bold text-success">+{formatCurrency(totalIncome)}</p>
         </div>
         <div className="text-center border-x border-gray-100">
-          <p className="text-xs text-textLight mb-1">Dépenses</p>
+          <p className="text-xs text-textLight mb-1">{t("overview.expenses")}</p>
           <p className="text-lg font-bold text-danger">-{formatCurrency(totalExpenses)}</p>
           {diffPct !== null && (
             <span className={`inline-block text-[10px] font-semibold px-1.5 py-0.5 rounded-full mt-1 ${
               diffPct > 0 ? "bg-danger/10 text-danger" : "bg-success/10 text-success"
             }`}>
-              {diffPct > 0 ? "+" : ""}{diffPct}% vs mois dernier
+              {diffPct > 0 ? "+" : ""}{t("overview.vsPrevMonth", { pct: diffPct })}
             </span>
           )}
         </div>
         <div className="text-center">
-          <p className="text-xs text-textLight mb-1">Solde</p>
+          <p className="text-xs text-textLight mb-1">{t("overview.balance")}</p>
           <p className={`text-lg font-bold ${balance >= 0 ? "text-success" : "text-danger"}`}>
             {balance >= 0 ? "+" : ""}{formatCurrency(balance)}
           </p>
@@ -91,13 +92,13 @@ export function BudgetOverview({ totalExpenses, totalIncome, budget, warningThre
       {effectiveBudget > 0 && (
         <div className="mb-4">
           <div className="flex justify-between items-center mb-1.5">
-            <span className="text-xs text-textLight">{percentageUsed}% du revenu dépensé</span>
+            <span className="text-xs text-textLight">{t("overview.percentUsed", { percent: percentageUsed })}</span>
             <span className={`text-xs font-semibold ${isOverBudget ? "text-danger" : isNearWarning ? "text-warning" : "text-textLight"}`}>
               {isOverBudget
-                ? `🚨 Dépassement de ${formatCurrency(totalExpenses - effectiveBudget)}`
+                ? t("overview.overBudget", { amount: formatCurrency(totalExpenses - effectiveBudget) })
                 : isNearWarning
-                  ? `⚠️ Seuil atteint — ${formatCurrency(effectiveBudget - totalExpenses)} restants`
-                  : `${formatCurrency(effectiveBudget - totalExpenses)} restants`}
+                  ? t("overview.warningReached", { amount: formatCurrency(effectiveBudget - totalExpenses) })
+                  : t("overview.remaining", { amount: formatCurrency(effectiveBudget - totalExpenses) })}
             </span>
           </div>
           <div className="h-3 bg-gray-100 rounded-full overflow-hidden relative">
@@ -105,7 +106,6 @@ export function BudgetOverview({ totalExpenses, totalIncome, budget, warningThre
               className={`h-full rounded-full transition-all ${barColor}`}
               style={{ width: `${percentageUsed}%` }}
             />
-            {/* Marqueur seuil d'alerte */}
             {warningThreshold > 0 && warningThreshold < effectiveBudget && (
               <div
                 className="absolute top-0 bottom-0 w-0.5 bg-warning/70"
@@ -114,9 +114,9 @@ export function BudgetOverview({ totalExpenses, totalIncome, budget, warningThre
             )}
           </div>
           <div className="flex justify-between mt-1">
-            <p className="text-xs text-textLight">Plafond : {formatCurrency(effectiveBudget)}</p>
+            <p className="text-xs text-textLight">{t("overview.ceiling", { amount: formatCurrency(effectiveBudget) })}</p>
             {warningThreshold > 0 && (
-              <p className="text-xs text-warning">⚠️ Seuil : {formatCurrency(warningThreshold)}</p>
+              <p className="text-xs text-warning">{t("overview.warningThreshold", { amount: formatCurrency(warningThreshold) })}</p>
             )}
           </div>
         </div>
@@ -125,7 +125,7 @@ export function BudgetOverview({ totalExpenses, totalIncome, budget, warningThre
       {/* Top 3 dépenses */}
       {top3 && top3.length > 0 && (
         <div className="mb-4 pt-4 border-t border-gray-100">
-          <p className="text-xs font-semibold text-textLight uppercase tracking-wide mb-2">Top dépenses du mois</p>
+          <p className="text-xs font-semibold text-textLight uppercase tracking-wide mb-2">{t("overview.topExpenses")}</p>
           <div className="space-y-2">
             {top3.map((item, i) => (
               <div key={i} className="flex items-center justify-between">
@@ -144,7 +144,7 @@ export function BudgetOverview({ totalExpenses, totalIncome, budget, warningThre
       {/* Répartition par catégorie */}
       {byCategory.length > 0 && (
         <div className="space-y-2.5 pt-4 border-t border-gray-100">
-          <p className="text-xs font-semibold text-textLight uppercase tracking-wide">Dépenses par catégorie</p>
+          <p className="text-xs font-semibold text-textLight uppercase tracking-wide">{t("overview.byCategory")}</p>
           {byCategory.map((cat) => (
             <div key={cat.category}>
               <div className="flex justify-between items-center mb-1">

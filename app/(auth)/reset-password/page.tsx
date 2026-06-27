@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { config } from "@/lib/config";
 
 function EyeIcon({ open }: { open: boolean }) {
@@ -19,6 +20,10 @@ function EyeIcon({ open }: { open: boolean }) {
 }
 
 function ResetPasswordContent() {
+  const t = useTranslations("auth.resetPassword");
+  const tCommon = useTranslations("auth.common");
+  const tRegister = useTranslations("auth.register");
+
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get("token");
@@ -36,7 +41,7 @@ function ResetPasswordContent() {
   }, [token, router]);
 
   const passwordStrength = password.length === 0 ? 0 : password.length < 8 ? 1 : password.length < 12 ? 2 : 3;
-  const strengthLabel = ["", "Trop court", "Correct", "Fort"];
+  const strengthLabel = ["", tCommon("strength.tooShort"), tCommon("strength.ok"), tCommon("strength.strong")];
   const strengthColor = ["", "bg-danger", "bg-warning", "bg-success"];
 
   async function handleSubmit(e: React.FormEvent) {
@@ -44,11 +49,11 @@ function ResetPasswordContent() {
     setError("");
 
     if (password !== confirm) {
-      setError("Les mots de passe ne correspondent pas.");
+      setError(t("errors.passwordsMismatch"));
       return;
     }
     if (password.length < 8) {
-      setError("Le mot de passe doit contenir au moins 8 caractères.");
+      setError(t("errors.passwordTooShort"));
       return;
     }
 
@@ -62,7 +67,7 @@ function ResetPasswordContent() {
     setLoading(false);
 
     if (!res.ok) {
-      setError(data.error || "Une erreur est survenue.");
+      setError(data.error || t("errors.serverError"));
       return;
     }
 
@@ -85,19 +90,19 @@ function ResetPasswordContent() {
           {success ? (
             <div className="text-center py-4">
               <div className="text-5xl mb-4">✅</div>
-              <h1 className="text-xl font-bold text-textDark mb-2">Mot de passe mis à jour !</h1>
+              <h1 className="text-xl font-bold text-textDark mb-2">{t("successTitle")}</h1>
               <p className="text-sm text-textLight mb-6">
-                Ton mot de passe a été réinitialisé. Tu vas être redirigé vers la connexion dans quelques secondes...
+                {t("successSubtitle")}
               </p>
               <Link href="/login" className="inline-block w-full text-center bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-xl transition text-sm">
-                Se connecter maintenant
+                {t("loginNow")}
               </Link>
             </div>
           ) : (
             <>
               <div className="mb-6">
-                <h1 className="text-2xl font-bold text-textDark mb-1">Nouveau mot de passe</h1>
-                <p className="text-sm text-textLight">Choisis un mot de passe sécurisé d&apos;au moins 8 caractères.</p>
+                <h1 className="text-2xl font-bold text-textDark mb-1">{t("title")}</h1>
+                <p className="text-sm text-textLight">{t("subtitle")}</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -108,7 +113,7 @@ function ResetPasswordContent() {
                 {/* Nouveau mot de passe */}
                 <div>
                   <label htmlFor="password" className="block text-sm font-medium text-textDark mb-1">
-                    Nouveau mot de passe
+                    {t("newPasswordLabel")}
                   </label>
                   <div className="relative">
                     <input
@@ -119,13 +124,13 @@ function ResetPasswordContent() {
                       required
                       autoFocus
                       className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-11 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
-                      placeholder="8 caractères minimum"
+                      placeholder={tCommon("passwordMin")}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword((v) => !v)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-textLight hover:text-textDark transition"
-                      aria-label={showPassword ? "Masquer" : "Afficher"}
+                      aria-label={showPassword ? tCommon("hide") : tCommon("show")}
                     >
                       <EyeIcon open={showPassword} />
                     </button>
@@ -148,7 +153,7 @@ function ResetPasswordContent() {
                 {/* Confirmation */}
                 <div>
                   <label htmlFor="confirm" className="block text-sm font-medium text-textDark mb-1">
-                    Confirmer le mot de passe
+                    {t("confirmLabel")}
                   </label>
                   <div className="relative">
                     <input
@@ -158,22 +163,22 @@ function ResetPasswordContent() {
                       onChange={(e) => setConfirm(e.target.value)}
                       required
                       className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-11 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
-                      placeholder="Répète le mot de passe"
+                      placeholder={t("confirmPlaceholder")}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirm((v) => !v)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-textLight hover:text-textDark transition"
-                      aria-label={showConfirm ? "Masquer" : "Afficher"}
+                      aria-label={showConfirm ? tCommon("hide") : tCommon("show")}
                     >
                       <EyeIcon open={showConfirm} />
                     </button>
                   </div>
                   {confirm.length > 0 && password !== confirm && (
-                    <p className="text-xs text-danger mt-1">Les mots de passe ne correspondent pas.</p>
+                    <p className="text-xs text-danger mt-1">{t("errors.passwordsMismatch")}</p>
                   )}
                   {confirm.length > 0 && password === confirm && password.length >= 8 && (
-                    <p className="text-xs text-success mt-1">✓ Les mots de passe correspondent.</p>
+                    <p className="text-xs text-success mt-1">{tRegister("passwordsMatch")}</p>
                   )}
                 </div>
 
@@ -185,10 +190,10 @@ function ResetPasswordContent() {
                   {loading ? (
                     <>
                       <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Mise à jour...
+                      {t("submitting")}
                     </>
                   ) : (
-                    "Mettre à jour le mot de passe"
+                    t("submit")
                   )}
                 </button>
               </form>

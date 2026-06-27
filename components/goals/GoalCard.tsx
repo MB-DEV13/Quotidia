@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 export interface Goal {
   id: string;
@@ -30,54 +31,54 @@ function getDaysRemaining(deadline: string): number {
   return Math.round((d.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 }
 
-function getDeadlineBadge(days: number): { label: string; className: string } {
-  if (days < 0) return { label: `En retard de ${Math.abs(days)}j`, className: "bg-danger/10 text-danger" };
-  if (days === 0) return { label: "Aujourd'hui !", className: "bg-danger/10 text-danger" };
-  if (days <= 7) return { label: `Dans ${days}j`, className: "bg-danger/10 text-danger" };
-  if (days <= 30) return { label: `Dans ${days}j`, className: "bg-warning/10 text-warning" };
-  return { label: `Dans ${days}j`, className: "bg-success/10 text-success" };
-}
-
-function getPaceText(goal: Goal): string | null {
-  if (!goal.deadline || goal.current >= goal.target) return null;
-  const days = getDaysRemaining(goal.deadline);
-  if (days <= 0) return null;
-  const remaining = goal.target - goal.current;
-  const unit = goal.unit ?? "unités";
-  if (days >= 14) {
-    const perWeek = (remaining / days) * 7;
-    const rounded = Math.round(perWeek * 10) / 10;
-    return `+${rounded} ${unit}/semaine pour tenir le rythme`;
-  }
-  const perDay = remaining / days;
-  const rounded = Math.round(perDay * 10) / 10;
-  return `+${rounded} ${unit}/jour pour tenir le rythme`;
-}
-
 function getBarColor(goal: Goal, isCompleted: boolean): string {
   if (isCompleted) return "bg-success";
   if (!goal.deadline) return "bg-primary";
   const days = getDaysRemaining(goal.deadline);
   if (days < 0) return "bg-danger";
-  // Est-on en retard par rapport au rythme théorique ?
   const totalDays = Math.round(
     (new Date(goal.deadline).getTime() - new Date(goal.createdAt).getTime()) / (1000 * 60 * 60 * 24)
   );
   if (totalDays <= 0) return "bg-primary";
   const expectedPct = Math.min(((totalDays - days) / totalDays) * 100, 100);
   const actualPct = goal.target > 0 ? (goal.current / goal.target) * 100 : 0;
-  if (actualPct < expectedPct - 15) return "bg-warning"; // en retard de >15%
+  if (actualPct < expectedPct - 15) return "bg-warning";
   return "bg-primary";
 }
 
 export function GoalCard({ goal, onUpdate, onDelete, onEdit, onRestart }: GoalCardProps) {
+  const t = useTranslations("goals");
+
+  function getDeadlineBadge(days: number): { label: string; className: string } {
+    if (days < 0) return { label: t("card.lateByDays", { days: Math.abs(days) }), className: "bg-danger/10 text-danger" };
+    if (days === 0) return { label: t("card.today"), className: "bg-danger/10 text-danger" };
+    if (days <= 7) return { label: t("card.inDays", { days }), className: "bg-danger/10 text-danger" };
+    if (days <= 30) return { label: t("card.inDays", { days }), className: "bg-warning/10 text-warning" };
+    return { label: t("card.inDays", { days }), className: "bg-success/10 text-success" };
+  }
+
+  function getPaceText(g: Goal): string | null {
+    if (!g.deadline || g.current >= g.target) return null;
+    const days = getDaysRemaining(g.deadline);
+    if (days <= 0) return null;
+    const remaining = g.target - g.current;
+    const unit = g.unit ?? t("card.defaultUnit");
+    if (days >= 14) {
+      const perWeek = (remaining / days) * 7;
+      const rounded = Math.round(perWeek * 10) / 10;
+      return t("card.perWeekPace", { value: rounded, unit });
+    }
+    const perDay = remaining / days;
+    const rounded = Math.round(perDay * 10) / 10;
+    return t("card.perDayPace", { value: rounded, unit });
+  }
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [incrementInput, setIncrementInput] = useState("");
   const [showIncrement, setShowIncrement] = useState(false);
   const [loading, setLoading] = useState(false);
   const [justCompleted, setJustCompleted] = useState(false);
-  const [showXP, setShowXP] = useState(false);
 
   const percentage = goal.target > 0 ? Math.min(Math.round((goal.current / goal.target) * 100), 100) : 0;
   const isCompleted = goal.current >= goal.target;
@@ -88,12 +89,10 @@ export function GoalCard({ goal, onUpdate, onDelete, onEdit, onRestart }: GoalCa
 
   useEffect(() => {
     if (justCompleted) {
-      setShowXP(true);
-      const t = setTimeout(() => {
+      const timer = setTimeout(() => {
         setJustCompleted(false);
-        setShowXP(false);
       }, 3000);
-      return () => clearTimeout(t);
+      return () => clearTimeout(timer);
     }
   }, [justCompleted]);
 
@@ -126,7 +125,7 @@ export function GoalCard({ goal, onUpdate, onDelete, onEdit, onRestart }: GoalCa
       {justCompleted && (
         <div className="absolute inset-0 rounded-2xl bg-success/5 pointer-events-none z-10 flex items-center justify-center">
           <div className="bg-success text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg animate-bounce">
-            🎉 Objectif atteint ! +150 XP
+            🎉 {t("card.justCompletedBanner")}
           </div>
         </div>
       )}
@@ -149,18 +148,18 @@ export function GoalCard({ goal, onUpdate, onDelete, onEdit, onRestart }: GoalCa
             )}
             {isCompleted && !justCompleted && (
               <span className="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full mt-1 bg-success/10 text-success">
-                ✅ Complété
+                ✅ {t("card.completedBadge")}
               </span>
             )}
           </div>
         </div>
 
-        {/* Menu (toujours visible) */}
+        {/* Menu */}
         <div className="relative shrink-0">
           <button
             onClick={() => { setMenuOpen((v) => !v); setConfirmDelete(false); }}
             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition text-textLight text-lg"
-            aria-label="Options"
+            aria-label={t("card.menuOptionsLabel")}
           >
             ⋯
           </button>
@@ -172,14 +171,14 @@ export function GoalCard({ goal, onUpdate, onDelete, onEdit, onRestart }: GoalCa
                   onClick={() => { onEdit(goal); setMenuOpen(false); }}
                   className="w-full text-left px-4 py-2.5 text-sm text-textDark hover:bg-gray-50 transition flex items-center gap-2"
                 >
-                  <span>✏️</span> Modifier
+                  <span>✏️</span> {t("card.menuEdit")}
                 </button>
                 {isCompleted && onRestart && (
                   <button
                     onClick={() => { onRestart(goal.id); setMenuOpen(false); }}
                     className="w-full text-left px-4 py-2.5 text-sm text-primary hover:bg-primary/5 transition flex items-center gap-2"
                   >
-                    <span>🔄</span> Relancer
+                    <span>🔄</span> {t("card.menuRestart")}
                   </button>
                 )}
                 {!confirmDelete ? (
@@ -187,19 +186,19 @@ export function GoalCard({ goal, onUpdate, onDelete, onEdit, onRestart }: GoalCa
                     onClick={() => setConfirmDelete(true)}
                     className="w-full text-left px-4 py-2.5 text-sm text-danger hover:bg-red-50 transition flex items-center gap-2"
                   >
-                    <span>🗑️</span> Supprimer
+                    <span>🗑️</span> {t("card.menuDelete")}
                   </button>
                 ) : (
                   <div className="px-3 py-2 border-t border-gray-100">
-                    <p className="text-xs text-textDark mb-2">Confirmer ?</p>
+                    <p className="text-xs text-textDark mb-2">{t("card.confirmDelete")}</p>
                     <div className="flex gap-2">
                       <button onClick={() => setConfirmDelete(false)}
                         className="flex-1 py-1.5 text-xs rounded-lg border border-gray-200 text-textLight hover:bg-gray-50 transition">
-                        Non
+                        {t("card.confirmNo")}
                       </button>
                       <button onClick={() => { onDelete(goal.id); setMenuOpen(false); }}
                         className="flex-1 py-1.5 text-xs rounded-lg bg-danger text-white hover:bg-danger/90 transition font-medium">
-                        Oui
+                        {t("card.confirmYes")}
                       </button>
                     </div>
                   </div>
@@ -250,7 +249,7 @@ export function GoalCard({ goal, onUpdate, onDelete, onEdit, onRestart }: GoalCa
                 onClick={() => setShowIncrement(true)}
                 className="px-3 py-1.5 rounded-xl text-xs font-semibold border border-primary/30 text-primary hover:bg-primary/5 transition"
               >
-                + Autre
+                {t("card.incrementOther")}
               </button>
             </div>
           ) : (
@@ -258,13 +257,13 @@ export function GoalCard({ goal, onUpdate, onDelete, onEdit, onRestart }: GoalCa
               <input
                 type="number" step="any" value={incrementInput}
                 onChange={(e) => setIncrementInput(e.target.value)}
-                placeholder={`+${goal.unit ?? "valeur"}`}
+                placeholder={t("card.incrementPlaceholder", { unit: goal.unit ?? t("card.defaultUnit") })}
                 autoFocus
                 className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
               />
               <button type="submit" disabled={loading || !incrementInput}
                 className="px-3 py-2 rounded-xl bg-primary text-white text-xs font-semibold disabled:opacity-60 transition">
-                {loading ? "..." : "OK"}
+                {loading ? t("card.incrementLoading") : t("card.incrementOk")}
               </button>
               <button type="button"
                 onClick={() => { setShowIncrement(false); setIncrementInput(""); }}
@@ -277,7 +276,7 @@ export function GoalCard({ goal, onUpdate, onDelete, onEdit, onRestart }: GoalCa
       )}
 
       {isCompleted && !justCompleted && (
-        <p className="text-xs text-success font-medium mt-2">✅ Objectif atteint !</p>
+        <p className="text-xs text-success font-medium mt-2">✅ {t("card.completedMsg")}</p>
       )}
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 
 interface Props {
   bankName: string | null;
@@ -9,6 +10,8 @@ interface Props {
 }
 
 export function BankConnectionStatus({ bankName, lastSyncAt, status }: Props) {
+  const t = useTranslations("budget.bank.status");
+  const locale = useLocale();
   const [syncing, setSyncing] = useState(false);
   const [synced, setSynced] = useState(false);
   const [error, setError] = useState("");
@@ -24,14 +27,16 @@ export function BankConnectionStatus({ bankName, lastSyncAt, status }: Props) {
       setSynced(true);
       setTimeout(() => window.location.reload(), 1000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur de sync");
+      setError(err instanceof Error ? err.message : t("syncError"));
     } finally {
       setSyncing(false);
     }
   }
 
   const lastSync = lastSyncAt
-    ? new Date(lastSyncAt).toLocaleDateString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })
+    ? new Date(lastSyncAt).toLocaleDateString(locale === "fr" ? "fr-FR" : "en-US", {
+        day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
+      })
     : null;
 
   return (
@@ -47,20 +52,20 @@ export function BankConnectionStatus({ bankName, lastSyncAt, status }: Props) {
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold text-textDark">
-          {bankName ?? "Banque connectée"}
+          {bankName ?? t("connected")}
           <span className={`ml-2 text-xs font-medium px-2 py-0.5 rounded-full ${
             status === "active" ? "bg-green-100 text-green-700" :
             status === "error" ? "bg-red-100 text-red-700" :
             "bg-gray-100 text-gray-600"
           }`}>
-            {status === "active" ? "✓ Actif" : status === "error" ? "⚠ Erreur" : "Inactif"}
+            {status === "active" ? t("active") : status === "error" ? t("error") : t("inactive")}
           </span>
         </p>
         {lastSync && (
-          <p className="text-xs text-textLight mt-0.5">Dernière sync : {lastSync}</p>
+          <p className="text-xs text-textLight mt-0.5">{t("lastSync", { date: lastSync })}</p>
         )}
         {error && <p className="text-xs text-red-500 mt-0.5">{error}</p>}
-        {synced && <p className="text-xs text-green-600 mt-0.5">✓ Synchronisé !</p>}
+        {synced && <p className="text-xs text-green-600 mt-0.5">{t("synced")}</p>}
       </div>
       <button
         onClick={handleSync}
@@ -72,7 +77,7 @@ export function BankConnectionStatus({ bankName, lastSyncAt, status }: Props) {
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-        ) : "↻"} Synchroniser
+        ) : "↻"} {t("syncBtn")}
       </button>
     </div>
   );

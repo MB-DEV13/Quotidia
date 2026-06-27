@@ -2,10 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
 import { config } from "@/lib/config";
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations("auth.forgotPassword");
+  const tCommon = useTranslations("auth.common");
+
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -18,7 +22,7 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !turnstileToken) {
-      setError("Valide le captcha pour continuer.");
+      setError(t("errors.captchaRequired"));
       setLoading(false);
       return;
     }
@@ -32,7 +36,7 @@ export default function ForgotPasswordPage() {
     setLoading(false);
 
     if (!res.ok) {
-      setError("Une erreur est survenue. Réessaie dans quelques instants.");
+      setError(t("errors.serverError"));
       return;
     }
 
@@ -52,21 +56,21 @@ export default function ForgotPasswordPage() {
           {sent ? (
             <div className="text-center py-4">
               <div className="text-5xl mb-4">📬</div>
-              <h1 className="text-xl font-bold text-textDark mb-2">Email envoyé !</h1>
+              <h1 className="text-xl font-bold text-textDark mb-2">{t("sentTitle")}</h1>
               <p className="text-sm text-textLight mb-6 leading-relaxed">
-                Si un compte existe pour <strong className="text-textDark">{email}</strong>, tu recevras un lien de réinitialisation dans quelques minutes. Pense à vérifier tes spams.
+                {t("sentSubtitle", { email })}
               </p>
-              <p className="text-xs text-textLight mb-6">Le lien est valable <strong>1 heure</strong>.</p>
+              <p className="text-xs text-textLight mb-6">{t("sentValidity")}</p>
               <Link href="/login" className="inline-block w-full text-center bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-xl transition text-sm">
-                Retour à la connexion
+                {t("backToLoginBtn")}
               </Link>
             </div>
           ) : (
             <>
               <div className="mb-6">
-                <h1 className="text-2xl font-bold text-textDark mb-1">Mot de passe oublié ?</h1>
+                <h1 className="text-2xl font-bold text-textDark mb-1">{t("title")}</h1>
                 <p className="text-sm text-textLight">
-                  Saisis ton email et on t&apos;envoie un lien de réinitialisation.
+                  {t("subtitle")}
                 </p>
               </div>
 
@@ -77,7 +81,7 @@ export default function ForgotPasswordPage() {
 
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-textDark mb-1">
-                    Adresse email
+                    {t("emailLabel")}
                   </label>
                   <input
                     id="email"
@@ -87,7 +91,7 @@ export default function ForgotPasswordPage() {
                     required
                     autoFocus
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
-                    placeholder="toi@example.com"
+                    placeholder={tCommon("emailPlaceholder")}
                   />
                 </div>
 
@@ -105,17 +109,17 @@ export default function ForgotPasswordPage() {
                   {loading ? (
                     <>
                       <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Envoi en cours...
+                      {t("submitting")}
                     </>
                   ) : (
-                    "Envoyer le lien"
+                    t("submit")
                   )}
                 </button>
               </form>
 
               <p className="text-center text-sm text-textLight mt-6">
                 <Link href="/login" className="text-primary font-medium hover:underline">
-                  ← Retour à la connexion
+                  {t("backToLogin")}
                 </Link>
               </p>
             </>

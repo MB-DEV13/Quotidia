@@ -4,6 +4,7 @@ import { LandingNav } from "@/components/landing/LandingNav";
 import { PWAInstallModal } from "@/components/ui/PWAInstallModal";
 import { config } from "@/lib/config";
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -18,233 +19,90 @@ export const metadata: Metadata = {
   },
 };
 
-const FEATURES = [
-  {
-    icon: "✅",
-    title: "Habitudes & Streaks",
-    desc: "Construis des routines solides. Chaque jour validé alimente ton streak et te rapproche de tes objectifs.",
-    color: "from-violet-500/10 to-primary/10",
-    iconBg: "bg-primary/10 text-primary",
-  },
-  {
-    icon: "💰",
-    title: "Budget intelligent",
-    desc: "Suis tes dépenses, relie ton compte bancaire pour une sync auto (Premium — bientôt disponible), et visualise où va ton argent en un coup d'œil.",
-    color: "from-emerald-500/10 to-green-400/10",
-    iconBg: "bg-emerald-500/10 text-emerald-600",
-  },
-  {
-    icon: "🎯",
-    title: "Objectifs concrets",
-    desc: "Définis des objectifs SMART avec une barre de progression. Jalons, délais, tout est suivi automatiquement.",
-    color: "from-orange-400/10 to-yellow-300/10",
-    iconBg: "bg-orange-400/10 text-orange-500",
-  },
-  {
-    icon: "🤖",
-    title: "Coach IA personnel",
-    desc: "Un assistant qui analyse tes données et te donne des conseils personnalisés, chaque jour.",
-    color: "from-sky-400/10 to-blue-400/10",
-    iconBg: "bg-sky-400/10 text-sky-500",
-  },
-  {
-    icon: "🏆",
-    title: "Gamification",
-    desc: "Gagne des XP, monte de niveau, débloque des badges. Rester constant n'a jamais été aussi addictif.",
-    color: "from-yellow-400/10 to-amber-300/10",
-    iconBg: "bg-yellow-400/10 text-yellow-600",
-  },
-  {
-    icon: "📊",
-    title: "Stats & Bilans",
-    desc: "Visualise tes progrès sur 7, 30 ou 90 jours. Reçois un bilan hebdo par email (Premium).",
-    color: "from-purple-500/10 to-accent/10",
-    iconBg: "bg-accent/10 text-accent",
-  },
+const FEATURE_STYLES = [
+  { icon: "✅", color: "from-violet-500/10 to-primary/10", iconBg: "bg-primary/10 text-primary" },
+  { icon: "💰", color: "from-emerald-500/10 to-green-400/10", iconBg: "bg-emerald-500/10 text-emerald-600" },
+  { icon: "🎯", color: "from-orange-400/10 to-yellow-300/10", iconBg: "bg-orange-400/10 text-orange-500" },
+  { icon: "🤖", color: "from-sky-400/10 to-blue-400/10", iconBg: "bg-sky-400/10 text-sky-500" },
+  { icon: "🏆", color: "from-yellow-400/10 to-amber-300/10", iconBg: "bg-yellow-400/10 text-yellow-600" },
+  { icon: "📊", color: "from-purple-500/10 to-accent/10", iconBg: "bg-accent/10 text-accent" },
 ];
 
-const TESTIMONIALS = [
-  {
-    quote:
-      "Ça fait 18 jours que je tiens mon streak de méditation. Avant j'abandonnais au bout d'une semaine. Le fait de voir le streak qui monte, ça change tout.",
-    name: "Sophie M.",
-    role: "Enseignante",
-    avatar: "👩‍🏫",
-  },
-  {
-    quote:
-      "J'ai enfin compris où partait mon argent. Le graphique par catégorie m'a montré que je dépensais 90€/mois en abonnements. J'ai économisé la moitié grâce au bon plan suggéré.",
-    name: "Thomas K.",
-    role: "Développeur",
-    avatar: "👨‍💻",
-  },
-  {
-    quote:
-      "L'IA m'a conseillé de commencer par 10 minutes de lecture plutôt que 30. Depuis, je lis régulièrement sans me forcer.",
-    name: "Léa D.",
-    role: "Étudiante",
-    avatar: "👩‍🎓",
-  },
+const COMPARISON_BOOLEANS = [
+  { quotidia: true, notion: false, habitica: true, ynab: false },
+  { quotidia: true, notion: false, habitica: false, ynab: true },
+  { quotidia: true, notion: false, habitica: false, ynab: true },
+  { quotidia: true, notion: true, habitica: false, ynab: false },
+  { quotidia: true, notion: false, habitica: false, ynab: false },
+  { quotidia: true, notion: false, habitica: true, ynab: false },
+  { quotidia: true, notion: false, habitica: true, ynab: false },
+  { quotidia: true, notion: false, habitica: false, ynab: false },
 ];
 
-const PRICING = [
-  {
-    name: "Gratuit",
-    price: "0€",
-    period: "pour toujours",
-    highlight: false,
-    features: [
-      "3 habitudes actives",
-      "2 objectifs",
-      "2 catégories budget / mois",
-      "5 requêtes IA / mois",
-      "Stats sur 7 jours",
-      "Classement mondial",
+const STEP_METAS = [
+  { num: "01", icon: "🚀" },
+  { num: "02", icon: "⚙️" },
+  { num: "03", icon: "📈" },
+];
+
+const TESTIMONIAL_AVATARS = ["👩‍🏫", "👨‍💻", "👩‍🎓"];
+
+export default async function LandingPage() {
+  const t = await getTranslations("landing");
+
+  const featureTexts = t.raw("features.items") as Array<{ title: string; desc: string }>;
+  const FEATURES = FEATURE_STYLES.map((s, i) => ({ ...s, ...featureTexts[i] }));
+
+  const comparisonFeatures = t.raw("comparison.features") as string[];
+  const COMPARISON = COMPARISON_BOOLEANS.map((b, i) => ({ feature: comparisonFeatures[i], ...b }));
+
+  const stepTexts = t.raw("how.steps") as Array<{ title: string; desc: string }>;
+  const STEPS = STEP_METAS.map((m, i) => ({ ...m, ...stepTexts[i] }));
+
+  const testimonialItems = t.raw("testimonials.items") as Array<{ quote: string; name: string; role: string }>;
+  const TESTIMONIALS = testimonialItems.map((item, i) => ({ ...item, avatar: TESTIMONIAL_AVATARS[i] }));
+
+  const pricingPlans = t.raw("pricing.plans") as Array<{
+    name: string;
+    price: string;
+    period: string;
+    features: string[];
+    badge?: string;
+    oldPrice?: string;
+    highlight?: boolean;
+  }>;
+  const PRICING = pricingPlans.map((plan, i) => ({ ...plan, highlight: i === 1 }));
+
+  const statsItems = t.raw("stats.items") as Array<{ value: string; label: string }>;
+  const aiBullets = t.raw("ai.bullets") as string[];
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: config.app.name,
+    applicationCategory: "ProductivityApplication",
+    operatingSystem: "Web, iOS, Android",
+    offers: [
+      {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "EUR",
+        name: "Gratuit",
+      },
+      {
+        "@type": "Offer",
+        price: "4.99",
+        priceCurrency: "EUR",
+        name: "Premium",
+        billingIncrement: "P1M",
+      },
     ],
-  },
-  {
-    name: "Premium",
-    price: "4,99€",
-    period: "/ mois",
-    highlight: true,
-    badge: "⭐ Recommandé",
-    features: [
-      "Habitudes & objectifs illimités",
-      "Catégories budget illimitées",
-      "Connexion bancaire automatique (bientôt disponible)",
-      "Assistant IA sans limite",
-      "Stats 30 & 90 jours",
-      "Badges exclusifs & niveaux",
-      "Bilan hebdo par email",
-      "Export CSV",
-      "Thème sombre",
-    ],
-  },
-  {
-    name: "Annuel",
-    price: "39,99€",
-    oldPrice: "59,99€",
-    period: "/ an",
-    highlight: false,
-    badge: "🔥 2 mois offerts",
-    features: [
-      "Tout Premium inclus",
-      "Soit 3,33€ / mois",
-      "Économise 33%",
-      "Paiement unique annuel",
-      "Support prioritaire",
-    ],
-  },
-];
+    description:
+      "Dashboard de vie personnel : suis tes habitudes, gère ton budget, atteins tes objectifs et booste ta productivité avec un assistant IA.",
+    url: config.app.url,
+    inLanguage: "fr",
+  };
 
-const STEPS = [
-  {
-    num: "01",
-    icon: "🚀",
-    title: "Crée ton compte",
-    desc: "Inscription en 30 secondes, sans carte bancaire. Connexion via Google ou email.",
-  },
-  {
-    num: "02",
-    icon: "⚙️",
-    title: "Configure ton dashboard",
-    desc: "Ajoute tes habitudes, saisis ton budget, définis tes objectifs. Tout en quelques minutes.",
-  },
-  {
-    num: "03",
-    icon: "📈",
-    title: "Progresse chaque jour",
-    desc: "Valide tes habitudes, suis tes dépenses, gagne de l'XP. Ton coach IA t'accompagne.",
-  },
-];
-
-const COMPARISON = [
-  {
-    feature: "Habitudes + streaks",
-    quotidia: true,
-    notion: false,
-    habitica: true,
-    ynab: false,
-  },
-  {
-    feature: "Budget & dépenses",
-    quotidia: true,
-    notion: false,
-    habitica: false,
-    ynab: true,
-  },
-  {
-    feature: "Sync bancaire automatique (bientôt dispo)",
-    quotidia: true,
-    notion: false,
-    habitica: false,
-    ynab: true,
-  },
-  {
-    feature: "Objectifs avec jalons",
-    quotidia: true,
-    notion: true,
-    habitica: false,
-    ynab: false,
-  },
-  {
-    feature: "Coach IA personnalisé",
-    quotidia: true,
-    notion: false,
-    habitica: false,
-    ynab: false,
-  },
-  {
-    feature: "Gamification XP",
-    quotidia: true,
-    notion: false,
-    habitica: true,
-    ynab: false,
-  },
-  {
-    feature: "Classement",
-    quotidia: true,
-    notion: false,
-    habitica: true,
-    ynab: false,
-  },
-  {
-    feature: "Tout-en-un",
-    quotidia: true,
-    notion: false,
-    habitica: false,
-    ynab: false,
-  },
-];
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: config.app.name,
-  applicationCategory: "ProductivityApplication",
-  operatingSystem: "Web, iOS, Android",
-  offers: [
-    {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "EUR",
-      name: "Gratuit",
-    },
-    {
-      "@type": "Offer",
-      price: "4.99",
-      priceCurrency: "EUR",
-      name: "Premium",
-      billingIncrement: "P1M",
-    },
-  ],
-  description:
-    "Dashboard de vie personnel : suis tes habitudes, gère ton budget, atteins tes objectifs et booste ta productivité avec un assistant IA.",
-  url: config.app.url,
-  inLanguage: "fr",
-};
-
-export default function LandingPage() {
   return (
     <main className="min-h-screen bg-background overflow-x-hidden">
       <script
@@ -261,18 +119,14 @@ export default function LandingPage() {
 
         <div className="max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-extrabold text-textDark mb-6 leading-tight tracking-tight">
-            Ton quotidien,{" "}
+            {t("hero.titleStart")}{" "}
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              en mieux.
+              {t("hero.titleHighlight")}
             </span>
           </h1>
 
           <p className="text-lg md:text-xl text-textLight max-w-2xl mx-auto mb-10 leading-relaxed">
-            {config.app.name} réunit <strong className="text-textDark">habitudes</strong>
-            , <strong className="text-textDark">budget</strong>,{" "}
-            <strong className="text-textDark">objectifs</strong> et{" "}
-            <strong className="text-textDark">assistant IA</strong> dans un seul
-            dashboard élégant. Fini les 4 apps séparées.
+            {t("hero.description", { appName: config.app.name })}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
@@ -280,13 +134,13 @@ export default function LandingPage() {
               href="/register"
               className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white font-bold px-8 py-4 rounded-2xl transition-all shadow-card text-base"
             >
-              🚀 Commencer gratuitement
+              {t("hero.ctaPrimary")}
             </Link>
             <a
               href="#how"
               className="bg-white hover:bg-gray-50 text-primary font-semibold px-8 py-4 rounded-2xl border border-primary/20 transition-all shadow-soft text-base"
             >
-              Voir comment ça marche →
+              {t("hero.ctaSecondary")}
             </a>
           </div>
 
@@ -297,7 +151,7 @@ export default function LandingPage() {
       <section className="px-4 pb-12">
         <div className="max-w-lg mx-auto">
           <p className="text-center text-xs font-semibold text-textLight uppercase tracking-widest mb-4">
-            Explore le dashboard
+            {t("mockup.label")}
           </p>
           <InteractiveMockup />
         </div>
@@ -308,13 +162,13 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
-              Simple & rapide
+              {t("how.badge")}
             </p>
             <h2 className="text-3xl md:text-4xl font-extrabold text-textDark mb-3">
-              En seulement 3 étapes
+              {t("how.title")}
             </h2>
             <p className="text-textLight">
-              De zéro à un dashboard complet en moins de 5 minutes.
+              {t("how.subtitle")}
             </p>
           </div>
 
@@ -345,7 +199,7 @@ export default function LandingPage() {
               href="/register"
               className="inline-block bg-gradient-to-r from-primary to-accent text-white font-bold px-8 py-3 rounded-2xl shadow-card hover:opacity-90 transition"
             >
-              Commencer maintenant →
+              {t("how.cta")}
             </Link>
           </div>
         </div>
@@ -356,14 +210,13 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
             <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
-              Tout en un
+              {t("features.badge")}
             </p>
             <h2 className="text-3xl md:text-5xl font-extrabold text-textDark mb-4">
-              Tout ce dont tu as besoin
+              {t("features.title")}
             </h2>
             <p className="text-textLight text-lg max-w-xl mx-auto">
-              Remplace 4 apps par un seul espace qui comprend vraiment ton
-              quotidien.
+              {t("features.subtitle")}
             </p>
           </div>
 
@@ -396,26 +249,16 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
               <div className="inline-flex items-center gap-2 bg-sky-100 text-sky-600 text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
-                🤖 Nouveau — Coach IA GPT-4o
+                🤖 {t("ai.badge")}
               </div>
               <h2 className="text-3xl md:text-4xl font-extrabold text-textDark mb-5 leading-tight">
-                Un coach qui te connaît vraiment
+                {t("ai.title")}
               </h2>
               <p className="text-textLight leading-relaxed mb-6">
-                Ton assistant analyse{" "}
-                <strong className="text-textDark">
-                  tes habitudes, ton budget et tes objectifs
-                </strong>{" "}
-                en temps réel pour te donner des conseils adaptés à <em>ta</em>{" "}
-                situation — pas des messages génériques.
+                {t("ai.description")}
               </p>
               <ul className="space-y-3 mb-8">
-                {[
-                  "Conseils personnalisés chaque matin selon tes données",
-                  "Détecte tes points faibles et propose des ajustements",
-                  "Chat disponible à tout moment pour répondre à tes questions",
-                  "Suggestions proactives quand ton streak est en danger",
-                ].map((item) => (
+                {aiBullets.map((item) => (
                   <li
                     key={item}
                     className="flex items-start gap-3 text-sm text-textDark"
@@ -431,7 +274,7 @@ export default function LandingPage() {
                 href="/register"
                 className="inline-block bg-sky-500 hover:bg-sky-600 text-white font-semibold px-6 py-3 rounded-xl transition shadow-card text-sm"
               >
-                Essayer le Coach IA →
+                {t("ai.cta")}
               </Link>
             </div>
             {/* Chat mockup */}
@@ -444,39 +287,34 @@ export default function LandingPage() {
                   <p className="text-xs font-semibold text-textDark">
                     {config.app.name} Coach
                   </p>
-                  <p className="text-xs text-sky-500">En ligne</p>
+                  <p className="text-xs text-sky-500">{t("ai.online")}</p>
                 </div>
               </div>
               <div className="space-y-3">
                 <div className="bg-sky-50 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[85%]">
                   <p className="text-xs text-textDark leading-relaxed">
-                    Bonjour Alex 👋 Ton streak sport est à 8 jours — t&apos;es
-                    dans une belle dynamique ! Pense à valider ta séance
-                    aujourd&apos;hui avant 17h.
+                    {t("ai.chatMsg1")}
                   </p>
                 </div>
                 <div className="bg-gray-100 rounded-2xl rounded-tr-sm px-4 py-3 max-w-[85%] ml-auto">
                   <p className="text-xs text-textDark">
-                    J&apos;ai du mal à tenir mes séances en semaine...
+                    {t("ai.chatMsg2")}
                   </p>
                 </div>
                 <div className="bg-sky-50 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[85%]">
                   <p className="text-xs text-textDark leading-relaxed">
-                    Je vois que tu valides surtout le week-end. Essaie de caler
-                    une courte séance de 30 min le mardi et jeudi — moins
-                    ambitieux, mais bien plus régulier. La constance bat
-                    l&apos;intensité. 💪
+                    {t("ai.chatMsg3")}
                   </p>
                 </div>
               </div>
               <div className="mt-4 flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2">
                 <input
                   className="flex-1 text-xs bg-transparent outline-none text-textLight"
-                  placeholder="Pose ta question..."
+                  placeholder={t("ai.chatPlaceholder")}
                   readOnly
                 />
                 <button
-                  aria-label="Envoyer"
+                  aria-label={t("ai.sendLabel")}
                   className="w-7 h-7 rounded-lg bg-sky-500 flex items-center justify-center flex-shrink-0"
                 >
                   <svg
@@ -505,13 +343,13 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
-              Pourquoi {config.app.name} ?
+              {t("comparison.badge", { appName: config.app.name })}
             </p>
             <h2 className="text-3xl md:text-4xl font-extrabold text-textDark mb-3">
-              Une app pour tout remplacer
+              {t("comparison.title")}
             </h2>
             <p className="text-textLight">
-              Compare ce que tu obtiens avec {config.app.name} vs les autres.
+              {t("comparison.subtitle", { appName: config.app.name })}
             </p>
           </div>
 
@@ -520,7 +358,7 @@ export default function LandingPage() {
               <thead>
                 <tr>
                   <th className="text-left text-sm font-semibold text-textLight pb-4 pr-4">
-                    Fonctionnalité
+                    {t("comparison.featureCol")}
                   </th>
                   <th className="text-center pb-4 px-3">
                     <div className="inline-flex flex-col items-center gap-1">
@@ -534,7 +372,7 @@ export default function LandingPage() {
                     <div className="inline-flex flex-col items-center gap-1">
                       <span className="text-lg">📝</span>
                       <span className="text-xs font-medium text-textLight">
-                        App to-do-list
+                        {t("comparison.todoApp")}
                       </span>
                     </div>
                   </th>
@@ -542,7 +380,7 @@ export default function LandingPage() {
                     <div className="inline-flex flex-col items-center gap-1">
                       <span className="text-lg">✅</span>
                       <span className="text-xs font-medium text-textLight">
-                        App habitudes
+                        {t("comparison.habitApp")}
                       </span>
                     </div>
                   </th>
@@ -550,7 +388,7 @@ export default function LandingPage() {
                     <div className="inline-flex flex-col items-center gap-1">
                       <span className="text-lg">💳</span>
                       <span className="text-xs font-medium text-textLight">
-                        App budget
+                        {t("comparison.budgetApp")}
                       </span>
                     </div>
                   </th>
@@ -600,8 +438,7 @@ export default function LandingPage() {
           </div>
 
           <p className="text-center text-xs text-textLight mt-6">
-            {config.app.name} est la seule app qui combine <strong>tout</strong> dans une
-            interface moderne et gamifiée.
+            {t("comparison.footer", { appName: config.app.name })}
           </p>
         </div>
       </section>
@@ -610,25 +447,10 @@ export default function LandingPage() {
       <section className="px-4 py-20 bg-gradient-to-br from-primary to-accent text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-extrabold mb-12">
-            Des résultats concrets
+            {t("stats.title")}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              {
-                value: "72%",
-                label:
-                  "des utilisateurs maintiennent leurs habitudes après 3 semaines",
-              },
-              {
-                value: "60€",
-                label: "économisés en moyenne par mois grâce au suivi budget",
-              },
-              {
-                value: "9j",
-                label: "de streak moyen après 2 semaines d'utilisation",
-              },
-              { value: "4,7★", label: "satisfaction utilisateurs" },
-            ].map((s) => (
+            {statsItems.map((s) => (
               <div
                 key={s.label}
                 className="bg-white/10 backdrop-blur rounded-2xl p-5"
@@ -646,31 +468,31 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
-              Témoignages
+              {t("testimonials.badge")}
             </p>
             <h2 className="text-3xl md:text-4xl font-extrabold text-textDark">
-              Ils ont transformé leur quotidien
+              {t("testimonials.title")}
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map((t) => (
+            {TESTIMONIALS.map((testimonial) => (
               <div
-                key={t.name}
+                key={testimonial.name}
                 className="bg-white rounded-2xl p-6 shadow-soft hover:shadow-card transition-all"
               >
                 <div className="flex mb-3 text-yellow-400">{"★★★★★"}</div>
                 <p className="text-sm text-textDark leading-relaxed mb-4 italic">
-                  &ldquo;{t.quote}&rdquo;
+                  &ldquo;{testimonial.quote}&rdquo;
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center text-xl">
-                    {t.avatar}
+                    {testimonial.avatar}
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-textDark">
-                      {t.name}
+                      {testimonial.name}
                     </p>
-                    <p className="text-xs text-textLight">{t.role}</p>
+                    <p className="text-xs text-textLight">{testimonial.role}</p>
                   </div>
                 </div>
               </div>
@@ -684,18 +506,18 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
-              Tarifs
+              {t("pricing.badge")}
             </p>
             <h2 className="text-3xl md:text-4xl font-extrabold text-textDark mb-3">
-              Simple et transparent
+              {t("pricing.title")}
             </h2>
             <p className="text-textLight">
-              Commence gratuitement. Passe Premium quand tu es prêt.
+              {t("pricing.subtitle")}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-            {PRICING.map((plan) => (
+            {PRICING.map((plan, index) => (
               <div
                 key={plan.name}
                 className={`rounded-2xl p-6 relative ${
@@ -728,9 +550,9 @@ export default function LandingPage() {
                     {plan.period}
                   </span>
                 </div>
-                {"oldPrice" in plan && plan.oldPrice && (
+                {plan.oldPrice && (
                   <p className="text-xs line-through text-textLight mb-3">
-                    {plan.oldPrice} / an
+                    {plan.oldPrice} {t("pricing.oldPriceLabel")}
                   </p>
                 )}
                 <ul className="space-y-2 mb-6 mt-4">
@@ -756,17 +578,16 @@ export default function LandingPage() {
                       : "bg-primary text-white hover:bg-primary/90"
                   }`}
                 >
-                  {plan.name === "Gratuit"
-                    ? "Commencer gratuitement"
-                    : "Choisir ce plan"}
+                  {index === 0
+                    ? t("pricing.ctaFree")
+                    : t("pricing.ctaPaid")}
                 </Link>
               </div>
             ))}
           </div>
 
           <p className="text-center text-xs text-textLight mt-8">
-            ✓ Aucune carte requise pour le plan gratuit · ✓ Annulation à tout
-            moment · ✓ Données sécurisées
+            {t("pricing.footer")}
           </p>
         </div>
       </section>
@@ -785,31 +606,31 @@ export default function LandingPage() {
             </div>
             <div className="flex flex-wrap justify-center gap-4">
               <a href="#features" className="hover:text-textDark transition">
-                Fonctionnalités
+                {t("footer.features")}
               </a>
               <a href="#pricing" className="hover:text-textDark transition">
-                Tarifs
+                {t("footer.pricing")}
               </a>
               <Link href="/contact" className="hover:text-textDark transition">
-                Contact
+                {t("footer.contact")}
               </Link>
               <Link
                 href="/legal/mentions-legales"
                 className="hover:text-textDark transition"
               >
-                Mentions légales
+                {t("footer.legal")}
               </Link>
               <Link
                 href="/legal/confidentialite"
                 className="hover:text-textDark transition"
               >
-                Confidentialité
+                {t("footer.privacy")}
               </Link>
               <Link
                 href="/legal/cgu"
                 className="hover:text-textDark transition"
               >
-                CGU / CGV
+                {t("footer.terms")}
               </Link>
             </div>
             <div className="flex items-center gap-3">
@@ -864,7 +685,7 @@ export default function LandingPage() {
             </div>
           </div>
           <p className="text-center w-full">
-            © {new Date().getFullYear()} {config.app.name}. Tous droits réservés. · Développé par{" "}
+            {t("footer.copyright", { year: new Date().getFullYear(), appName: config.app.name })}{" "}
             <a
               href="https://devlyn.fr"
               target="_blank"

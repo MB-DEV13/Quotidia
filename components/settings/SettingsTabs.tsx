@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { config } from "@/lib/config";
 import { ProfileEditor } from "./ProfileEditor";
 import { SettingsSubscription } from "./SettingsSubscription";
@@ -12,6 +13,7 @@ import { DeleteAccountSection } from "./DeleteAccountSection";
 import { DailyReminderToggle } from "./DailyReminderToggle";
 import { PushNotificationToggle } from "./PushNotificationToggle";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { BadgesByCategory } from "@/components/badges/BadgesByCategory";
 import { getXpProgressForCurrentLevel, getLevelTitle } from "@/lib/gamification";
 import { ContactForm } from "@/components/contact/ContactForm";
@@ -54,39 +56,43 @@ interface SettingsTabsProps {
   } | null;
 }
 
-const TABS = [
-  { id: "info", label: "Mes informations", icon: "👤" },
-  { id: "progression", label: "Ma progression", icon: "🏆" },
-  { id: "stats", label: "Export & bilan", icon: "📊" },
-  { id: "contact", label: "Contact", icon: "✉️" },
-] as const;
-
-type TabId = (typeof TABS)[number]["id"];
+type TabId = "info" | "progression" | "stats" | "contact";
 
 export function SettingsTabs({ user, badges, bankConnection }: SettingsTabsProps) {
+  const t = useTranslations("settings");
+  const locale = useLocale();
   const [tab, setTab] = useState<TabId>("info");
   const xpProgress = getXpProgressForCurrentLevel(user.xp);
   const levelTitle = getLevelTitle(user.level);
   const aiRemaining = user.isPremium ? null : Math.max(0, 5 - user.aiRequestsUsed);
 
+  const dateLocale = locale === "fr" ? "fr-FR" : "en-US";
+
+  const TABS: Array<{ id: TabId; label: string; icon: string }> = [
+    { id: "info",        label: t("tabs.info"),        icon: "👤" },
+    { id: "progression", label: t("tabs.progression"), icon: "🏆" },
+    { id: "stats",       label: t("tabs.export"),      icon: "📊" },
+    { id: "contact",     label: t("tabs.contact"),     icon: "✉️" },
+  ];
+
   return (
     <div>
       {/* Tab header */}
       <div className="flex gap-1 bg-white rounded-2xl shadow-soft p-1.5 mb-6">
-        {TABS.map((t) => (
+        {TABS.map((tabItem) => (
           <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
+            key={tabItem.id}
+            onClick={() => setTab(tabItem.id)}
             className={`flex-1 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition ${
-              tab === t.id
+              tab === tabItem.id
                 ? "bg-primary text-white shadow-card"
                 : "text-textLight hover:text-textDark hover:bg-gray-50"
             }`}
           >
-            <span>{t.icon}</span>
-            <span className="hidden sm:inline">{t.label}</span>
+            <span>{tabItem.icon}</span>
+            <span className="hidden sm:inline">{tabItem.label}</span>
             <span className="sm:hidden text-[10px] leading-tight text-center">
-              {t.label.replace("Mes ", "").replace("Ma ", "").replace("Export & ", "")}
+              {tabItem.label.split(" ").slice(-1)[0]}
             </span>
           </button>
         ))}
@@ -106,10 +112,10 @@ export function SettingsTabs({ user, badges, bankConnection }: SettingsTabsProps
 
           {/* Profil */}
           <div className="bg-white rounded-2xl shadow-soft p-6">
-            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-1">Profil</h2>
+            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-1">{t("profile.title")}</h2>
             <p className="text-xs text-textLight mb-4">
-              {user.email} · Membre depuis{" "}
-              {new Date(user.createdAt).toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}
+              {user.email} · {t("profile.memberSince")}{" "}
+              {new Date(user.createdAt).toLocaleDateString(dateLocale, { month: "long", year: "numeric" })}
             </p>
             <ProfileEditor
               name={user.name}
@@ -123,29 +129,39 @@ export function SettingsTabs({ user, badges, bankConnection }: SettingsTabsProps
 
           {/* Sécurité */}
           <div className="bg-white rounded-2xl shadow-soft p-6 space-y-5">
-            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide">Sécurité</h2>
+            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide">{t("security.title")}</h2>
 
             {user.hasPassword ? (
               <PasswordChangeForm />
             ) : (
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-textDark">Connexion Google</p>
-                  <p className="text-xs text-textLight mt-0.5">Pas de mot de passe — tu te connectes via Google</p>
+                  <p className="text-sm font-medium text-textDark">{t("security.googleLogin")}</p>
+                  <p className="text-xs text-textLight mt-0.5">{t("security.googleLoginHint")}</p>
                 </div>
                 <span className="text-xl">🔒</span>
               </div>
             )}
           </div>
 
-          {/* Apparence & notifications */}
+          {/* Préférences */}
           <div className="bg-white rounded-2xl shadow-soft p-6 space-y-4">
-            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide">Préférences</h2>
+            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide">{t("preferences.title")}</h2>
 
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-textDark">Thème</p>
-                <p className="text-xs text-textLight mt-0.5">Bascule entre le mode clair et sombre</p>
+                <p className="text-sm font-medium text-textDark">{t("preferences.language")}</p>
+                <p className="text-xs text-textLight mt-0.5">{t("preferences.languageHint")}</p>
+              </div>
+              <LanguageSwitcher showLabel />
+            </div>
+
+            <div className="border-t border-gray-100" />
+
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-textDark">{t("preferences.theme")}</p>
+                <p className="text-xs text-textLight mt-0.5">{t("preferences.themeHint")}</p>
               </div>
               <ThemeToggle />
             </div>
@@ -164,22 +180,22 @@ export function SettingsTabs({ user, badges, bankConnection }: SettingsTabsProps
 
           {/* Infos compte */}
           <div className="bg-white rounded-2xl shadow-soft p-6">
-            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-4">Compte</h2>
+            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-4">{t("account.title")}</h2>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-textLight">Email</span>
+                <span className="text-textLight">{t("account.email")}</span>
                 <span className="text-textDark font-medium">{user.email}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-textLight">Membre depuis</span>
+                <span className="text-textLight">{t("account.memberSince")}</span>
                 <span className="text-textDark font-medium">
-                  {new Date(user.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                  {new Date(user.createdAt).toLocaleDateString(dateLocale, { day: "numeric", month: "long", year: "numeric" })}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-textLight">Plan</span>
+                <span className="text-textLight">{t("account.plan")}</span>
                 <span className={`font-semibold ${user.isPremium ? "text-accent" : "text-textLight"}`}>
-                  {user.isPremium ? "✨ Premium" : "Gratuit"}
+                  {user.isPremium ? t("account.planPremium") : t("account.planFree")}
                 </span>
               </div>
             </div>
@@ -187,9 +203,9 @@ export function SettingsTabs({ user, badges, bankConnection }: SettingsTabsProps
 
           {/* Zone de danger */}
           <div className="bg-white rounded-2xl shadow-soft p-6">
-            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-4">Suppression du compte</h2>
+            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-4">{t("danger.title")}</h2>
             <p className="text-xs text-textLight mb-4">
-              La suppression de ton compte est permanente et irréversible. Toutes tes données seront effacées conformément au RGPD.
+              {t("danger.description")}
             </p>
             <DeleteAccountSection />
           </div>
@@ -206,19 +222,19 @@ export function SettingsTabs({ user, badges, bankConnection }: SettingsTabsProps
         <div className="space-y-4">
           {/* Niveau & XP */}
           <div className="bg-white rounded-2xl shadow-soft p-6">
-            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-4">Niveau & XP</h2>
+            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-4">{t("progression.levelTitle")}</h2>
             <div className="flex items-center gap-4 mb-4">
               <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
                 <span className="text-2xl font-extrabold text-primary">{user.level}</span>
               </div>
               <div>
                 <p className="font-bold text-textDark">{levelTitle}</p>
-                <p className="text-xs text-textLight">{user.xp} XP total</p>
+                <p className="text-xs text-textLight">{t("progression.xpTotal", { xp: user.xp })}</p>
               </div>
             </div>
             <div className="mb-1 flex justify-between text-xs text-textLight">
-              <span>Niveau {user.level}</span>
-              <span>{xpProgress.current} / {xpProgress.needed} XP</span>
+              <span>{t("progression.levelLabel", { level: user.level })}</span>
+              <span>{t("progression.xpProgress", { current: xpProgress.current, needed: xpProgress.needed })}</span>
             </div>
             <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
               <div
@@ -227,15 +243,17 @@ export function SettingsTabs({ user, badges, bankConnection }: SettingsTabsProps
               />
             </div>
             <p className="text-xs text-textLight mt-1.5 text-right">
-              {xpProgress.percentage}% vers le niveau {user.level + 1}
+              {t("progression.xpToNext", { percentage: xpProgress.percentage, next: user.level + 1 })}
             </p>
 
             <div className="mt-4 pt-4 border-t border-gray-50 flex items-center gap-3">
               <span className="text-2xl">📅</span>
               <div>
-                <p className="text-sm font-semibold text-textDark">Streak connexion</p>
+                <p className="text-sm font-semibold text-textDark">{t("progression.loginStreakTitle")}</p>
                 <p className="text-xs text-textLight">
-                  {user.loginStreak} semaine{user.loginStreak > 1 ? "s" : ""} consécutive{user.loginStreak > 1 ? "s" : ""} · +30 XP/semaine
+                  {user.loginStreak > 1
+                    ? t("progression.loginStreakDescPlural", { count: user.loginStreak })
+                    : t("progression.loginStreakDesc", { count: user.loginStreak })}
                 </p>
               </div>
             </div>
@@ -244,7 +262,7 @@ export function SettingsTabs({ user, badges, bankConnection }: SettingsTabsProps
           {/* Badges */}
           <div className="bg-white rounded-2xl shadow-soft p-6">
             <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-4">
-              Badges — {badges.filter((b) => b.earned).length}/{badges.length} débloqués
+              {t("progression.badgesTitle", { earned: badges.filter((b) => b.earned).length, total: badges.length })}
             </h2>
             <BadgesByCategory badges={badges} />
           </div>
@@ -256,17 +274,17 @@ export function SettingsTabs({ user, badges, bankConnection }: SettingsTabsProps
         <div className="space-y-4">
           <div className="bg-white rounded-2xl shadow-soft p-6">
             <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-1">
-              Nous contacter
+              {t("contact.title")}
             </h2>
             <p className="text-xs text-textLight mb-5">
-              Une question, un bug ou une suggestion ? On te répond sous 24-48h.
+              {t("contact.subtitle")}
             </p>
             <ContactForm userName={user.name} userEmail={user.email} />
           </div>
 
           <div className="bg-white rounded-2xl shadow-soft p-5 text-center">
-            <p className="text-sm font-semibold text-textDark mb-1">Suis-nous sur les réseaux</p>
-            <p className="text-xs text-textLight mb-4">Actualités, conseils et nouveautés {config.app.name}.</p>
+            <p className="text-sm font-semibold text-textDark mb-1">{t("contact.socialTitle")}</p>
+            <p className="text-xs text-textLight mb-4">{t("contact.socialSubtitle", { appName: config.app.name })}</p>
             <div className="flex items-center justify-center gap-3">
               <a href={config.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram"
                 className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 text-purple-600 hover:from-purple-500/20 hover:to-pink-500/20 transition text-sm font-medium">
@@ -299,9 +317,9 @@ export function SettingsTabs({ user, badges, bankConnection }: SettingsTabsProps
         <div className="space-y-4">
           {/* Bilan PDF */}
           <div className="bg-white rounded-2xl shadow-soft p-6">
-            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-1">Bilan</h2>
+            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-1">{t("export.bilanTitle")}</h2>
             <p className="text-xs text-textLight mb-4">
-              Génère un rapport complet de tes habitudes, budget et objectifs au format PDF.
+              {t("export.bilanDescription")}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <PdfBilanButton type="weekly" isPremium={user.isPremium} />
@@ -311,9 +329,9 @@ export function SettingsTabs({ user, badges, bankConnection }: SettingsTabsProps
 
           {/* Export CSV */}
           <div className="bg-white rounded-2xl shadow-soft p-6">
-            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-1">Export de données</h2>
+            <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-1">{t("export.csvTitle")}</h2>
             <p className="text-xs text-textLight mb-4">
-              Télécharge toutes tes habitudes, dépenses et objectifs au format CSV.
+              {t("export.csvDescription")}
             </p>
             <ExportButton isPremium={user.isPremium} />
           </div>

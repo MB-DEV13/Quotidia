@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { AppShell } from "@/components/layout/AppShell";
@@ -7,6 +8,7 @@ import { BADGES } from "@/lib/gamification";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
 
 export default async function SettingsPage() {
+  const t = await getTranslations("settings");
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login");
 
@@ -58,7 +60,7 @@ export default async function SettingsPage() {
   return (
     <AppShell>
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-textDark mb-6">Paramètres</h1>
+        <h1 className="text-2xl font-bold text-textDark mb-6">{t("pageTitle")}</h1>
         <SettingsTabs
           user={{
             ...user,

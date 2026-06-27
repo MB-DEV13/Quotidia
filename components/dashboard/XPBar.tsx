@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 interface Badge {
   name: string;
@@ -14,7 +15,8 @@ interface XPBarProps {
   earnedBadges: Badge[];
 }
 
-export function XPBar({ current, needed, percentage, level, earnedBadges }: XPBarProps) {
+export async function XPBar({ current, needed, percentage, level, earnedBadges }: XPBarProps) {
+  const t = await getTranslations("dashboard.xp");
   const displayedBadges = earnedBadges.slice(0, 7);
   const remaining = earnedBadges.length - displayedBadges.length;
 
@@ -22,7 +24,7 @@ export function XPBar({ current, needed, percentage, level, earnedBadges }: XPBa
     <div className="bg-white rounded-2xl shadow-soft p-4">
       {/* XP progress */}
       <div className="flex justify-between items-center mb-2">
-        <span className="text-sm font-medium text-textDark">Niveau {level}</span>
+        <span className="text-sm font-medium text-textDark">{t("level", { level })}</span>
         <span className="text-xs text-textLight">{current} / {needed} XP</span>
       </div>
       <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
@@ -31,20 +33,22 @@ export function XPBar({ current, needed, percentage, level, earnedBadges }: XPBa
           style={{ width: `${percentage}%` }}
         />
       </div>
-      <p className="text-xs text-textLight mt-1">{percentage}% vers le niveau {level + 1}</p>
+      <p className="text-xs text-textLight mt-1">{t("progress", { percentage, next: level + 1 })}</p>
 
       {/* Badges débloqués */}
       {earnedBadges.length > 0 ? (
         <div className="mt-3 pt-3 border-t border-gray-100">
           <div className="flex items-center justify-between mb-2.5">
             <span className="text-xs font-semibold text-textLight uppercase tracking-wide">
-              {earnedBadges.length} badge{earnedBadges.length > 1 ? "s" : ""} débloqué{earnedBadges.length > 1 ? "s" : ""}
+              {earnedBadges.length > 1
+                ? t("badges", { count: earnedBadges.length })
+                : t("badge", { count: earnedBadges.length })}
             </span>
             <Link
               href="/settings"
               className="text-xs text-primary hover:underline underline-offset-2 font-medium"
             >
-              Voir tout →
+              {t("seeAll")}
             </Link>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
@@ -74,7 +78,7 @@ export function XPBar({ current, needed, percentage, level, earnedBadges }: XPBa
       ) : (
         <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2">
           <span className="text-base">🔒</span>
-          <p className="text-xs text-textLight">Complète tes habitudes pour débloquer des badges</p>
+          <p className="text-xs text-textLight">{t("noBadges")}</p>
         </div>
       )}
     </div>

@@ -6,6 +6,8 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { CookieBanner } from "@/components/ui/CookieBanner";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 import { config } from "@/lib/config";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -77,13 +79,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="fr">
+    <html lang={locale}>
       <head>
         {/* Preconnect pour Google Fonts (accélère le chargement Inter) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -92,11 +97,13 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://eu.i.posthog.com" />
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
-        <ErrorBoundary>
-          <Providers>{children}</Providers>
-        </ErrorBoundary>
-        <CookieBanner />
-        <ServiceWorkerRegistration />
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <ErrorBoundary>
+            <Providers>{children}</Providers>
+          </ErrorBoundary>
+          <CookieBanner />
+          <ServiceWorkerRegistration />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

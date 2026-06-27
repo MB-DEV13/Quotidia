@@ -1,15 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
-const SUBJECTS = [
-  "Question générale",
-  "Problème technique",
-  "Signaler un bug",
-  "Suggestion d'amélioration",
-  "Facturation / abonnement",
-  "Autre",
-];
+import { useTranslations } from "next-intl";
 
 interface ContactFormProps {
   userName?: string | null;
@@ -17,9 +9,12 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ userName, userEmail }: ContactFormProps) {
+  const t = useTranslations("contact.form");
+  const SUBJECTS = t.raw("subjects") as string[];
+
   const [name, setName] = useState(userName ?? "");
   const [email, setEmail] = useState(userEmail ?? "");
-  const [subject, setSubject] = useState(SUBJECTS[0]);
+  const [subject, setSubject] = useState(SUBJECTS[0] ?? "");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [error, setError] = useState("");
@@ -43,7 +38,7 @@ export function ContactForm({ userName, userEmail }: ContactFormProps) {
       }
     } catch {
       setStatus("error");
-      setError("Une erreur est survenue. Réessaie dans quelques instants.");
+      setError(t("error"));
     }
   }
 
@@ -51,13 +46,13 @@ export function ContactForm({ userName, userEmail }: ContactFormProps) {
     return (
       <div className="text-center py-8">
         <div className="text-5xl mb-4">✅</div>
-        <p className="font-bold text-textDark text-lg">Message envoyé !</p>
-        <p className="text-sm text-textLight mt-2">On te répondra dans les plus brefs délais.</p>
+        <p className="font-bold text-textDark text-lg">{t("successTitle")}</p>
+        <p className="text-sm text-textLight mt-2">{t("successSubtitle")}</p>
         <button
           onClick={() => setStatus("idle")}
           className="mt-5 text-sm text-primary underline underline-offset-2"
         >
-          Envoyer un autre message
+          {t("sendAnother")}
         </button>
       </div>
     );
@@ -67,18 +62,18 @@ export function ContactForm({ userName, userEmail }: ContactFormProps) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="text-xs font-semibold text-textLight block mb-1.5">Nom *</label>
+          <label className="text-xs font-semibold text-textLight block mb-1.5">{t("nameLabel")}</label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
             disabled={!!userName}
             className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:bg-gray-50 disabled:text-textLight"
-            placeholder="Ton prénom"
+            placeholder={t("namePlaceholder")}
           />
         </div>
         <div>
-          <label className="text-xs font-semibold text-textLight block mb-1.5">Email *</label>
+          <label className="text-xs font-semibold text-textLight block mb-1.5">{t("emailLabel")}</label>
           <input
             type="email"
             value={email}
@@ -92,7 +87,7 @@ export function ContactForm({ userName, userEmail }: ContactFormProps) {
       </div>
 
       <div>
-        <label className="text-xs font-semibold text-textLight block mb-1.5">Sujet *</label>
+        <label className="text-xs font-semibold text-textLight block mb-1.5">{t("subjectLabel")}</label>
         <select
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
@@ -105,7 +100,7 @@ export function ContactForm({ userName, userEmail }: ContactFormProps) {
       </div>
 
       <div>
-        <label className="text-xs font-semibold text-textLight block mb-1.5">Message *</label>
+        <label className="text-xs font-semibold text-textLight block mb-1.5">{t("messageLabel")}</label>
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
@@ -113,7 +108,7 @@ export function ContactForm({ userName, userEmail }: ContactFormProps) {
           minLength={10}
           rows={6}
           className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
-          placeholder="Décris ta demande en détail..."
+          placeholder={t("messagePlaceholder")}
         />
       </div>
 
@@ -124,7 +119,7 @@ export function ContactForm({ userName, userEmail }: ContactFormProps) {
         disabled={status === "loading"}
         className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-xl transition disabled:opacity-60"
       >
-        {status === "loading" ? "Envoi en cours..." : "Envoyer le message"}
+        {status === "loading" ? t("submitting") : t("submit")}
       </button>
     </form>
   );

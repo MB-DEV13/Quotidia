@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { usePostHog } from "posthog-js/react";
+import { useTranslations } from "next-intl";
 import { HabitForm } from "./HabitForm";
 import { HabitCard } from "./HabitCard";
 import { FREE_LIMITS } from "@/lib/config";
@@ -24,17 +25,16 @@ interface HabitsClientProps {
   isPremium: boolean;
 }
 
-const SUGGESTED_HABITS = [
-  { name: "Méditation",        icon: "🧘", color: "#9B72CF", frequency: "daily" },
-  { name: "Sport",             icon: "🏃", color: "#4CAF50", frequency: "daily" },
-  { name: "Lecture",           icon: "📚", color: "#5B5EA6", frequency: "daily" },
-  { name: "Hydratation",       icon: "💧", color: "#0EA5E9", frequency: "daily" },
-  { name: "Étirements",        icon: "🤸", color: "#FF9800", frequency: "daily" },
-  { name: "Alimentation saine",icon: "🥗", color: "#4CAF50", frequency: "daily" },
-];
+interface SuggestedHabit {
+  name: string;
+  icon: string;
+  color: string;
+  frequency: string;
+}
 
 export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsClientProps) {
   const ph = usePostHog();
+  const t = useTranslations("habits");
   const [habits, setHabits] = useState(initialHabits);
 
   useEffect(() => { setHabits(initialHabits); }, [initialHabits]);
@@ -45,6 +45,8 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
 
   const activeHabits = habits.filter((h) => !h.isArchived);
   const archivedHabits = habits.filter((h) => h.isArchived);
+
+  const suggestedHabits = t.raw("suggested.list") as SuggestedHabit[];
 
   async function handleCreate(data: { name: string; icon?: string; color: string; frequency: string }) {
     const res = await fetch("/api/habits", {
@@ -107,7 +109,7 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
     }
   }
 
-  function openSuggestion(s: typeof SUGGESTED_HABITS[0]) {
+  function openSuggestion(s: SuggestedHabit) {
     setPrefillData({ name: s.name, icon: s.icon, color: s.color, frequency: s.frequency });
     setShowForm(true);
   }
@@ -119,8 +121,10 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
         <div className="mb-4 bg-accent/5 border border-accent/20 rounded-2xl px-4 py-3 text-center">
           <p className="text-xs text-textLight">
             Compte gratuit :{" "}
-            <strong className="text-textDark">{activeHabits.length}/{FREE_LIMITS.HABITS} habitudes</strong> utilisées.{" "}
-            <span className="text-accent font-semibold">Premium</span> pour des habitudes illimitées.
+            <strong className="text-textDark">{t("freemiumUsed", { used: activeHabits.length, max: FREE_LIMITS.HABITS })}</strong>{" "}
+            utilisées.{" "}
+            <span className="text-accent font-semibold">{t("freemiumCta")}</span>{" "}
+            {t("freemiumUpgrade")}
           </p>
         </div>
       )}
@@ -132,13 +136,15 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
           className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-2xl mb-6 transition flex items-center justify-center gap-2"
         >
           <span className="text-xl leading-none">+</span>
-          Ajouter une habitude
+          {t("createBtn")}
         </button>
       ) : (
         <div className="w-full bg-accent/10 border border-accent/20 rounded-2xl mb-6 p-4 text-center">
-          <p className="text-sm font-medium text-accent mb-1">Limite gratuite atteinte ({FREE_LIMITS.HABITS} habitudes)</p>
+          <p className="text-sm font-medium text-accent mb-1">{t("limitTitle", { max: FREE_LIMITS.HABITS })}</p>
           <p className="text-xs text-textLight">
-            Passe en <span className="text-accent font-semibold">Premium</span> pour des habitudes illimitées.
+            {t("limitSubtitle", { premium: "" }).split(t("limitUpgradeCta"))[0]}
+            <span className="text-accent font-semibold">{t("limitUpgradeCta")}</span>
+            {t("limitSubtitle", { premium: "" }).split(t("limitUpgradeCta"))[1]}
           </p>
         </div>
       )}
@@ -172,8 +178,8 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
         {activeHabits.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-soft p-6 text-center">
             <p className="text-3xl mb-2">🌱</p>
-            <p className="text-textDark font-semibold mb-1">Aucune habitude pour l&apos;instant</p>
-            <p className="text-textLight text-sm">Crée ta première habitude ci-dessus !</p>
+            <p className="text-textDark font-semibold mb-1">{t("emptyTitle")}</p>
+            <p className="text-textLight text-sm">{t("emptySubtitle")}</p>
           </div>
         ) : (
           activeHabits.map((habit) => (
@@ -191,9 +197,9 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
 
       {/* Suggestions */}
       <div className="mt-6">
-        <p className="text-sm font-semibold text-textLight uppercase tracking-wide mb-3">Suggestions populaires</p>
+        <p className="text-sm font-semibold text-textLight uppercase tracking-wide mb-3">{t("suggested.title")}</p>
         <div className="space-y-3">
-          {SUGGESTED_HABITS.map((s) => (
+          {suggestedHabits.map((s) => (
             <button
               key={s.name}
               onClick={() => openSuggestion(s)}
@@ -208,9 +214,9 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm text-textDark">{s.name}</p>
-                <p className="text-xs text-textLight mt-0.5">Quotidien · Cliquer pour personnaliser</p>
+                <p className="text-xs text-textLight mt-0.5">{t("suggested.clickToCustomize")}</p>
               </div>
-              <span className="text-xs text-primary font-semibold shrink-0">+ Ajouter</span>
+              <span className="text-xs text-primary font-semibold shrink-0">{t("suggested.addBtn")}</span>
             </button>
           ))}
         </div>
@@ -224,7 +230,7 @@ export function HabitsClient({ initialHabits, canAddMore, isPremium }: HabitsCli
             className="text-sm text-textLight hover:text-textDark transition mb-3 flex items-center gap-1"
           >
             <span>{showArchived ? "▾" : "▸"}</span>
-            Archivées ({archivedHabits.length})
+            {t("archivedSection", { count: archivedHabits.length })}
           </button>
           {showArchived && (
             <div className="space-y-3 opacity-70">

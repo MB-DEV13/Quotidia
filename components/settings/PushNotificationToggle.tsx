@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -18,6 +19,7 @@ function isMobile() {
 }
 
 export function PushNotificationToggle() {
+  const t = useTranslations("settings.notifications");
   const [supported, setSupported] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -88,13 +90,13 @@ export function PushNotificationToggle() {
   return (
     <div className="flex items-center justify-between">
       <div>
-        <p className="text-sm font-medium text-textDark">Notifications mobiles</p>
+        <p className="text-sm font-medium text-textDark">{t("mobileTitle")}</p>
         <p className="text-xs text-textLight mt-0.5">
           {permission === "denied"
-            ? "Bloquées dans les paramètres de ton navigateur"
+            ? t("mobileDenied")
             : subscribed
-            ? "Rappels habitudes, alertes budget et badges"
-            : "Reçois des alertes directement sur ton téléphone"}
+            ? t("mobileActive")
+            : t("mobileInactive")}
         </p>
       </div>
       <button

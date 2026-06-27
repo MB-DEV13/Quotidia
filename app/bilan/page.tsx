@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { AppShell } from "@/components/layout/AppShell";
 import { BilanClient } from "@/components/bilan/BilanClient";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 export default async function BilanPage() {
   const session = await getServerSession(authOptions);
@@ -17,11 +18,13 @@ export default async function BilanPage() {
 
   if (!user) redirect("/login");
 
+  const t = await getTranslations("bilan");
+
   return (
     <AppShell>
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-textDark">Bilan hebdomadaire</h1>
+          <h1 className="text-2xl font-bold text-textDark">{t("pageTitle")}</h1>
           {!user.isPremium && (
             <Link
               href="/upgrade"
@@ -36,17 +39,16 @@ export default async function BilanPage() {
           <div className="bg-white rounded-2xl shadow-soft p-8 text-center">
             <div className="text-5xl mb-4">📋</div>
             <h2 className="text-lg font-semibold text-textDark mb-2">
-              Bilan hebdomadaire
+              {t("premiumTitle")}
             </h2>
             <p className="text-sm text-textLight max-w-md mx-auto mb-6">
-              Reçois chaque semaine un résumé de tes habitudes, dépenses, objectifs et l&apos;XP
-              gagné. Identifie tes forces et tes axes d&apos;amélioration.
+              {t("premiumDesc")}
             </p>
             <Link
               href="/upgrade"
               className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-accent text-white font-semibold px-6 py-3 rounded-xl hover:opacity-90 transition"
             >
-              ✨ Passer Premium — 4,99€/mois
+              {t("premiumCta")}
             </Link>
           </div>
         ) : (

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 
 interface SettingsSubscriptionProps {
   isPremium: boolean;
@@ -23,12 +24,16 @@ export function SettingsSubscription({
   budgetMode,
   bankConnection,
 }: SettingsSubscriptionProps) {
+  const t = useTranslations("settings.subscription");
+  const locale = useLocale();
   const router = useRouter();
   const [loadingPortal, setLoadingPortal] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentBudgetMode, setCurrentBudgetMode] = useState(budgetMode);
   const [togglingMode, setTogglingMode] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
+
+  const dateLocale = locale === "fr" ? "fr-FR" : "en-US";
 
   async function handleToggleMode(newMode: "manual" | "automatic") {
     if (newMode === currentBudgetMode || togglingMode) return;
@@ -68,14 +73,14 @@ export function SettingsSubscription({
       const res = await fetch("/api/stripe/portal", { method: "POST" });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        setError(json.error ?? "Erreur portail");
+        setError(json.error ?? t("errorPortal"));
         return;
       }
       if (json.data?.url) {
         window.location.href = json.data.url;
       }
     } catch {
-      setError("Erreur réseau");
+      setError(t("errorNetwork"));
     } finally {
       setLoadingPortal(false);
     }
@@ -84,34 +89,33 @@ export function SettingsSubscription({
   return (
     <div className="bg-white rounded-2xl shadow-soft p-6">
       <h2 className="text-sm font-semibold text-textLight uppercase tracking-wide mb-4">
-        Abonnement
+        {t("title")}
       </h2>
 
       {isPremium ? (
         <div>
           <div className="flex items-center gap-2 mb-3">
             <span className="inline-flex items-center gap-1.5 bg-accent/15 text-accent text-sm font-semibold px-3 py-1 rounded-full">
-              ✨ Premium
+              ✨ {t("premium")}
             </span>
           </div>
           <p className="text-sm text-textLight mb-1">
-            Accès illimité à toutes les fonctionnalités.
+            {t("unlimitedAccess")}
           </p>
           {stripeCurrentPeriodEnd && (
             <p className="text-xs text-textLight mb-4">
-              Renouvellement le{" "}
-              <span className="font-medium text-textDark">
-                {new Date(stripeCurrentPeriodEnd).toLocaleDateString("fr-FR", {
+              {t("renewsAt", {
+                date: new Date(stripeCurrentPeriodEnd).toLocaleDateString(dateLocale, {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
-                })}
-              </span>
+                }),
+              })}
             </p>
           )}
           {/* Section connexion bancaire */}
           <div className="mt-5 pt-5 border-t border-gray-100">
-            <p className="text-xs font-semibold text-textLight uppercase tracking-wide mb-3">Connexion bancaire</p>
+            <p className="text-xs font-semibold text-textLight uppercase tracking-wide mb-3">{t("bankConnection")}</p>
 
             {/* Toggle mode */}
             <div className="flex items-center gap-2 mb-4">
@@ -124,7 +128,7 @@ export function SettingsSubscription({
                     : "bg-gray-100 text-textLight hover:bg-gray-200"
                 }`}
               >
-                ✏️ Manuel
+                {t("modeManual")}
               </button>
               <button
                 onClick={() => handleToggleMode("automatic")}
@@ -135,7 +139,7 @@ export function SettingsSubscription({
                     : "bg-gray-100 text-textLight hover:bg-gray-200 disabled:opacity-40"
                 }`}
               >
-                🏦 Automatique
+                {t("modeAutomatic")}
               </button>
             </div>
 
@@ -143,12 +147,16 @@ export function SettingsSubscription({
               <div className="bg-green-50 border border-green-100 rounded-xl px-3 py-2.5 flex items-center justify-between gap-3">
                 <div>
                   <p className="text-sm font-semibold text-textDark">
-                    {bankConnection.bankName ?? "Banque connectée"}
-                    <span className="ml-2 text-xs font-medium px-1.5 py-0.5 bg-green-100 text-green-700 rounded-full">✓ Actif</span>
+                    {bankConnection.bankName ?? t("bankConnected")}
+                    <span className="ml-2 text-xs font-medium px-1.5 py-0.5 bg-green-100 text-green-700 rounded-full">{t("bankActive")}</span>
                   </p>
                   {bankConnection.lastSyncAt && (
                     <p className="text-xs text-textLight mt-0.5">
-                      Sync : {new Date(bankConnection.lastSyncAt).toLocaleDateString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                      {t("bankSync", {
+                        date: new Date(bankConnection.lastSyncAt).toLocaleDateString(dateLocale, {
+                          day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
+                        }),
+                      })}
                     </p>
                   )}
                 </div>
@@ -157,17 +165,17 @@ export function SettingsSubscription({
                   disabled={disconnecting}
                   className="text-xs text-danger hover:text-danger/80 font-medium transition disabled:opacity-50 shrink-0"
                 >
-                  {disconnecting ? "..." : "Déconnecter"}
+                  {disconnecting ? t("bankDisconnecting") : t("bankDisconnect")}
                 </button>
               </div>
             ) : (
               <div className="bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 flex items-center justify-between gap-3">
-                <p className="text-sm text-textLight">Aucune banque connectée</p>
+                <p className="text-sm text-textLight">{t("noBankConnected")}</p>
                 <Link
                   href="/budget"
                   className="text-xs text-primary font-semibold hover:text-primary/80 transition shrink-0"
                 >
-                  Connecter →
+                  {t("connectBank")}
                 </Link>
               </div>
             )}
@@ -179,7 +187,7 @@ export function SettingsSubscription({
               disabled={loadingPortal}
               className="w-full py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-textLight hover:bg-gray-50 disabled:opacity-60 transition"
             >
-              {loadingPortal ? "Chargement..." : "Gérer mon abonnement"}
+              {loadingPortal ? t("manageBtnLoading") : t("manageBtn")}
             </button>
           </div>
           {error && <p className="text-xs text-danger mt-2">{error}</p>}
@@ -188,15 +196,17 @@ export function SettingsSubscription({
         <div>
           <div className="flex items-center justify-between mb-3">
             <span className="inline-flex items-center gap-1.5 bg-gray-100 text-textLight text-sm font-medium px-3 py-1 rounded-full">
-              Gratuit
+              {t("free")}
             </span>
           </div>
           <ul className="text-xs text-textLight space-y-1 mb-4">
-            <li>• 3 habitudes max</li>
-            <li>• 2 objectifs max</li>
+            <li>• {t("freeHabits")}</li>
+            <li>• {t("freeGoals")}</li>
             {aiRemaining !== null && (
               <li className="text-ai">
-                • 💬 {aiRemaining} requête{aiRemaining > 1 ? "s" : ""} IA restante{aiRemaining > 1 ? "s" : ""} ce mois
+                • 💬 {aiRemaining > 1
+                  ? t("aiRemainingPlural", { count: aiRemaining })
+                  : t("aiRemaining", { count: aiRemaining })}
               </li>
             )}
           </ul>
@@ -204,7 +214,7 @@ export function SettingsSubscription({
             href="/upgrade"
             className="block w-full text-center py-3 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-semibold text-sm hover:opacity-90 transition"
           >
-            ✨ Passer Premium — 4,99€/mois →
+            {t("upgradePremiumCta")}
           </Link>
         </div>
       )}
