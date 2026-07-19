@@ -1,6 +1,7 @@
 "use client";
 
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { useTranslations, useLocale } from "next-intl";
 
 interface CategoryData {
   category: string;
@@ -23,10 +24,13 @@ const COLORS = [
 ];
 
 export function CategoryPie({ data }: CategoryPieProps) {
+  const t = useTranslations("charts.categoryPie");
+  const locale = useLocale();
+
   if (data.length === 0) {
     return (
       <div className="bg-white rounded-2xl shadow-soft p-6 flex items-center justify-center h-64">
-        <p className="text-textLight text-sm">Aucune donnée à afficher</p>
+        <p className="text-textLight text-sm">{t("empty")}</p>
       </div>
     );
   }
@@ -55,7 +59,7 @@ export function CategoryPie({ data }: CategoryPieProps) {
           </Pie>
           <Tooltip
             formatter={(value: number) =>
-              new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(value)
+              new Intl.NumberFormat(locale === "fr" ? "fr-FR" : "en-US", { style: "currency", currency: "EUR" }).format(value)
             }
           />
           <Legend

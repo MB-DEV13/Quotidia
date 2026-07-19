@@ -1877,6 +1877,9 @@
     "monthly": {
       "title": "Weekly expenses",
       "empty": "No expenses this month"
+    },
+    "categoryPie": {
+      "empty": "No data to display"
     }
   }
 }

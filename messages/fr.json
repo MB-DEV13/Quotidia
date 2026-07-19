@@ -1877,6 +1877,9 @@
     "monthly": {
       "title": "Dépenses par semaine",
       "empty": "Aucune dépense ce mois"
+    },
+    "categoryPie": {
+      "empty": "Aucune donnée à afficher"
     }
   }
 }
