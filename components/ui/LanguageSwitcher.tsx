@@ -1,20 +1,19 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 interface LanguageSwitcherProps {
-  /** Affichage compact (drapeaux seuls) ou avec label */
   showLabel?: boolean;
 }
 
 export function LanguageSwitcher({ showLabel = false }: LanguageSwitcherProps) {
   const router = useRouter();
   const locale = useLocale();
+  const t = useTranslations("ui.languageSwitcher");
 
   const setLocale = (newLocale: string) => {
     if (newLocale === locale) return;
-    // Persiste dans un cookie d'un an
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
     router.refresh();
   };
@@ -28,8 +27,8 @@ export function LanguageSwitcher({ showLabel = false }: LanguageSwitcherProps) {
             ? "opacity-100 ring-2 ring-[#5B5EA6] bg-[#5B5EA6]/10"
             : "opacity-40 hover:opacity-70"
         }`}
-        title="Français"
-        aria-label="Passer en français"
+        title={t("fr")}
+        aria-label={t("switchToFr")}
         aria-pressed={locale === "fr"}
       >
         <span className="text-base leading-none">🇫🇷</span>
@@ -42,8 +41,8 @@ export function LanguageSwitcher({ showLabel = false }: LanguageSwitcherProps) {
             ? "opacity-100 ring-2 ring-[#5B5EA6] bg-[#5B5EA6]/10"
             : "opacity-40 hover:opacity-70"
         }`}
-        title="English"
-        aria-label="Switch to English"
+        title={t("en")}
+        aria-label={t("switchToEn")}
         aria-pressed={locale === "en"}
       >
         <span className="text-base leading-none">🇬🇧</span>

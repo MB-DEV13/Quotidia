@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export const EXPENSE_CATEGORIES = [
-  { value: "Alimentation", label: "🍕 Alimentation" },
-  { value: "Transport", label: "🚗 Transport" },
-  { value: "Loisirs", label: "🎮 Loisirs" },
-  { value: "Logement", label: "🏠 Logement" },
-  { value: "Santé", label: "🏥 Santé" },
-  { value: "Abonnements", label: "📱 Abonnements" },
-  { value: "Autres", label: "📦 Autres" },
+  { value: "Alimentation", icon: "🍕" },
+  { value: "Transport", icon: "🚗" },
+  { value: "Loisirs", icon: "🎮" },
+  { value: "Logement", icon: "🏠" },
+  { value: "Santé", icon: "🏥" },
+  { value: "Abonnements", icon: "📱" },
+  { value: "Autres", icon: "📦" },
 ];
 
 interface Expense {
@@ -36,6 +37,8 @@ export function ExpenseForm({ onSubmit, onCancel, initialData }: ExpenseFormProp
       : new Date().toISOString().slice(0, 10)
   );
   const [loading, setLoading] = useState(false);
+  const t = useTranslations("budget.expenseForm");
+  const tCat = useTranslations("budget.categories");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -55,13 +58,13 @@ export function ExpenseForm({ onSubmit, onCancel, initialData }: ExpenseFormProp
     <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4">
       <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-card max-h-[90vh] overflow-y-auto">
         <h2 className="text-lg font-semibold text-textDark mb-5">
-          {initialData ? "Modifier la dépense" : "Nouvelle dépense"}
+          {initialData ? t("titleEdit") : t("titleNew")}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Amount */}
           <div>
-            <label className="block text-sm font-medium text-textDark mb-1">Montant (€)</label>
+            <label className="block text-sm font-medium text-textDark mb-1">{t("amountLabel")}</label>
             <input
               type="number"
               step="0.01"
@@ -77,7 +80,7 @@ export function ExpenseForm({ onSubmit, onCancel, initialData }: ExpenseFormProp
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-textDark mb-2">Catégorie</label>
+            <label className="block text-sm font-medium text-textDark mb-2">{t("categoryLabel")}</label>
             <div className="grid grid-cols-2 gap-2">
               {EXPENSE_CATEGORIES.map((cat) => (
                 <button
@@ -90,7 +93,7 @@ export function ExpenseForm({ onSubmit, onCancel, initialData }: ExpenseFormProp
                       : "bg-gray-50 text-textDark hover:bg-gray-100"
                   }`}
                 >
-                  {cat.label}
+                  {cat.icon} {(tCat as any)(cat.value)}
                 </button>
               ))}
             </div>
@@ -99,20 +102,21 @@ export function ExpenseForm({ onSubmit, onCancel, initialData }: ExpenseFormProp
           {/* Label */}
           <div>
             <label className="block text-sm font-medium text-textDark mb-1">
-              Description <span className="text-textLight font-normal">(optionnel)</span>
+              {t("descriptionLabel")}{" "}
+              <span className="text-textLight font-normal">{t("optional")}</span>
             </label>
             <input
               type="text"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              placeholder="ex: Restaurant midi, Métro..."
+              placeholder={t("descriptionPlaceholder")}
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
             />
           </div>
 
           {/* Date */}
           <div>
-            <label className="block text-sm font-medium text-textDark mb-1">Date</label>
+            <label className="block text-sm font-medium text-textDark mb-1">{t("dateLabel")}</label>
             <input
               type="date"
               value={date}
@@ -128,14 +132,14 @@ export function ExpenseForm({ onSubmit, onCancel, initialData }: ExpenseFormProp
               onClick={onCancel}
               className="flex-1 py-3 rounded-xl border border-gray-200 text-sm font-medium text-textLight hover:bg-gray-50 transition"
             >
-              Annuler
+              {t("cancel")}
             </button>
             <button
               type="submit"
               disabled={loading || !amount || parseFloat(amount) <= 0}
               className="flex-1 py-3 rounded-xl bg-primary hover:bg-primary/90 disabled:opacity-60 text-white text-sm font-semibold transition"
             >
-              {loading ? "Enregistrement..." : initialData ? "Modifier" : "Ajouter"}
+              {loading ? t("saving") : initialData ? t("submitEdit") : t("submit")}
             </button>
           </div>
         </form>

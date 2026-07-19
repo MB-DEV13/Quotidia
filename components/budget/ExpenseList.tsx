@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { formatCurrency } from "@/lib/utils";
 import { EXPENSE_CATEGORIES } from "./ExpenseForm";
 
@@ -18,13 +19,13 @@ interface ExpenseListProps {
 
 function getCategoryIcon(category: string): string {
   const found = EXPENSE_CATEGORIES.find((c) => c.value === category);
-  return found ? found.label.split(" ")[0] : "📦";
+  return found?.icon ?? "📦";
 }
 
-function groupByDate(expenses: Expense[]): Map<string, Expense[]> {
+function groupByDate(expenses: Expense[], locale: string): Map<string, Expense[]> {
   const map = new Map<string, Expense[]>();
   for (const expense of expenses) {
-    const dateKey = new Date(expense.date).toLocaleDateString("fr-FR", {
+    const dateKey = new Date(expense.date).toLocaleDateString(locale, {
       weekday: "long",
       day: "numeric",
       month: "long",
@@ -36,16 +37,20 @@ function groupByDate(expenses: Expense[]): Map<string, Expense[]> {
 }
 
 export function ExpenseList({ expenses, onDelete }: ExpenseListProps) {
+  const t = useTranslations("budget.expenseList");
+  const tCat = useTranslations("budget.categories");
+  const locale = useLocale();
+
   if (expenses.length === 0) {
     return (
       <div className="bg-white rounded-2xl shadow-soft p-8 text-center">
         <p className="text-3xl mb-2">💸</p>
-        <p className="text-textLight text-sm">Aucune dépense ce mois.</p>
+        <p className="text-textLight text-sm">{t("empty")}</p>
       </div>
     );
   }
 
-  const grouped = groupByDate(expenses);
+  const grouped = groupByDate(expenses, locale);
 
   return (
     <div className="space-y-4">
@@ -68,10 +73,10 @@ export function ExpenseList({ expenses, onDelete }: ExpenseListProps) {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-textDark">
-                      {expense.label || expense.category}
+                      {expense.label || (tCat as any)(expense.category)}
                     </p>
                     {expense.label && (
-                      <p className="text-xs text-textLight">{expense.category}</p>
+                      <p className="text-xs text-textLight">{(tCat as any)(expense.category)}</p>
                     )}
                   </div>
                 </div>
@@ -82,7 +87,7 @@ export function ExpenseList({ expenses, onDelete }: ExpenseListProps) {
                   <button
                     onClick={() => onDelete(expense.id)}
                     className="w-7 h-7 flex items-center justify-center rounded-lg text-textLight hover:bg-red-50 hover:text-danger transition text-sm"
-                    aria-label="Supprimer"
+                    aria-label={t("deleteLabel")}
                   >
                     🗑️
                   </button>

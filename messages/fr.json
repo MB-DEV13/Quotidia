@@ -44,7 +44,109 @@
       "ctaSecondary": "Voir comment ça marche →"
     },
     "mockup": {
-      "label": "Explore le dashboard"
+      "label": "Explore le dashboard",
+      "tabs": [
+        {
+          "id": "habits",
+          "label": "✅ Habitudes"
+        },
+        {
+          "id": "budget",
+          "label": "💰 Budget"
+        },
+        {
+          "id": "goals",
+          "label": "🎯 Objectifs"
+        }
+      ],
+      "habits": [
+        {
+          "name": "Méditation",
+          "icon": "🧘",
+          "streak": 23,
+          "done": true,
+          "color": "#5B5EA6"
+        },
+        {
+          "name": "Sport 30 min",
+          "icon": "🏋️",
+          "streak": 8,
+          "done": true,
+          "color": "#9B72CF"
+        },
+        {
+          "name": "Lecture",
+          "icon": "📚",
+          "streak": 15,
+          "done": false,
+          "color": "#0EA5E9"
+        },
+        {
+          "name": "Eau 2L",
+          "icon": "💧",
+          "streak": 5,
+          "done": false,
+          "color": "#4CAF50"
+        }
+      ],
+      "streakLabel": "🔥 {streak}j de streak",
+      "budgetMonth": "Budget ce mois",
+      "budgetValue": "600 / 680 €",
+      "budgetRemaining": "{amount} € restants ce mois",
+      "budgetCategories": [
+        {
+          "name": "Alimentation",
+          "amount": 280,
+          "budget": 350,
+          "color": "#4CAF50"
+        },
+        {
+          "name": "Transport",
+          "amount": 95,
+          "budget": 120,
+          "color": "#0EA5E9"
+        },
+        {
+          "name": "Loisirs",
+          "amount": 180,
+          "budget": 150,
+          "color": "#EF4444"
+        },
+        {
+          "name": "Abonnements",
+          "amount": 45,
+          "budget": 60,
+          "color": "#9B72CF"
+        }
+      ],
+      "goals": [
+        {
+          "title": "Économiser 5000€",
+          "current": 3200,
+          "target": 5000,
+          "unit": "€",
+          "icon": "💰"
+        },
+        {
+          "title": "Courir 100km",
+          "current": 67,
+          "target": 100,
+          "unit": "km",
+          "icon": "🏃"
+        },
+        {
+          "title": "Lire 12 livres",
+          "current": 7,
+          "target": 12,
+          "unit": "livres",
+          "icon": "📚"
+        }
+      ],
+      "headerGreeting": "Bonjour, Alex 👋",
+      "headerDate": "lundi 17 mars 2025",
+      "statToday": "Aujourd'hui",
+      "statStreak": "Streak",
+      "statLevel": "Niveau"
     },
     "how": {
       "badge": "Simple & rapide",
@@ -762,10 +864,35 @@
       "health": "Santé",
       "shopping": "Shopping",
       "housing": "Logement",
-      "other": "Autre"
+      "other": "Autre",
+      "Alimentation": "Alimentation",
+      "Transport": "Transport",
+      "Loisirs": "Loisirs",
+      "Logement": "Logement",
+      "Santé": "Santé",
+      "Abonnements": "Abonnements",
+      "Autres": "Autres"
     },
     "empty": "Aucune dépense ce mois.",
-    "limitReached": "Limite de catégories atteinte. Passe Premium pour en avoir plus."
+    "limitReached": "Limite de catégories atteinte. Passe Premium pour en avoir plus.",
+    "expenseForm": {
+      "titleNew": "Nouvelle dépense",
+      "titleEdit": "Modifier la dépense",
+      "amountLabel": "Montant (€)",
+      "categoryLabel": "Catégorie",
+      "descriptionLabel": "Description",
+      "optional": "(optionnel)",
+      "descriptionPlaceholder": "ex: Restaurant midi, Métro...",
+      "dateLabel": "Date",
+      "cancel": "Annuler",
+      "saving": "Enregistrement...",
+      "submit": "Ajouter",
+      "submitEdit": "Modifier"
+    },
+    "expenseList": {
+      "empty": "Aucune dépense ce mois.",
+      "deleteLabel": "Supprimer"
+    }
   },
   "goals": {
     "pageTitle": "Mes objectifs",
@@ -1155,11 +1282,40 @@
       "title": "Installer l'app",
       "subtitle": "Ajoute Quotidia à ton écran d'accueil pour un accès rapide.",
       "install": "Installer",
-      "later": "Plus tard"
+      "later": "Plus tard",
+      "closeLabel": "Fermer",
+      "quickAccess": "Accès rapide",
+      "notifications": "Notifications",
+      "offline": "Hors-ligne",
+      "platformPrefix": "Sur {platform}",
+      "dontShow": "Ne plus afficher ce message",
+      "gotIt": "J'ai compris, merci !",
+      "desktop": "Ordinateur",
+      "yourDevice": "Ton appareil",
+      "iosStep1": "Appuie sur l'icône Partager en bas de Safari",
+      "iosStep2": "Choisis « Sur l'écran d'accueil »",
+      "iosStep3": "Appuie sur « Ajouter » en haut à droite",
+      "androidStep1": "Appuie sur le menu en haut à droite de Chrome",
+      "androidStep2": "Choisis « Ajouter à l'écran d'accueil »",
+      "androidStep3": "Confirme l'installation",
+      "desktopStep1": "Ouvre {appName} dans Google Chrome",
+      "desktopStep2": "Clique sur l'icône ↓ dans la barre d'adresse",
+      "desktopStep3": "Clique sur « Installer » et profite !",
+      "unknownStep1": "Ouvre {appName} dans Chrome ou Safari",
+      "unknownStep2": "Cherche l'option « Ajouter à l'écran d'accueil »",
+      "unknownStep3": "Confirme pour accéder en un tap !"
     },
     "themeToggle": {
       "light": "Mode clair",
-      "dark": "Mode sombre"
+      "dark": "Mode sombre",
+      "toLight": "Passer en mode clair",
+      "toDark": "Passer en mode sombre"
+    },
+    "languageSwitcher": {
+      "switchToFr": "Passer en français",
+      "switchToEn": "Switch to English",
+      "fr": "Français",
+      "en": "English"
     }
   },
   "stats": {
@@ -1452,7 +1608,57 @@
         "title": "C’est parti !",
         "content": "Tu es prêt ! Crée ta première habitude et commence dès aujourd’hui."
       }
-    ]
+    ],
+    "modal": {
+      "skip": "Passer l'intro",
+      "profileTitle": "Ton profil",
+      "profileSubtitle": "Pour apparaître dans le classement et te comparer aux autres.",
+      "countryLabel": "Pays",
+      "countryPlaceholder": "Sélectionne ton pays",
+      "cityLabel": "Ville",
+      "optional": "(optionnel)",
+      "cityPlaceholder": "ex: Paris",
+      "leaderboardLabel": "Apparaître dans le classement",
+      "leaderboardHint": "Ton nom et niveau visibles des autres",
+      "saving": "Enregistrement...",
+      "continue": "Continuer →",
+      "prev": "Précédent",
+      "finish": "Créer ma première habitude →",
+      "next": "Suivant",
+      "introSteps": [
+        {
+          "icon": "🎉",
+          "title": "Bienvenue sur {appName} !",
+          "content": "Ton dashboard de vie personnel qui réunit habitudes, budget, objectifs et assistant IA. En quelques secondes, on te montre comment ça marche."
+        },
+        {
+          "icon": "✅",
+          "title": "Tes habitudes",
+          "content": "Crée des habitudes quotidiennes ou hebdomadaires. Chaque jour, valide-les en un clic pour construire des streaks et gagner des XP. Plus tu es régulier, plus tu montes en niveau !"
+        },
+        {
+          "icon": "💰",
+          "title": "Ton budget",
+          "content": "Enregistre tes dépenses par catégorie et visualise où va ton argent. Un graphique hebdomadaire te montre tes tendances et t'aide à rester dans les clous."
+        },
+        {
+          "icon": "🚀",
+          "title": "C'est parti !",
+          "content": "Tu es prêt à commencer. Crée ta première habitude et lance-toi ! Chaque petite habitude construite aujourd'hui crée le toi de demain."
+        }
+      ],
+      "countries": {
+        "FR": "France",
+        "BE": "Belgique",
+        "CH": "Suisse",
+        "CA": "Canada",
+        "LU": "Luxembourg",
+        "MA": "Maroc",
+        "SN": "Sénégal",
+        "CI": "Côte d'Ivoire",
+        "OTHER": "Autre"
+      }
+    }
   },
   "contact": {
     "title": "Contacte-nous",
@@ -1521,5 +1727,26 @@
     "privacyLink": "Gérer dans les paramètres",
     "toNextLevel": "→ Niv. {level}",
     "streakSuffix": "j"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "Cette page n'existe pas ou a été déplacée.",
+    "hint": "Retourne au dashboard pour continuer ta progression.",
+    "dashboard": "→ Mon dashboard",
+    "home": "Accueil"
+  },
+  "ai": {
+    "chat": {
+      "greeting": "Bonjour ! Je suis {name} Coach, ton assistant personnel. Comment puis-je t'aider aujourd'hui ? 😊",
+      "limitMessage": "Tu as atteint ta limite mensuelle de {limit} requêtes. Passe en Premium pour un accès illimité ! ✨",
+      "errorMessage": "Désolé, une erreur s'est produite. Réessaie dans un moment.",
+      "requestsSingular": "1 requête restante",
+      "requestsPlural": "{count} requêtes restantes",
+      "closeLabel": "Fermer",
+      "sendLabel": "Envoyer",
+      "limitTitle": "Limite mensuelle atteinte",
+      "upgradeCta": "✨ Passer Premium — 4,99€/mois",
+      "placeholder": "Écris ton message..."
+    }
   }
 }

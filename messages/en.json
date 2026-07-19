@@ -44,7 +44,109 @@
       "ctaSecondary": "See how it works →"
     },
     "mockup": {
-      "label": "Explore the dashboard"
+      "label": "Explore the dashboard",
+      "tabs": [
+        {
+          "id": "habits",
+          "label": "✅ Habits"
+        },
+        {
+          "id": "budget",
+          "label": "💰 Budget"
+        },
+        {
+          "id": "goals",
+          "label": "🎯 Goals"
+        }
+      ],
+      "habits": [
+        {
+          "name": "Meditation",
+          "icon": "🧘",
+          "streak": 23,
+          "done": true,
+          "color": "#5B5EA6"
+        },
+        {
+          "name": "30 min Workout",
+          "icon": "🏋️",
+          "streak": 8,
+          "done": true,
+          "color": "#9B72CF"
+        },
+        {
+          "name": "Reading",
+          "icon": "📚",
+          "streak": 15,
+          "done": false,
+          "color": "#0EA5E9"
+        },
+        {
+          "name": "Water 2L",
+          "icon": "💧",
+          "streak": 5,
+          "done": false,
+          "color": "#4CAF50"
+        }
+      ],
+      "streakLabel": "🔥 {streak}d streak",
+      "budgetMonth": "Monthly Budget",
+      "budgetValue": "600 / 680 €",
+      "budgetRemaining": "{amount} € left this month",
+      "budgetCategories": [
+        {
+          "name": "Food",
+          "amount": 280,
+          "budget": 350,
+          "color": "#4CAF50"
+        },
+        {
+          "name": "Transport",
+          "amount": 95,
+          "budget": 120,
+          "color": "#0EA5E9"
+        },
+        {
+          "name": "Entertainment",
+          "amount": 180,
+          "budget": 150,
+          "color": "#EF4444"
+        },
+        {
+          "name": "Subscriptions",
+          "amount": 45,
+          "budget": 60,
+          "color": "#9B72CF"
+        }
+      ],
+      "goals": [
+        {
+          "title": "Save 5000€",
+          "current": 3200,
+          "target": 5000,
+          "unit": "€",
+          "icon": "💰"
+        },
+        {
+          "title": "Run 100km",
+          "current": 67,
+          "target": 100,
+          "unit": "km",
+          "icon": "🏃"
+        },
+        {
+          "title": "Read 12 books",
+          "current": 7,
+          "target": 12,
+          "unit": "books",
+          "icon": "📚"
+        }
+      ],
+      "headerGreeting": "Hello, Alex 👋",
+      "headerDate": "Monday, March 17, 2025",
+      "statToday": "Today",
+      "statStreak": "Streak",
+      "statLevel": "Level"
     },
     "how": {
       "badge": "Simple & fast",
@@ -762,10 +864,35 @@
       "health": "Health",
       "shopping": "Shopping",
       "housing": "Housing",
-      "other": "Other"
+      "other": "Other",
+      "Alimentation": "Food",
+      "Transport": "Transport",
+      "Loisirs": "Entertainment",
+      "Logement": "Housing",
+      "Santé": "Health",
+      "Abonnements": "Subscriptions",
+      "Autres": "Other"
     },
     "empty": "No expenses this month.",
-    "limitReached": "Category limit reached. Upgrade to Premium for more."
+    "limitReached": "Category limit reached. Upgrade to Premium for more.",
+    "expenseForm": {
+      "titleNew": "New expense",
+      "titleEdit": "Edit expense",
+      "amountLabel": "Amount (€)",
+      "categoryLabel": "Category",
+      "descriptionLabel": "Description",
+      "optional": "(optional)",
+      "descriptionPlaceholder": "e.g. Business lunch, Metro...",
+      "dateLabel": "Date",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "submit": "Add",
+      "submitEdit": "Save"
+    },
+    "expenseList": {
+      "empty": "No expenses this month.",
+      "deleteLabel": "Delete"
+    }
   },
   "goals": {
     "pageTitle": "My goals",
@@ -1155,11 +1282,40 @@
       "title": "Install the app",
       "subtitle": "Add Quotidia to your home screen for quick access.",
       "install": "Install",
-      "later": "Later"
+      "later": "Later",
+      "closeLabel": "Close",
+      "quickAccess": "Quick access",
+      "notifications": "Notifications",
+      "offline": "Offline",
+      "platformPrefix": "On {platform}",
+      "dontShow": "Don't show this again",
+      "gotIt": "Got it, thanks!",
+      "desktop": "Desktop",
+      "yourDevice": "Your device",
+      "iosStep1": "Tap the Share icon at the bottom of Safari",
+      "iosStep2": "Choose 'Add to Home Screen'",
+      "iosStep3": "Tap 'Add' in the top right",
+      "androidStep1": "Tap the menu in the top right of Chrome",
+      "androidStep2": "Choose 'Add to Home Screen'",
+      "androidStep3": "Confirm the installation",
+      "desktopStep1": "Open {appName} in Google Chrome",
+      "desktopStep2": "Click the install icon in the address bar",
+      "desktopStep3": "Click 'Install' and enjoy!",
+      "unknownStep1": "Open {appName} in Chrome or Safari",
+      "unknownStep2": "Find the 'Add to Home Screen' option",
+      "unknownStep3": "Confirm for one-tap access!"
     },
     "themeToggle": {
       "light": "Light mode",
-      "dark": "Dark mode"
+      "dark": "Dark mode",
+      "toLight": "Switch to light mode",
+      "toDark": "Switch to dark mode"
+    },
+    "languageSwitcher": {
+      "switchToFr": "Passer en français",
+      "switchToEn": "Switch to English",
+      "fr": "Français",
+      "en": "English"
     }
   },
   "stats": {
@@ -1452,7 +1608,57 @@
         "title": "Let’s go!",
         "content": "You are ready! Create your first habit and start today."
       }
-    ]
+    ],
+    "modal": {
+      "skip": "Skip intro",
+      "profileTitle": "Your profile",
+      "profileSubtitle": "To appear in the leaderboard and compare yourself to others.",
+      "countryLabel": "Country",
+      "countryPlaceholder": "Select your country",
+      "cityLabel": "City",
+      "optional": "(optional)",
+      "cityPlaceholder": "e.g. Paris",
+      "leaderboardLabel": "Appear in the leaderboard",
+      "leaderboardHint": "Your name and level visible to others",
+      "saving": "Saving...",
+      "continue": "Continue →",
+      "prev": "Previous",
+      "finish": "Create my first habit →",
+      "next": "Next",
+      "introSteps": [
+        {
+          "icon": "🎉",
+          "title": "Welcome to {appName}!",
+          "content": "Your personal life dashboard that brings together habits, budget, goals and an AI assistant. In a few seconds, we'll show you how it works."
+        },
+        {
+          "icon": "✅",
+          "title": "Your habits",
+          "content": "Create daily or weekly habits. Each day, complete them in one click to build streaks and earn XP. The more consistent you are, the higher you level up!"
+        },
+        {
+          "icon": "💰",
+          "title": "Your budget",
+          "content": "Record your expenses by category and visualize where your money goes. A weekly chart shows your trends and helps you stay on track."
+        },
+        {
+          "icon": "🚀",
+          "title": "Let's go!",
+          "content": "You're ready to start. Create your first habit and get going! Every small habit built today creates the you of tomorrow."
+        }
+      ],
+      "countries": {
+        "FR": "France",
+        "BE": "Belgium",
+        "CH": "Switzerland",
+        "CA": "Canada",
+        "LU": "Luxembourg",
+        "MA": "Morocco",
+        "SN": "Senegal",
+        "CI": "Ivory Coast",
+        "OTHER": "Other"
+      }
+    }
   },
   "contact": {
     "title": "Contact us",
@@ -1521,5 +1727,26 @@
     "privacyLink": "Manage in settings",
     "toNextLevel": "→ Lv. {level}",
     "streakSuffix": "d"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "This page doesn't exist or has been moved.",
+    "hint": "Go back to your dashboard to continue your progress.",
+    "dashboard": "→ My dashboard",
+    "home": "Home"
+  },
+  "ai": {
+    "chat": {
+      "greeting": "Hello! I'm {name} Coach, your personal assistant. How can I help you today? 😊",
+      "limitMessage": "You've reached your monthly limit of {limit} requests. Upgrade to Premium for unlimited access! ✨",
+      "errorMessage": "Sorry, an error occurred. Please try again in a moment.",
+      "requestsSingular": "1 request remaining",
+      "requestsPlural": "{count} requests remaining",
+      "closeLabel": "Close",
+      "sendLabel": "Send",
+      "limitTitle": "Monthly limit reached",
+      "upgradeCta": "✨ Go Premium — €4.99/month",
+      "placeholder": "Type your message..."
+    }
   }
 }

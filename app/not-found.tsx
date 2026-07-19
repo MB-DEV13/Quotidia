@@ -1,13 +1,14 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
-export default function NotFound() {
+export default async function NotFound() {
+  const t = await getTranslations("notFound");
+
   return (
     <main className="min-h-screen bg-background flex items-center justify-center px-4">
-      {/* Glow décoratif */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-primary/15 to-accent/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative text-center max-w-md">
-        {/* Numéro 404 */}
         <div className="relative mb-6 select-none">
           <span className="text-[120px] md:text-[160px] font-extrabold leading-none bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent opacity-20">
             404
@@ -18,11 +19,12 @@ export default function NotFound() {
         </div>
 
         <h1 className="text-2xl md:text-3xl font-extrabold text-textDark mb-3">
-          Page introuvable
+          {t("title")}
         </h1>
         <p className="text-textLight text-sm md:text-base leading-relaxed mb-8">
-          Cette page n&apos;existe pas ou a été déplacée.<br />
-          Retourne au dashboard pour continuer ta progression.
+          {t("description")}
+          <br />
+          {t("hint")}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -30,13 +32,13 @@ export default function NotFound() {
             href="/dashboard"
             className="bg-gradient-to-r from-primary to-accent text-white font-semibold px-6 py-3 rounded-2xl shadow-card hover:opacity-90 transition text-sm"
           >
-            → Mon dashboard
+            {t("dashboard")}
           </Link>
           <Link
             href="/"
             className="bg-white border border-gray-200 text-textLight font-medium px-6 py-3 rounded-2xl hover:bg-gray-50 transition text-sm"
           >
-            Accueil
+            {t("home")}
           </Link>
         </div>
       </div>

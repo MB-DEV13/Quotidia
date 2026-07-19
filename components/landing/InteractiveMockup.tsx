@@ -1,33 +1,72 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
-const TABS = [
-  { id: "habits", label: "✅ Habitudes" },
-  { id: "budget", label: "💰 Budget" },
-  { id: "goals", label: "🎯 Objectifs" },
-];
+interface HabitData {
+  name: string;
+  icon: string;
+  streak: number;
+  done: boolean;
+  color: string;
+}
 
-function HabitsView() {
-  const habits = [
-    { name: "Méditation", icon: "🧘", streak: 23, done: true, color: "#5B5EA6" },
-    { name: "Sport 30 min", icon: "🏋️", streak: 8, done: true, color: "#9B72CF" },
-    { name: "Lecture", icon: "📚", streak: 15, done: false, color: "#0EA5E9" },
-    { name: "Eau 2L", icon: "💧", streak: 5, done: false, color: "#4CAF50" },
-  ];
+interface CategoryData {
+  name: string;
+  amount: number;
+  budget: number;
+  color: string;
+}
+
+interface GoalData {
+  title: string;
+  current: number;
+  target: number;
+  unit: string;
+  icon: string;
+}
+
+interface TabData {
+  id: string;
+  label: string;
+}
+
+function HabitsView({
+  habits,
+  streakLabel,
+}: {
+  habits: HabitData[];
+  streakLabel: (streak: number) => string;
+}) {
   return (
     <div className="space-y-2.5">
       {habits.map((h) => (
-        <div key={h.name} className={`flex items-center gap-3 bg-white rounded-xl px-3 py-2.5 shadow-sm ${h.done ? "opacity-70" : ""}`}>
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-base" style={{ backgroundColor: `${h.color}20` }}>
+        <div
+          key={h.name}
+          className={`flex items-center gap-3 bg-white rounded-xl px-3 py-2.5 shadow-sm ${h.done ? "opacity-70" : ""}`}
+        >
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-base"
+            style={{ backgroundColor: `${h.color}20` }}
+          >
             {h.icon}
           </div>
           <div className="flex-1 min-w-0">
-            <p className={`text-xs font-medium ${h.done ? "line-through text-gray-400" : "text-gray-800"}`}>{h.name}</p>
-            <p className="text-xs text-gray-400">🔥 {h.streak}j de streak</p>
+            <p className={`text-xs font-medium ${h.done ? "line-through text-gray-400" : "text-gray-800"}`}>
+              {h.name}
+            </p>
+            <p className="text-xs text-gray-400">{streakLabel(h.streak)}</p>
           </div>
-          <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${h.done ? "bg-green-500 text-white" : "border-2 border-gray-200"}`}>
-            {h.done && <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+          <div
+            className={`w-6 h-6 rounded-lg flex items-center justify-center ${
+              h.done ? "bg-green-500 text-white" : "border-2 border-gray-200"
+            }`}
+          >
+            {h.done && (
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            )}
           </div>
         </div>
       ))}
@@ -35,24 +74,31 @@ function HabitsView() {
   );
 }
 
-function BudgetView() {
-  const categories = [
-    { name: "Alimentation", amount: 280, budget: 350, color: "#4CAF50" },
-    { name: "Transport", amount: 95, budget: 120, color: "#0EA5E9" },
-    { name: "Loisirs", amount: 180, budget: 150, color: "#EF4444" },
-    { name: "Abonnements", amount: 45, budget: 60, color: "#9B72CF" },
-  ];
+function BudgetView({
+  categories,
+  budgetMonth,
+  budgetValue,
+  budgetRemaining,
+}: {
+  categories: CategoryData[];
+  budgetMonth: string;
+  budgetValue: string;
+  budgetRemaining: string;
+}) {
   return (
     <div className="space-y-2.5">
       <div className="bg-white rounded-xl p-3 shadow-sm">
         <div className="flex justify-between items-center mb-1.5">
-          <p className="text-xs font-semibold text-gray-700">Budget ce mois</p>
-          <span className="text-xs font-bold text-orange-500">600 / 680 €</span>
+          <p className="text-xs font-semibold text-gray-700">{budgetMonth}</p>
+          <span className="text-xs font-bold text-orange-500">{budgetValue}</span>
         </div>
         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-green-400 to-orange-400 rounded-full" style={{ width: "88%" }} />
+          <div
+            className="h-full bg-gradient-to-r from-green-400 to-orange-400 rounded-full"
+            style={{ width: "88%" }}
+          />
         </div>
-        <p className="text-xs text-gray-400 mt-1">80 € restants ce mois</p>
+        <p className="text-xs text-gray-400 mt-1">{budgetRemaining}</p>
       </div>
       {categories.map((c) => {
         const pct = Math.min(Math.round((c.amount / c.budget) * 100), 100);
@@ -61,10 +107,21 @@ function BudgetView() {
             <div className="flex-1 min-w-0">
               <div className="flex justify-between mb-1">
                 <p className="text-xs font-medium text-gray-700">{c.name}</p>
-                <p className="text-xs font-semibold" style={{ color: c.amount > c.budget ? "#EF4444" : "#888" }}>{c.amount}€</p>
+                <p
+                  className="text-xs font-semibold"
+                  style={{ color: c.amount > c.budget ? "#EF4444" : "#888" }}
+                >
+                  {c.amount}€
+                </p>
               </div>
               <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: c.amount > c.budget ? "#EF4444" : c.color }} />
+                <div
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${pct}%`,
+                    backgroundColor: c.amount > c.budget ? "#EF4444" : c.color,
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -74,12 +131,7 @@ function BudgetView() {
   );
 }
 
-function GoalsView() {
-  const goals = [
-    { title: "Économiser 5000€", current: 3200, target: 5000, unit: "€", icon: "💰" },
-    { title: "Courir 100km", current: 67, target: 100, unit: "km", icon: "🏃" },
-    { title: "Lire 12 livres", current: 7, target: 12, unit: "livres", icon: "📚" },
-  ];
+function GoalsView({ goals }: { goals: GoalData[] }) {
   return (
     <div className="space-y-2.5">
       {goals.map((g) => {
@@ -96,9 +148,14 @@ function GoalsView() {
               </div>
             </div>
             <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-[#5B5EA6] to-[#9B72CF] rounded-full" style={{ width: `${pct}%` }} />
+              <div
+                className="h-full bg-gradient-to-r from-[#5B5EA6] to-[#9B72CF] rounded-full"
+                style={{ width: `${pct}%` }}
+              />
             </div>
-            <p className="text-xs text-gray-400 mt-1">{g.current} / {g.target} {g.unit}</p>
+            <p className="text-xs text-gray-400 mt-1">
+              {g.current} / {g.target} {g.unit}
+            </p>
           </div>
         );
       })}
@@ -108,6 +165,12 @@ function GoalsView() {
 
 export function InteractiveMockup() {
   const [activeTab, setActiveTab] = useState("habits");
+  const t = useTranslations("landing.mockup");
+
+  const tabs = t.raw("tabs") as TabData[];
+  const habits = t.raw("habits") as HabitData[];
+  const budgetCategories = t.raw("budgetCategories") as CategoryData[];
+  const goals = t.raw("goals") as GoalData[];
 
   return (
     <div className="bg-white rounded-3xl shadow-card border border-gray-100 overflow-hidden">
@@ -126,18 +189,20 @@ export function InteractiveMockup() {
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <p className="font-bold text-gray-800 text-sm">Bonjour, Alex 👋</p>
-            <p className="text-xs text-gray-400">lundi 17 mars 2025</p>
+            <p className="font-bold text-gray-800 text-sm">{t("headerGreeting")}</p>
+            <p className="text-xs text-gray-400">{t("headerDate")}</p>
           </div>
-          <div className="bg-gradient-to-r from-[#5B5EA6] to-[#9B72CF] text-white text-xs font-semibold px-3 py-1.5 rounded-full">✨ Premium</div>
+          <div className="bg-gradient-to-r from-[#5B5EA6] to-[#9B72CF] text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+            ✨ Premium
+          </div>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-2 mb-4">
           {[
-            { label: "Aujourd'hui", value: "4/5" },
-            { label: "Streak", value: "🔥 23j" },
-            { label: "Niveau", value: "12 ⭐" },
+            { label: t("statToday"), value: "4/5" },
+            { label: t("statStreak"), value: t("streakLabel", { streak: 23 }) },
+            { label: t("statLevel"), value: "12 ⭐" },
           ].map((s) => (
             <div key={s.label} className="bg-white rounded-xl p-2.5 shadow-sm text-center">
               <p className="text-xs text-gray-400 mb-0.5">{s.label}</p>
@@ -148,7 +213,7 @@ export function InteractiveMockup() {
 
         {/* Tabs */}
         <div className="flex bg-white rounded-xl p-1 gap-1 mb-4 shadow-sm">
-          {TABS.map((tab) => (
+          {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -165,9 +230,21 @@ export function InteractiveMockup() {
 
         {/* Content */}
         <div className="min-h-[180px]">
-          {activeTab === "habits" && <HabitsView />}
-          {activeTab === "budget" && <BudgetView />}
-          {activeTab === "goals" && <GoalsView />}
+          {activeTab === "habits" && (
+            <HabitsView
+              habits={habits}
+              streakLabel={(streak) => t("streakLabel", { streak })}
+            />
+          )}
+          {activeTab === "budget" && (
+            <BudgetView
+              categories={budgetCategories}
+              budgetMonth={t("budgetMonth")}
+              budgetValue={t("budgetValue")}
+              budgetRemaining={t("budgetRemaining", { amount: 80 })}
+            />
+          )}
+          {activeTab === "goals" && <GoalsView goals={goals} />}
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { config } from "@/lib/config";
+import { useTranslations } from "next-intl";
 
 interface Message {
   role: "user" | "assistant";
@@ -19,10 +20,12 @@ interface ChatWindowProps {
 const AI_FREE_LIMIT = 5;
 
 export function ChatWindow({ onClose, aiRequestsUsed, isPremium }: ChatWindowProps) {
+  const t = useTranslations("ai.chat");
+
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: `Bonjour ! Je suis ${config.app.name} Coach, ton assistant personnel. Comment puis-je t'aider aujourd'hui ? 😊`,
+      content: t("greeting", { name: config.app.name }),
       timestamp: new Date().toISOString(),
     },
   ]);
@@ -54,7 +57,6 @@ export function ChatWindow({ onClose, aiRequestsUsed, isPremium }: ChatWindowPro
     setInput("");
     setIsLoading(true);
 
-    // Add streaming placeholder
     const placeholderMessage: Message = {
       role: "assistant",
       content: "",
@@ -78,7 +80,7 @@ export function ChatWindow({ onClose, aiRequestsUsed, isPremium }: ChatWindowPro
             ...prev,
             {
               role: "assistant",
-              content: "Tu as atteint ta limite mensuelle de 5 requêtes. Passe en Premium pour un accès illimité ! ✨",
+              content: t("limitMessage", { limit: AI_FREE_LIMIT }),
               timestamp: new Date().toISOString(),
             },
           ]);
@@ -88,7 +90,7 @@ export function ChatWindow({ onClose, aiRequestsUsed, isPremium }: ChatWindowPro
       }
 
       if (!res.ok || !res.body) {
-        throw new Error("Erreur de réponse");
+        throw new Error("response error");
       }
 
       const reader = res.body.getReader();
@@ -101,7 +103,6 @@ export function ChatWindow({ onClose, aiRequestsUsed, isPremium }: ChatWindowPro
 
         const chunk = decoder.decode(value, { stream: true });
 
-        // Check for meta
         if (chunk.includes("__META__")) {
           const parts = chunk.split("__META__");
           accumulatedText += parts[0];
@@ -113,7 +114,6 @@ export function ChatWindow({ onClose, aiRequestsUsed, isPremium }: ChatWindowPro
           accumulatedText += chunk;
         }
 
-        // Update last message
         setMessages((prev) => {
           const updated = [...prev];
           updated[updated.length - 1] = {
@@ -137,7 +137,7 @@ export function ChatWindow({ onClose, aiRequestsUsed, isPremium }: ChatWindowPro
         const updated = [...prev];
         updated[updated.length - 1] = {
           role: "assistant",
-          content: "Désolé, une erreur s'est produite. Réessaie dans un moment.",
+          content: t("errorMessage"),
           timestamp: new Date().toISOString(),
         };
         return updated;
@@ -164,9 +164,11 @@ export function ChatWindow({ onClose, aiRequestsUsed, isPremium }: ChatWindowPro
           </div>
           <div>
             <p className="text-sm font-semibold text-textDark">{config.app.name} Coach</p>
-            {!isPremium && (
+            {!isPremium && remaining !== null && (
               <p className="text-xs text-textLight">
-                {remaining !== null ? `${remaining} requête${remaining > 1 ? "s" : ""} restante${remaining > 1 ? "s" : ""}` : ""}
+                {remaining === 1
+                  ? t("requestsSingular")
+                  : t("requestsPlural", { count: remaining })}
               </p>
             )}
           </div>
@@ -174,7 +176,7 @@ export function ChatWindow({ onClose, aiRequestsUsed, isPremium }: ChatWindowPro
         <button
           onClick={onClose}
           className="w-7 h-7 flex items-center justify-center rounded-lg text-textLight hover:bg-gray-100 transition text-sm"
-          aria-label="Fermer"
+          aria-label={t("closeLabel")}
         >
           ✕
         </button>
@@ -212,9 +214,9 @@ export function ChatWindow({ onClose, aiRequestsUsed, isPremium }: ChatWindowPro
       {/* Limit banner */}
       {limitReached && (
         <div className="px-4 py-2.5 bg-accent/10 border-t border-accent/20">
-          <p className="text-xs text-accent font-medium mb-1.5">Limite mensuelle atteinte</p>
+          <p className="text-xs text-accent font-medium mb-1.5">{t("limitTitle")}</p>
           <button className="w-full py-2 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent/90 transition">
-            ✨ Passer Premium — 4,99€/mois
+            {t("upgradeCta")}
           </button>
         </div>
       )}
@@ -227,7 +229,7 @@ export function ChatWindow({ onClose, aiRequestsUsed, isPremium }: ChatWindowPro
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Écris ton message..."
+            placeholder={t("placeholder")}
             disabled={isLoading}
             className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ai/30 focus:border-ai transition disabled:opacity-60"
           />
@@ -235,7 +237,7 @@ export function ChatWindow({ onClose, aiRequestsUsed, isPremium }: ChatWindowPro
             type="submit"
             disabled={isLoading || !input.trim()}
             className="w-10 h-10 rounded-xl bg-ai text-white flex items-center justify-center disabled:opacity-60 hover:bg-ai/90 transition shrink-0"
-            aria-label="Envoyer"
+            aria-label={t("sendLabel")}
           >
             ➤
           </button>
