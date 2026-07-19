@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { EMOJI_GROUPS } from "@/lib/avatars";
 
 interface AvatarPickerProps {
@@ -29,6 +30,7 @@ function resizeImageToBase64(file: File, maxSize = 256): Promise<string> {
 }
 
 export function AvatarPicker({ value, onChange }: AvatarPickerProps) {
+  const t = useTranslations("ui.avatarPicker");
   const [tab, setTab] = useState<"emoji" | "upload">("emoji");
   const [openGroup, setOpenGroup] = useState<string | null>("boys");
   const [uploading, setUploading] = useState(false);
@@ -41,11 +43,11 @@ export function AvatarPicker({ value, onChange }: AvatarPickerProps) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      setUploadError("Format non supporté. Utilise JPG, PNG ou WebP.");
+      setUploadError(t("formatError"));
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      setUploadError("Image trop lourde (max 5 Mo).");
+      setUploadError(t("sizeError"));
       return;
     }
     setUploadError("");
@@ -54,7 +56,7 @@ export function AvatarPicker({ value, onChange }: AvatarPickerProps) {
       const base64 = await resizeImageToBase64(file, 256);
       onChange(base64);
     } catch {
-      setUploadError("Erreur lors du chargement de l'image.");
+      setUploadError(t("loadError"));
     } finally {
       setUploading(false);
     }
@@ -75,7 +77,7 @@ export function AvatarPicker({ value, onChange }: AvatarPickerProps) {
             tab === "emoji" ? "bg-primary text-white" : "bg-gray-50 text-textDark hover:bg-gray-100"
           }`}
         >
-          😊 Choisir un emoji
+          {t("tabEmoji")}
         </button>
         <button
           type="button"
@@ -84,7 +86,7 @@ export function AvatarPicker({ value, onChange }: AvatarPickerProps) {
             tab === "upload" ? "bg-primary text-white" : "bg-gray-50 text-textDark hover:bg-gray-100"
           }`}
         >
-          📷 Ma photo
+          {t("tabPhoto")}
         </button>
       </div>
 
@@ -109,7 +111,7 @@ export function AvatarPicker({ value, onChange }: AvatarPickerProps) {
                     <span className="text-xs font-semibold text-textDark">{group.label}</span>
                     {selectedInGroup && (
                       <span className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-medium">
-                        ✓ sélectionné
+                        {t("selected")}
                       </span>
                     )}
                   </div>
@@ -154,13 +156,13 @@ export function AvatarPicker({ value, onChange }: AvatarPickerProps) {
             <div className="flex items-center gap-3">
               <img src={value} alt="avatar" className="w-16 h-16 rounded-2xl object-cover border-2 border-primary" />
               <div>
-                <p className="text-sm font-medium text-success">✅ Photo importée</p>
+                <p className="text-sm font-medium text-success">{t("importSuccess")}</p>
                 <button
                   type="button"
                   onClick={() => fileRef.current?.click()}
                   className="text-xs text-primary hover:underline mt-1"
                 >
-                  Changer la photo
+                  {t("changePicture")}
                 </button>
               </div>
             </div>
@@ -176,8 +178,8 @@ export function AvatarPicker({ value, onChange }: AvatarPickerProps) {
               ) : (
                 <>
                   <span className="text-3xl">📷</span>
-                  <span className="text-sm font-medium text-textDark">Sélectionner une photo</span>
-                  <span className="text-xs text-textLight">JPG, PNG, WebP · max 5 Mo</span>
+                  <span className="text-sm font-medium text-textDark">{t("selectPicture")}</span>
+                  <span className="text-xs text-textLight">{t("sizeHint")}</span>
                 </>
               )}
             </button>

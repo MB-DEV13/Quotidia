@@ -4,37 +4,37 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 
 export const EXPENSE_CATEGORIES = [
-  { value: "Alimentation",  label: "🛒 Alimentation" },
-  { value: "Restaurant",    label: "🍽️ Restaurant" },
-  { value: "Transport",     label: "🚗 Transport" },
-  { value: "Carburant",     label: "⛽ Carburant" },
-  { value: "Logement",      label: "🏠 Logement" },
-  { value: "Charges",       label: "💡 Charges" },
-  { value: "Santé",         label: "🏥 Santé" },
-  { value: "Pharmacie",     label: "💊 Pharmacie" },
-  { value: "Sport",         label: "🏋️ Sport" },
-  { value: "Loisirs",       label: "🎮 Loisirs" },
-  { value: "Voyages",       label: "✈️ Voyages" },
-  { value: "Vêtements",     label: "👕 Vêtements" },
-  { value: "Culture",       label: "🎬 Culture" },
-  { value: "High-tech",     label: "💻 High-tech" },
-  { value: "Abonnements",   label: "📱 Abonnements" },
-  { value: "Beauté",        label: "💄 Beauté" },
-  { value: "Épargne",       label: "🏦 Épargne" },
-  { value: "Autres",        label: "📦 Autres" },
+  { value: "Alimentation",  icon: "🛒" },
+  { value: "Restaurant",    icon: "🍽️" },
+  { value: "Transport",     icon: "🚗" },
+  { value: "Carburant",     icon: "⛽" },
+  { value: "Logement",      icon: "🏠" },
+  { value: "Charges",       icon: "💡" },
+  { value: "Santé",         icon: "🏥" },
+  { value: "Pharmacie",     icon: "💊" },
+  { value: "Sport",         icon: "🏋️" },
+  { value: "Loisirs",       icon: "🎮" },
+  { value: "Voyages",       icon: "✈️" },
+  { value: "Vêtements",     icon: "👕" },
+  { value: "Culture",       icon: "🎬" },
+  { value: "High-tech",     icon: "💻" },
+  { value: "Abonnements",   icon: "📱" },
+  { value: "Beauté",        icon: "💄" },
+  { value: "Épargne",       icon: "🏦" },
+  { value: "Autres",        icon: "📦" },
 ];
 
 export const INCOME_CATEGORIES = [
-  { value: "Salaire",       label: "💼 Salaire" },
-  { value: "Emploi2",       label: "🏢 2ème emploi" },
-  { value: "Freelance",     label: "💻 Freelance" },
-  { value: "Vente",         label: "🛒 Vente" },
-  { value: "Investissement",label: "📈 Investissement" },
-  { value: "Bourse",        label: "📊 Bourse" },
-  { value: "Location",      label: "🏘️ Location" },
-  { value: "Allocation",    label: "🏛️ Allocation" },
-  { value: "Jeux",          label: "🎰 Gains / Jeux" },
-  { value: "Autre",         label: "💰 Autre revenu" },
+  { value: "Salaire",       icon: "💼" },
+  { value: "Emploi2",       icon: "🏢" },
+  { value: "Freelance",     icon: "💻" },
+  { value: "Vente",         icon: "🛒" },
+  { value: "Investissement",icon: "📈" },
+  { value: "Bourse",        icon: "📊" },
+  { value: "Location",      icon: "🏘️" },
+  { value: "Allocation",    icon: "🏛️" },
+  { value: "Jeux",          icon: "🎰" },
+  { value: "Autre",         icon: "💰" },
 ];
 
 export interface TransactionFormData {
@@ -66,6 +66,7 @@ interface TransactionFormProps {
 
 export function TransactionForm({ type, onSubmit, onCancel, initialValues, editMode = false }: TransactionFormProps) {
   const t = useTranslations("budget");
+  const tCat = useTranslations("budget.categories");
   const isExpense = type === "expense";
   const categories = isExpense ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
 
@@ -142,7 +143,7 @@ export function TransactionForm({ type, onSubmit, onCancel, initialValues, editM
                       : "bg-gray-50 text-textDark hover:bg-gray-100"
                   }`}
                 >
-                  {cat.label}
+                  {cat.icon} {(tCat as any)(cat.value)}
                 </button>
               ))}
             </div>

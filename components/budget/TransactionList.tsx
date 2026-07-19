@@ -26,7 +26,7 @@ interface TransactionListProps {
 function getCategoryIcon(category: string, type: "expense" | "income"): string {
   const list = type === "expense" ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
   const found = list.find((c) => c.value === category);
-  return found ? found.label.split(" ")[0] : type === "expense" ? "📦" : "💰";
+  return found?.icon ?? (type === "expense" ? "📦" : "💰");
 }
 
 function groupByDate(transactions: Transaction[], locale: string): Map<string, Transaction[]> {
@@ -43,6 +43,7 @@ function groupByDate(transactions: Transaction[], locale: string): Map<string, T
 
 export function TransactionList({ transactions, onDelete, onEdit }: TransactionListProps) {
   const t = useTranslations("budget");
+  const tCat = useTranslations("budget.categories");
   const locale = useLocale();
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
@@ -96,7 +97,7 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="text-sm font-medium text-textDark truncate">
-                        {tx.label || tx.category}
+                        {tx.label || (tCat as any)(tx.category)}
                       </p>
                       {tx.source === "bank_sync" && (
                         <span className="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-md font-medium shrink-0">
@@ -110,7 +111,7 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
                       )}
                     </div>
                     {tx.label && (
-                      <p className="text-xs text-textLight">{tx.category}</p>
+                      <p className="text-xs text-textLight">{(tCat as any)(tx.category)}</p>
                     )}
                   </div>
                 </div>

@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { getTranslations, getLocale } from "next-intl/server";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getXpProgressForCurrentLevel, getLevelTitle, getStreakMultiplier } from "@/lib/gamification";
@@ -69,11 +70,15 @@ export default async function DashboardPage() {
   // Utilisateurs Google : pas passé par le register, profil vide → onboarding obligatoire
   if (!user.onboardingCompleted && !user.country) redirect("/onboarding");
 
+  const [t, locale] = await Promise.all([getTranslations("dashboard"), getLocale()]);
+  const dateLocale = locale === "fr" ? "fr-FR" : "en-US";
+
   const habitsScheduledToday = habits.filter((h) => isHabitScheduledToday(h.frequency));
   const todayCompletions = habitsScheduledToday.filter((h) =>
     h.completions.some((c) => c.date >= startOfDay && c.date <= endOfDay)
   ).length;
   const allDoneToday = habitsScheduledToday.length > 0 && todayCompletions === habitsScheduledToday.length;
+  const streakRemainingCount = habitsScheduledToday.length - todayCompletions;
   const bestStreak = habits.reduce((max, h) => Math.max(max, h.currentStreak), 0);
   const xpProgress = getXpProgressForCurrentLevel(user.xp);
   const levelTitle = getLevelTitle(user.level);
@@ -91,7 +96,7 @@ export default async function DashboardPage() {
     const dayEnd = getEndOfDay(day);
     const completed = habits.filter((h) => h.completions.some((c) => c.date >= day && c.date <= dayEnd)).length;
     return {
-      day: day.toLocaleDateString("fr-FR", { weekday: "short" }),
+      day: day.toLocaleDateString(dateLocale, { weekday: "short" }),
       completed,
       total: habitsScheduledToday.length,
       rate: habitsScheduledToday.length > 0 ? Math.round((completed / habitsScheduledToday.length) * 100) : 0,
@@ -108,7 +113,7 @@ export default async function DashboardPage() {
     const total = expensesLast7
       .filter((e) => e.date >= day && e.date <= dayEnd)
       .reduce((sum, e) => sum + e.amount, 0);
-    return { day: day.toLocaleDateString("fr-FR", { weekday: "short" }), amount: Math.round(total * 100) / 100 };
+    return { day: day.toLocaleDateString(dateLocale, { weekday: "short" }), amount: Math.round(total * 100) / 100 };
   });
 
   const habitsToday = habitsScheduledToday.map((h) => ({
@@ -131,15 +136,15 @@ export default async function DashboardPage() {
 
   type NextBadge = { name: string; icon: string; description: string; progress: number; total: number };
   const candidates: (NextBadge | null)[] = [
-    !earnedConditions.has("streak_7")   ? { name: "Semaine Parfaite",   icon: "🔥", description: "7 jours de streak",    progress: bestStreak, total: 7   } : null,
-    !earnedConditions.has("streak_21")  ? { name: "Habitude Installée", icon: "💪", description: "21 jours de streak",   progress: bestStreak, total: 21  } : null,
-    !earnedConditions.has("streak_30")  ? { name: "Mois de Feu",        icon: "🏆", description: "30 jours de streak",   progress: bestStreak, total: 30  } : null,
-    !earnedConditions.has("completions_365") ? { name: "Machine",       icon: "🤖", description: "365 complétions",      progress: totalCompletions, total: 365 } : null,
-    !earnedConditions.has("habits_5_active") && habits.length < 5 ? { name: "Multitâche", icon: "🎪", description: "5 habitudes actives", progress: habits.length, total: 5 } : null,
-    !earnedConditions.has("first_goal") && completedGoalsCount < 1 ? { name: "Objectif Atteint", icon: "🎯", description: "1 objectif complété", progress: completedGoalsCount, total: 1 } : null,
-    !earnedConditions.has("goals_3")    ? { name: "Persévérant",        icon: "🔥", description: "3 objectifs complétés", progress: completedGoalsCount, total: 3 } : null,
-    !earnedConditions.has("login_4w")   ? { name: "Régularité",         icon: "📅", description: "4 semaines de connexion", progress: user.loginStreak, total: 4 } : null,
-    !earnedConditions.has("login_12w")  ? { name: "Dédié",              icon: "🎯", description: "12 semaines de connexion", progress: user.loginStreak, total: 12 } : null,
+    !earnedConditions.has("streak_7")        ? { name: t("badges.streak7.name"),        icon: "🔥", description: t("badges.streak7.desc"),        progress: bestStreak,        total: 7   } : null,
+    !earnedConditions.has("streak_21")       ? { name: t("badges.streak21.name"),       icon: "💪", description: t("badges.streak21.desc"),       progress: bestStreak,        total: 21  } : null,
+    !earnedConditions.has("streak_30")       ? { name: t("badges.streak30.name"),       icon: "🏆", description: t("badges.streak30.desc"),       progress: bestStreak,        total: 30  } : null,
+    !earnedConditions.has("completions_365") ? { name: t("badges.completions365.name"), icon: "🤖", description: t("badges.completions365.desc"), progress: totalCompletions,  total: 365 } : null,
+    !earnedConditions.has("habits_5_active") && habits.length < 5 ? { name: t("badges.habits5.name"), icon: "🎪", description: t("badges.habits5.desc"), progress: habits.length, total: 5 } : null,
+    !earnedConditions.has("first_goal") && completedGoalsCount < 1 ? { name: t("badges.firstGoal.name"), icon: "🎯", description: t("badges.firstGoal.desc"), progress: completedGoalsCount, total: 1 } : null,
+    !earnedConditions.has("goals_3")         ? { name: t("badges.goals3.name"),         icon: "🔥", description: t("badges.goals3.desc"),         progress: completedGoalsCount, total: 3 } : null,
+    !earnedConditions.has("login_4w")        ? { name: t("badges.login4w.name"),        icon: "📅", description: t("badges.login4w.desc"),        progress: user.loginStreak,  total: 4  } : null,
+    !earnedConditions.has("login_12w")       ? { name: t("badges.login12w.name"),       icon: "🎯", description: t("badges.login12w.desc"),       progress: user.loginStreak,  total: 12 } : null,
   ];
   const nextBadge = candidates
     .filter((c): c is NextBadge => c !== null && c.progress < c.total)
@@ -164,7 +169,7 @@ export default async function DashboardPage() {
           name={user.name}
           serverHour={serverHour}
           isPremium={user.isPremium}
-          dateLabel={today.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
+          dateLabel={today.toLocaleDateString(dateLocale, { weekday: "long", day: "numeric", month: "long" })}
         />
 
         {/* Alerte streak en danger (après 17h si habitudes non complétées) */}
@@ -172,9 +177,9 @@ export default async function DashboardPage() {
           <div className="mb-6 bg-warning/10 border border-warning/30 rounded-2xl px-4 py-3 flex items-center gap-3">
             <span className="text-2xl">⚠️</span>
             <div>
-              <p className="text-sm font-semibold text-warning">Streak en danger !</p>
+              <p className="text-sm font-semibold text-warning">{t("streakDanger")}</p>
               <p className="text-xs text-warning/80">
-                Il te reste {habitsScheduledToday.length - todayCompletions} habitude{habitsScheduledToday.length - todayCompletions > 1 ? "s" : ""} à valider avant minuit pour garder ton streak.
+                {streakRemainingCount === 1 ? t("streakDangerMsg1") : t("streakDangerMsgN", { count: streakRemainingCount })}
               </p>
             </div>
           </div>
@@ -184,7 +189,7 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-3 gap-4 mb-6">
           {/* Habitudes du jour — avec barre de progression */}
           <div className="bg-white rounded-2xl shadow-soft p-4">
-            <p className="text-textLight text-xs mb-1">Aujourd'hui</p>
+            <p className="text-textLight text-xs mb-1">{t("today")}</p>
             <p className="text-2xl font-bold text-textDark">
               {todayCompletions}
               <span className="text-textLight text-base font-normal">/{habitsScheduledToday.length}</span>
@@ -198,12 +203,12 @@ export default async function DashboardPage() {
               </div>
             )}
             {weekCompletionRate > 0 && (
-              <p className="text-xs text-textLight mt-1.5">{weekCompletionRate}% cette semaine</p>
+              <p className="text-xs text-textLight mt-1.5">{t("weekPercent", { rate: weekCompletionRate })}</p>
             )}
           </div>
           <StreakCard streak={bestStreak} />
           <div className="bg-white rounded-2xl shadow-soft p-4">
-            <p className="text-textLight text-xs mb-1">Niveau</p>
+            <p className="text-textLight text-xs mb-1">{t("level")}</p>
             <p className="text-2xl font-bold text-primary">
               {user.level}{" "}
               <span className="text-sm font-normal text-textLight">{levelTitle}</span>
@@ -255,8 +260,8 @@ export default async function DashboardPage() {
           <div className="mb-6">
             <div className="bg-white rounded-2xl shadow-soft p-5">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-sm font-semibold text-textDark">Budget ce mois</p>
-                <Link href="/budget" className="text-xs text-primary hover:underline">Voir tout →</Link>
+                <p className="text-sm font-semibold text-textDark">{t("budgetMonth")}</p>
+                <Link href="/budget" className="text-xs text-primary hover:underline">{t("seeAll")}</Link>
               </div>
               <div className="flex items-end gap-2 mb-2">
                 <span className={`text-2xl font-bold ${budgetTextColor}`}>{formatCurrency(totalExpenses)}</span>
@@ -269,7 +274,7 @@ export default async function DashboardPage() {
                 <div className={`h-full rounded-full transition-all ${budgetColor}`} style={{ width: `${budgetPct}%` }} />
               </div>
               <p className={`text-xs mt-1.5 ${budgetRemaining < 0 ? "text-danger font-semibold" : "text-textLight"}`}>
-                {budgetRemaining < 0 ? `⚠️ Dépassement de ${formatCurrency(Math.abs(budgetRemaining))}` : `${formatCurrency(budgetRemaining)} restants`}
+                {budgetRemaining < 0 ? t("budgetOver", { amount: formatCurrency(Math.abs(budgetRemaining)) }) : t("budgetRemaining", { amount: formatCurrency(budgetRemaining) })}
               </p>
             </div>
           </div>
@@ -277,9 +282,9 @@ export default async function DashboardPage() {
           <div className="mb-6">
             <Link href="/budget" className="block bg-white rounded-2xl shadow-soft p-5 hover:shadow-card transition border-2 border-dashed border-gray-200 hover:border-primary/30 text-center group">
               <p className="text-2xl mb-2">💰</p>
-              <p className="text-sm font-semibold text-textDark group-hover:text-primary transition">Configure ton budget</p>
-              <p className="text-xs text-textLight mt-1">Suis tes dépenses et reste dans le vert chaque mois.</p>
-              <span className="inline-block mt-3 text-xs text-primary font-semibold">Commencer →</span>
+              <p className="text-sm font-semibold text-textDark group-hover:text-primary transition">{t("configBudget")}</p>
+              <p className="text-xs text-textLight mt-1">{t("configBudgetMsg")}</p>
+              <span className="inline-block mt-3 text-xs text-primary font-semibold">{t("start")}</span>
             </Link>
           </div>
         )}
@@ -289,18 +294,18 @@ export default async function DashboardPage() {
           /* Tous les objectifs sont complétés */
           <div className="mb-6 bg-white rounded-2xl shadow-soft p-5">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-semibold text-textDark">Objectifs</h2>
-              <Link href="/goals" className="text-xs text-primary hover:underline">Voir tout →</Link>
+              <h2 className="text-sm font-semibold text-textDark">{t("goalsTitle")}</h2>
+              <Link href="/goals" className="text-xs text-primary hover:underline">{t("seeAll")}</Link>
             </div>
             <div className="text-center py-3">
               <p className="text-3xl mb-2">🎉</p>
-              <p className="text-sm font-bold text-success mb-1">Félicitations !</p>
-              <p className="text-xs text-textLight mb-4">Tu as complété tous tes objectifs. C&apos;est une vraie performance !</p>
+              <p className="text-sm font-bold text-success mb-1">{t("goalsCongrats")}</p>
+              <p className="text-xs text-textLight mb-4">{t("goalsCongratsMsg")}</p>
               <Link
                 href="/goals"
                 className="inline-flex items-center gap-1.5 bg-primary text-white text-xs font-semibold px-4 py-2 rounded-xl hover:bg-primary/90 transition"
               >
-                <span>+</span> Nouvel objectif
+                {t("goalsNew")}
               </Link>
             </div>
           </div>
@@ -308,8 +313,8 @@ export default async function DashboardPage() {
           /* Objectifs actifs à afficher */
           <div className="mb-6 bg-white rounded-2xl shadow-soft p-5">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-semibold text-textDark">Objectifs en cours</h2>
-              <Link href="/goals" className="text-xs text-primary hover:underline">Voir tout →</Link>
+              <h2 className="text-sm font-semibold text-textDark">{t("goalsActive")}</h2>
+              <Link href="/goals" className="text-xs text-primary hover:underline">{t("seeAll")}</Link>
             </div>
             <div className="space-y-3">
               {goals.map((goal) => {
@@ -337,9 +342,9 @@ export default async function DashboardPage() {
           <div className="mb-6">
             <Link href="/goals" className="block bg-white rounded-2xl shadow-soft p-5 hover:shadow-card transition border-2 border-dashed border-gray-200 hover:border-primary/30 text-center group">
               <p className="text-2xl mb-2">🎯</p>
-              <p className="text-sm font-semibold text-textDark group-hover:text-primary transition">Crée ton premier objectif</p>
-              <p className="text-xs text-textLight mt-1">Définis une cible et suis ta progression jour après jour.</p>
-              <span className="inline-block mt-3 text-xs text-primary font-semibold">Commencer →</span>
+              <p className="text-sm font-semibold text-textDark group-hover:text-primary transition">{t("goalsEmpty")}</p>
+              <p className="text-xs text-textLight mt-1">{t("goalsEmptyMsg")}</p>
+              <span className="inline-block mt-3 text-xs text-primary font-semibold">{t("start")}</span>
             </Link>
           </div>
         )}

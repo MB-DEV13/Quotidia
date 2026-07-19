@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   ComposedChart,
   Bar,
@@ -38,13 +39,14 @@ function HabitsTooltip({
   payload?: { value: number; payload: HabitDay }[];
   label?: string;
 }) {
+  const t = useTranslations("charts.weekly");
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (
     <div className="bg-white rounded-xl shadow-card border border-gray-100 px-3 py-2 text-sm space-y-1">
       <p className="font-semibold text-textDark capitalize">{label}</p>
-      <p className="text-primary font-medium">Complétion : {d.rate}%</p>
-      <p className="text-textLight text-xs">{d.completed}/{d.total} habitudes</p>
+      <p className="text-primary font-medium">{t("tooltipCompletion", { rate: d.rate })}</p>
+      <p className="text-textLight text-xs">{t("tooltipHabits", { completed: d.completed, total: d.total })}</p>
     </div>
   );
 }
@@ -69,13 +71,14 @@ function ExpensesTooltip({
 
 export function WeeklyChart({ habitsData, expensesData }: WeeklyChartProps) {
   const [view, setView] = useState<"habits" | "expenses">("habits");
+  const t = useTranslations("charts.weekly");
   const hasExpenses = expensesData.some((d) => d.amount > 0);
 
   return (
     <div className="bg-white rounded-2xl shadow-soft p-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-textDark">
-          {view === "habits" ? "Taux de complétion — 7 jours" : "Dépenses — 7 jours"}
+          {view === "habits" ? t("titleHabits") : t("titleExpenses")}
         </h3>
         {hasExpenses && (
           <div className="flex bg-gray-100 rounded-lg p-0.5 gap-0.5">
@@ -85,7 +88,7 @@ export function WeeklyChart({ habitsData, expensesData }: WeeklyChartProps) {
                 view === "habits" ? "bg-white text-primary shadow-sm" : "text-textLight hover:text-textDark"
               }`}
             >
-              Habitudes
+              {t("btnHabits")}
             </button>
             <button
               onClick={() => setView("expenses")}
@@ -93,7 +96,7 @@ export function WeeklyChart({ habitsData, expensesData }: WeeklyChartProps) {
                 view === "expenses" ? "bg-white text-warning shadow-sm" : "text-textLight hover:text-textDark"
               }`}
             >
-              Dépenses
+              {t("btnExpenses")}
             </button>
           </div>
         )}

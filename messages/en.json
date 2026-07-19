@@ -584,6 +584,64 @@
     },
     "nextBadge": {
       "title": "Next badge"
+    },
+    "today": "Today",
+    "level": "Level",
+    "weekPercent": "{rate}% this week",
+    "streakDanger": "Streak at risk!",
+    "streakDangerMsg1": "You have 1 habit left to complete before midnight to keep your streak.",
+    "streakDangerMsgN": "You have {count} habits left to complete before midnight to keep your streak.",
+    "budgetMonth": "Monthly budget",
+    "seeAll": "See all →",
+    "budgetOver": "⚠️ Over budget by {amount}",
+    "budgetRemaining": "{amount} remaining",
+    "configBudget": "Set up your budget",
+    "configBudgetMsg": "Track your expenses and stay in the green every month.",
+    "start": "Get started →",
+    "goalsTitle": "Goals",
+    "goalsActive": "Active goals",
+    "goalsNew": "+ New goal",
+    "goalsCongrats": "Congratulations!",
+    "goalsCongratsMsg": "You've completed all your goals. That's a real achievement!",
+    "goalsEmpty": "Create your first goal",
+    "goalsEmptyMsg": "Set a target and track your progress day by day.",
+    "badges": {
+      "streak7": {
+        "name": "Perfect Week",
+        "desc": "7-day streak"
+      },
+      "streak21": {
+        "name": "Habit Locked In",
+        "desc": "21-day streak"
+      },
+      "streak30": {
+        "name": "Month on Fire",
+        "desc": "30-day streak"
+      },
+      "completions365": {
+        "name": "Machine",
+        "desc": "365 completions"
+      },
+      "habits5": {
+        "name": "Multitasker",
+        "desc": "5 active habits"
+      },
+      "firstGoal": {
+        "name": "Goal Reached",
+        "desc": "1 goal completed"
+      },
+      "goals3": {
+        "name": "Persistent",
+        "desc": "3 goals completed"
+      },
+      "login4w": {
+        "name": "Consistent",
+        "desc": "4 weeks of logins"
+      },
+      "login12w": {
+        "name": "Dedicated",
+        "desc": "12 weeks of logins"
+      }
     }
   },
   "habits": {
@@ -871,7 +929,28 @@
       "Logement": "Housing",
       "Santé": "Health",
       "Abonnements": "Subscriptions",
-      "Autres": "Other"
+      "Autres": "Other",
+      "Restaurant": "Restaurant",
+      "Carburant": "Fuel",
+      "Charges": "Utilities",
+      "Pharmacie": "Pharmacy",
+      "Sport": "Sport",
+      "Voyages": "Travel",
+      "Vêtements": "Clothing",
+      "Culture": "Culture",
+      "High-tech": "Tech",
+      "Beauté": "Beauty",
+      "Épargne": "Savings",
+      "Salaire": "Salary",
+      "Emploi2": "2nd job",
+      "Freelance": "Freelance",
+      "Vente": "Sales",
+      "Investissement": "Investment",
+      "Bourse": "Stock market",
+      "Location": "Rental income",
+      "Allocation": "Benefits",
+      "Jeux": "Gambling / Games",
+      "Autre": "Other income"
     },
     "empty": "No expenses this month.",
     "limitReached": "Category limit reached. Upgrade to Premium for more.",
@@ -1187,7 +1266,25 @@
       "csvDescription": "Download all your habits, expenses and goals as CSV.",
       "csv": "Export my data (CSV)",
       "csvLoading": "Exporting...",
-      "pdf": "Download PDF report",
+      "pdf": {
+        "financialSummary": "Financial summary",
+        "income": "Income",
+        "expenses": "Expenses",
+        "balance": "Balance",
+        "habits": "Habits",
+        "habitCol": "Habit",
+        "streakCol": "Current streak",
+        "completionCol": "Completion rate",
+        "expensesSection": "Expenses",
+        "incomesSection": "Income",
+        "labelCol": "Label",
+        "categoryCol": "Category",
+        "amountCol": "Amount",
+        "goalsSection": "Goals",
+        "titleCol": "Title",
+        "progressCol": "Progress",
+        "streakUnit": "d"
+      },
       "premiumRequired": "Premium feature",
       "premiumTooltip": "Premium feature",
       "weekly": "Weekly report",
@@ -1316,6 +1413,25 @@
       "switchToEn": "Switch to English",
       "fr": "Français",
       "en": "English"
+    },
+    "avatarPicker": {
+      "tabEmoji": "😊 Choose an emoji",
+      "tabPhoto": "📷 My photo",
+      "selected": "✓ selected",
+      "importSuccess": "✅ Photo imported",
+      "changePicture": "Change photo",
+      "selectPicture": "Select a photo",
+      "sizeHint": "JPG, PNG, WebP · max 5 MB",
+      "formatError": "Unsupported format. Use JPG, PNG or WebP.",
+      "sizeError": "Image too large (max 5 MB).",
+      "loadError": "Error loading the image."
+    },
+    "locationPicker": {
+      "country": "Country",
+      "countrySelect": "Select a country",
+      "region": "Region",
+      "select": "Select",
+      "city": "City"
     }
   },
   "stats": {
@@ -1747,6 +1863,20 @@
       "limitTitle": "Monthly limit reached",
       "upgradeCta": "✨ Go Premium — €4.99/month",
       "placeholder": "Type your message..."
+    }
+  },
+  "charts": {
+    "weekly": {
+      "titleHabits": "Completion rate — 7 days",
+      "titleExpenses": "Expenses — 7 days",
+      "btnHabits": "Habits",
+      "btnExpenses": "Expenses",
+      "tooltipCompletion": "Completion: {rate}%",
+      "tooltipHabits": "{completed}/{total} habits"
+    },
+    "monthly": {
+      "title": "Weekly expenses",
+      "empty": "No expenses this month"
     }
   }
 }

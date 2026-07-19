@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { COUNTRIES } from "@/lib/countries";
 import { LOCATIONS } from "@/lib/locations";
 
@@ -18,9 +19,10 @@ export function LocationPicker({
   region, setRegion,
   city, setCity,
 }: LocationPickerProps) {
+  const t = useTranslations("ui.locationPicker");
   const locationData = country ? LOCATIONS[country] : null;
   const regions = locationData?.regions ?? [];
-  const regionLabel = locationData?.regionLabel ?? "Région";
+  const regionLabel = locationData?.regionLabel ?? t("region");
 
   const selectedRegion = regions.find((r) => r.name === region);
   const cities = selectedRegion?.cities ?? [];
@@ -42,13 +44,13 @@ export function LocationPicker({
     <div className="space-y-3">
       {/* Pays */}
       <div>
-        <label className="block text-xs font-medium text-textLight mb-1">Pays</label>
+        <label className="block text-xs font-medium text-textLight mb-1">{t("country")}</label>
         <select
           value={country}
           onChange={(e) => setCountry(e.target.value)}
           className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 bg-white"
         >
-          <option value="">Sélectionner un pays</option>
+          <option value="">{t("countrySelect")}</option>
           {COUNTRIES.map((c) => (
             <option key={c.code} value={c.code}>
               {c.flag} {c.name}
@@ -68,7 +70,7 @@ export function LocationPicker({
                 onChange={(e) => setRegion(e.target.value)}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 bg-white"
               >
-                <option value="">Sélectionner</option>
+                <option value="">{t("select")}</option>
                 {regions.map((r) => (
                   <option key={r.name} value={r.name}>{r.name}</option>
                 ))}
@@ -78,7 +80,7 @@ export function LocationPicker({
                 type="text"
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
-                placeholder="Région"
+                placeholder={t("region")}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
             )}
@@ -86,14 +88,14 @@ export function LocationPicker({
 
           {/* Ville — visible seulement si région sélectionnée */}
           <div>
-            <label className="block text-xs font-medium text-textLight mb-1">Ville</label>
+            <label className="block text-xs font-medium text-textLight mb-1">{t("city")}</label>
             {region && cities.length > 0 ? (
               <select
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 bg-white"
               >
-                <option value="">Sélectionner</option>
+                <option value="">{t("select")}</option>
                 {cities.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
@@ -103,7 +105,7 @@ export function LocationPicker({
                 type="text"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                placeholder="Ville"
+                placeholder={t("city")}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
             )}

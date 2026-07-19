@@ -108,38 +108,38 @@ function openPrintWindow(
   <p class="date">${now}</p>
 
   ${summary ? `
-  <h2>${locale === "fr" ? "Résumé financier" : "Financial summary"}</h2>
+  <h2>${t("pdf.financialSummary")}</h2>
   <div class="summary-box">
-    <div class="summary-item"><div>${locale === "fr" ? "Revenus" : "Income"}</div><div class="val amount-pos">+${summary.totalIncome.toFixed(2)} €</div></div>
-    <div class="summary-item"><div>${locale === "fr" ? "Dépenses" : "Expenses"}</div><div class="val amount-neg">-${summary.totalExpenses.toFixed(2)} €</div></div>
-    <div class="summary-item"><div>${locale === "fr" ? "Solde" : "Balance"}</div><div class="val ${summary.balance >= 0 ? "amount-pos" : "amount-neg"}">${summary.balance >= 0 ? "+" : ""}${summary.balance.toFixed(2)} €</div></div>
+    <div class="summary-item"><div>${t("pdf.income")}</div><div class="val amount-pos">+${summary.totalIncome.toFixed(2)} €</div></div>
+    <div class="summary-item"><div>${t("pdf.expenses")}</div><div class="val amount-neg">-${summary.totalExpenses.toFixed(2)} €</div></div>
+    <div class="summary-item"><div>${t("pdf.balance")}</div><div class="val ${summary.balance >= 0 ? "amount-pos" : "amount-neg"}">${summary.balance >= 0 ? "+" : ""}${summary.balance.toFixed(2)} €</div></div>
   </div>` : ""}
 
   ${habits.length > 0 ? `
-  <h2>${locale === "fr" ? `Habitudes (${habits.length})` : `Habits (${habits.length})`}</h2>
+  <h2>${t("pdf.habits")} (${habits.length})</h2>
   <table>
-    <tr><th>${locale === "fr" ? "Habitude" : "Habit"}</th><th>${locale === "fr" ? "Streak actuel" : "Current streak"}</th><th>${locale === "fr" ? "Taux de complétion" : "Completion rate"}</th></tr>
-    ${habits.map((h) => `<tr><td>${h.name}</td><td>🔥 ${h.currentStreak}${locale === "fr" ? "j" : "d"}</td><td>${h.completionRate}%</td></tr>`).join("")}
+    <tr><th>${t("pdf.habitCol")}</th><th>${t("pdf.streakCol")}</th><th>${t("pdf.completionCol")}</th></tr>
+    ${habits.map((h) => `<tr><td>${h.name}</td><td>🔥 ${h.currentStreak}${t("pdf.streakUnit")}</td><td>${h.completionRate}%</td></tr>`).join("")}
   </table>` : ""}
 
   ${expenses.length > 0 ? `
-  <h2>${locale === "fr" ? `Dépenses (${expenses.length})` : `Expenses (${expenses.length})`}</h2>
+  <h2>${t("pdf.expensesSection")} (${expenses.length})</h2>
   <table>
-    <tr><th>${locale === "fr" ? "Libellé" : "Label"}</th><th>${locale === "fr" ? "Catégorie" : "Category"}</th><th>${locale === "fr" ? "Montant" : "Amount"}</th><th>Date</th></tr>
+    <tr><th>${t("pdf.labelCol")}</th><th>${t("pdf.categoryCol")}</th><th>${t("pdf.amountCol")}</th><th>Date</th></tr>
     ${expenses.map((e) => `<tr><td>${e.label ?? "—"}</td><td>${e.category}</td><td class="amount-neg">-${e.amount.toFixed(2)} €</td><td>${new Date(e.date).toLocaleDateString(dateLocale)}</td></tr>`).join("")}
   </table>` : ""}
 
   ${incomes.length > 0 ? `
-  <h2>${locale === "fr" ? `Revenus (${incomes.length})` : `Income (${incomes.length})`}</h2>
+  <h2>${t("pdf.incomesSection")} (${incomes.length})</h2>
   <table>
-    <tr><th>${locale === "fr" ? "Libellé" : "Label"}</th><th>${locale === "fr" ? "Catégorie" : "Category"}</th><th>${locale === "fr" ? "Montant" : "Amount"}</th><th>Date</th></tr>
+    <tr><th>${t("pdf.labelCol")}</th><th>${t("pdf.categoryCol")}</th><th>${t("pdf.amountCol")}</th><th>Date</th></tr>
     ${incomes.map((i) => `<tr><td>${i.label ?? "—"}</td><td>${i.category}</td><td class="amount-pos">+${i.amount.toFixed(2)} €</td><td>${new Date(i.date).toLocaleDateString(dateLocale)}</td></tr>`).join("")}
   </table>` : ""}
 
   ${goals.length > 0 ? `
-  <h2>${locale === "fr" ? `Objectifs (${goals.length})` : `Goals (${goals.length})`}</h2>
+  <h2>${t("pdf.goalsSection")} (${goals.length})</h2>
   <table>
-    <tr><th>${locale === "fr" ? "Titre" : "Title"}</th><th>${locale === "fr" ? "Progression" : "Progress"}</th></tr>
+    <tr><th>${t("pdf.titleCol")}</th><th>${t("pdf.progressCol")}</th></tr>
     ${goals.map((g) => `<tr><td>${g.title}</td><td>${g.current}/${g.target}${g.unit ? " " + g.unit : ""} (${Math.min(Math.round((g.current / g.target) * 100), 100)}%)</td></tr>`).join("")}
   </table>` : ""}
 
