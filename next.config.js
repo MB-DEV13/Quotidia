@@ -19,7 +19,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https:",
-      "connect-src 'self' https://eu.i.posthog.com https://eu-assets.i.posthog.com https://api.stripe.com https://api.bridgeapi.io https://vitals.vercel-insights.com https://*.sentry.io https://*.ingest.sentry.io",
+      "connect-src 'self' https://eu.i.posthog.com https://eu-assets.i.posthog.com https://api.stripe.com https://api.bridgeapi.io https://vitals.vercel-insights.com https://*.sentry.io https://*.ingest.sentry.io https://ingest.de.sentry.io https://o4511869098524672.ingest.de.sentry.io",
       "frame-src https://js.stripe.com https://hooks.stripe.com https://challenges.cloudflare.com",
       "worker-src 'self' blob:",
     ].join("; "),
