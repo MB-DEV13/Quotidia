@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const { withSentryConfig } = require("@sentry/nextjs");
 const withNextIntl = require("next-intl/plugin")("./i18n/request.ts");
 const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
@@ -18,7 +19,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https:",
-      "connect-src 'self' https://eu.i.posthog.com https://eu-assets.i.posthog.com https://api.stripe.com https://api.bridgeapi.io https://vitals.vercel-insights.com",
+      "connect-src 'self' https://eu.i.posthog.com https://eu-assets.i.posthog.com https://api.stripe.com https://api.bridgeapi.io https://vitals.vercel-insights.com https://*.sentry.io https://*.ingest.sentry.io",
       "frame-src https://js.stripe.com https://hooks.stripe.com https://challenges.cloudflare.com",
       "worker-src 'self' blob:",
     ].join("; "),
@@ -48,4 +49,21 @@ const nextConfig = {
   },
 };
 
-module.exports = withNextIntl(nextConfig);
+module.exports = withSentryConfig(withNextIntl(nextConfig), {
+  org: "quotidia",
+  project: "javascript-nextjs",
+
+  // Upload des source maps silencieusement
+  silent: !process.env.CI,
+
+  // Désactive le tunnel Sentry (utilise le CDN directement)
+  tunnelRoute: undefined,
+
+  // Cache les source maps dans le bundle final
+  hideSourceMaps: true,
+
+  // Désactive le treeshaking agressif pour garder les traces d'erreurs complètes
+  disableLogger: true,
+
+  automaticVercelMonitors: true,
+});
